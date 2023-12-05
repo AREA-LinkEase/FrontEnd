@@ -1,25 +1,17 @@
-import logo from './logo.svg';
-import './App.css';
-import PrimaryInput from './components/PrimaryInput';
+import { useEffect, useState } from 'react';
+import PrimaryInput from './components/Inputs/PrimaryInput';
 
-function App() {
+const App = () => {
+
+  const [inputEmailValue, setInputEmailValue] = useState('');
+
+  useEffect(() => {
+    console.log(inputEmailValue);
+  }, [inputEmailValue])
+
   return (
-    <div className="App">
-      <PrimaryInput/>
-      {/* <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header> */}
+    <div>
+      <PrimaryInput inputValue={inputEmailValue} setInputValue={setInputEmailValue} />
     </div>
   );
 }
