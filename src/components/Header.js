@@ -42,7 +42,9 @@ const Header = ({
             <CenterChildrenComponent/>
         )}
         {RightChildrenComponent && (
-            <RightChildrenComponent/>
+            <div onClick={onClickIconRight}>
+                <RightChildrenComponent/>
+            </div>
         )}
         {(RightIcon && !RightChildrenComponent) && (
           <div
