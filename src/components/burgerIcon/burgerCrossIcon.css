@@ -39,12 +39,15 @@
     .nav-open & {
       &.menu-toggle-bar--top {
         transform: translate(0, 0) rotate(45deg);
+        background-color: white;
       }
       &.menu-toggle-bar--middle {
         opacity: 0;
       }
       &.menu-toggle-bar--bottom {
         transform: translate(0, 0) rotate(-45deg);
+        background-color: white;
       }
     }
   }
+  
