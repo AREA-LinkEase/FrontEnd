@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { colors } from '../../style/color';
-import './burgerCrossIcon.css';
+import styles from './BurgerCrossIcon.module.css';
 
 const BurgerCrossIcon = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -10,11 +9,11 @@ const BurgerCrossIcon = () => {
   };
 
   return (
-    <div className={`container ${isOpen ? 'nav-open' : ''}`}>
-      <a id="menu-toggle" className="menu-toggle" onClick={handleClick}>
-        <span className="menu-toggle-bar menu-toggle-bar--top"></span>
-        <span className="menu-toggle-bar menu-toggle-bar--middle"></span>
-        <span className="menu-toggle-bar menu-toggle-bar--bottom"></span>
+    <div className={`${styles.container} ${isOpen ? styles['nav-open'] : ''}`}>
+      <a id="menu-toggle" className={styles['menu-toggle']} onClick={handleClick}>
+        <span className={styles['menu-toggle-bar']}></span>
+        <span className={styles['menu-toggle-bar']}></span>
+        <span className={styles['menu-toggle-bar']}></span>
       </a>
     </div>
   );
