@@ -8,7 +8,7 @@ const ServiceButton = ({
     height = '160px',
     borderRadius = '15px',
     backgroundColor = '#1DB954',
-    imgLink = 'https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/spotify-white-icon.png',
+    imgLink,
     serviceName = 'Spotify'
 }) => {
 
