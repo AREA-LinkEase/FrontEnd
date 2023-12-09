@@ -1,6 +1,7 @@
 import React from 'react';
 import { colors } from '../../style/color';
 import adjustColorBrightness from '../../utils/adjustColorBrightness';
+import { fontWeights } from '../../style/font/fontWeights';
 
 const TitleTextButton = ({
     backgroundColor = '#1DB954',
@@ -13,12 +14,12 @@ const TitleTextButton = ({
     titleFont = 'Arial, sans-serif',
     titleSize = '24px',
     titleColor = colors.white,
-    titleWeight = 'bold', // ajouter avec fonts
+    titleWeight = fontWeights.bold,
     text = 'Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
     textFont = 'Arial, sans-serif',
     textSize = '16px',
     textColor = colors.white,
-    textWeight = 'normal', // ajouter avec fonts semiBold
+    textWeight = fontWeights.normal,
     onPressButton = () => console.log('TitleText Button clicked'),
     onMouseOverButton = (e) => {
         (e.currentTarget.style.backgroundColor = hoverBackgroundColor);
