@@ -1,12 +1,14 @@
-import React from 'react';
+import React, { lazy, Suspense } from 'react';
 
 const SvgIcon = ({ svgName }) => {
 
-  const DynamicSvg = require(`../style/svgs/components/${svgName}`).default;
+  const DynamicSvg = lazy(() => import(`../style/svgs/components/${svgName}`));
 
   return (
     <div style={{ paddingLeft: '10px', position: 'absolute' }}>
-      <DynamicSvg />
+      <Suspense fallback={<div>Loading...</div>}>
+        <DynamicSvg />
+      </Suspense>
     </div>
   );
 };
