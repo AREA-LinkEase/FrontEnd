@@ -9,10 +9,10 @@ const LoginPage = () => {
             <div className={"loginContainer"}>
                 <div className={"loginInput"}>
                     <PrimaryInput placeholder={"Username"} />
-                    <PrimaryInput placeholder={"Password"} leftIconName={"Lock"} />
+                    <PrimaryInput placeholder={"Password"} leftIconName={"Lock"}/>
 
                 </div>
-                <PrimaryButton buttonText={"Login"} width={"95%"} height={"40%"}/>
+                <PrimaryButton buttonText={"Login"} width={"95%"}/>
             </div>
             <div className={"loginSeparation"}>
                 <div className={"loginSeparationLine"}></div>
