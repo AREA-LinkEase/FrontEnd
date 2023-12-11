@@ -9,6 +9,8 @@ const PrimaryInput = ({
   backgroundColor = colors.lightGrey,
   borderRadius = '15px',
   placeholder = 'Email',
+  width = '301px',
+  height = '20px',
   placeholderColor = colors.darkGrey,
   textFont = 'Arial, sans-serif',
   textSize = '20px',
@@ -32,13 +34,16 @@ const PrimaryInput = ({
         backgroundColor: backgroundColor,
         borderRadius: borderRadius,
         padding: '10px',
+        width: width,
+        height: height,
+        justifyContent: 'center'
       }}
     >
       <div
         style={{
           display: 'flex',
           flexDirection: 'row',
-          alignItems: 'center',
+          alignItems: 'center'
         }}
       >
         {LeftIcon && (
@@ -61,6 +66,8 @@ const PrimaryInput = ({
             fontSize: textSize,
             fontFamily: textFont,
             outline: 'none',
+            width: width,
+            height: height
           }}
         />
         {RightIcon && (
