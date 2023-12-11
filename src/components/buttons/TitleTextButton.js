@@ -2,6 +2,8 @@ import React from 'react';
 import { colors } from '../../style/color';
 import adjustColorBrightness from '../../utils/adjustColorBrightness';
 import { fontWeights } from '../../style/font/fontWeights';
+import * as Icon from 'react-feather';
+import { svgs } from '../../style/svgs/svgList';
 
 const TitleTextButton = ({
     backgroundColor = '#1DB954',
@@ -17,9 +19,13 @@ const TitleTextButton = ({
     titleWeight = fontWeights.bold,
     text = 'Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
     textFont = 'Arial, sans-serif',
-    textSize = '16px',
+    textSize = '15px',
     textColor = colors.white,
     textWeight = fontWeights.normal,
+    iconName = 'ChevronRight',
+    iconSize = '25px',
+    iconColor = colors.white,
+    paddingRightIcon = '20px',
     onPressButton = () => console.log('TitleText Button clicked'),
     onMouseOverButton = (e) => {
         (e.currentTarget.style.backgroundColor = hoverBackgroundColor);
@@ -31,9 +37,11 @@ const TitleTextButton = ({
     }
 }) => {
 
+    const IconLogo = iconName ? Icon[iconName] : null;
+
     return (
         <div>
-            <button
+            <div
                 onClick={onPressButton}
                 onMouseOver={onMouseOverButton}
                 onMouseOut={onMouseOutButton}
@@ -48,7 +56,8 @@ const TitleTextButton = ({
                     justifyContent: 'flex-start',
                     paddingTop: '15px',
                     paddingLeft: '15px',
-                    transition: 'background-color 0.3s'
+                    transition: 'background-color 0.3s',
+                    paddingRight: '2px'
                 }}
             >
                 <div style={{
@@ -57,27 +66,46 @@ const TitleTextButton = ({
                     alignItems: 'flex-start',
                     overflow: 'auto'
                 }}>
-                    <span style={{
-                        color: titleColor,
-                        fontFamily: titleFont,
-                        fontSize: titleSize,
-                        fontWeight: titleWeight,
-                        paddingBottom: '15px',
-                        textAlign: 'left'
+                    <div style={{
+                        display: 'flex',
+                        flexDirection: 'row',
+                        justifyContent: 'space-between',
+                        width: '100%',
+                        paddingBottom: '10px'
                     }}>
-                        {title}
-                    </span>
-                    <span style={{
-                        color: textColor,
-                        fontFamily: textFont,
-                        fontSize: textSize,
-                        fontWeight: textWeight,
-                        textAlign: 'left'
-                    }}>
-                        {text}
-                    </span>
+                        <div>
+                            <span style={{
+                                color: titleColor,
+                                fontFamily: titleFont,
+                                fontSize: titleSize,
+                                fontWeight: titleWeight,
+                                textAlign: 'left'
+                            }}>
+                                {title}
+                            </span>
+                        </div>
+                        {IconLogo && (
+                            <div style={{ paddingRight: paddingRightIcon }}>
+                                {React.createElement(IconLogo, {
+                                size: iconSize,
+                                color: iconColor,
+                                })}
+                            </div>
+                        )}
+                    </div>
+                    <div>
+                        <span style={{
+                            color: textColor,
+                            fontFamily: textFont,
+                            fontSize: textSize,
+                            fontWeight: textWeight,
+                            textAlign: 'left'
+                        }}>
+                            {text}
+                        </span>
+                    </div>
                 </div>
-            </button>
+            </div>
         </div>
     );
 };
