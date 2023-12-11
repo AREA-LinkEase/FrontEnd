@@ -3,6 +3,7 @@ import { colors } from '../../style/color';
 import adjustColorBrightness from '../../utils/adjustColorBrightness';
 import { fontWeights } from '../../style/font/fontWeights';
 import * as Icon from 'react-feather';
+import { svgs } from '../../style/svgs/svgList';
 
 const TitleTextButton = ({
     backgroundColor = '#1DB954',
@@ -21,10 +22,10 @@ const TitleTextButton = ({
     textSize = '15px',
     textColor = colors.white,
     textWeight = fontWeights.normal,
-    iconName = 'Back',
+    iconName = 'ChevronRight',
     iconSize = '25px',
-    iconColor = colors.darkBlue,
-    paddingLeftIcon = '10px',
+    iconColor = colors.white,
+    paddingRightIcon = '20px',
     onPressButton = () => console.log('TitleText Button clicked'),
     onMouseOverButton = (e) => {
         (e.currentTarget.style.backgroundColor = hoverBackgroundColor);
@@ -40,7 +41,7 @@ const TitleTextButton = ({
 
     return (
         <div>
-            <button
+            <div
                 onClick={onPressButton}
                 onMouseOver={onMouseOverButton}
                 onMouseOut={onMouseOutButton}
@@ -55,7 +56,8 @@ const TitleTextButton = ({
                     justifyContent: 'flex-start',
                     paddingTop: '15px',
                     paddingLeft: '15px',
-                    transition: 'background-color 0.3s'
+                    transition: 'background-color 0.3s',
+                    paddingRight: '2px'
                 }}
             >
                 <div style={{
@@ -66,20 +68,24 @@ const TitleTextButton = ({
                 }}>
                     <div style={{
                         display: 'flex',
-                        flexDirection: 'row'
+                        flexDirection: 'row',
+                        justifyContent: 'space-between',
+                        width: '100%',
+                        paddingBottom: '10px'
                     }}>
-                        <span style={{
-                            color: titleColor,
-                            fontFamily: titleFont,
-                            fontSize: titleSize,
-                            fontWeight: titleWeight,
-                            paddingBottom: '15px',
-                            textAlign: 'left'
-                        }}>
-                            {title}
-                        </span>
-                        {iconName && (
-                            <div style={{ paddingLeft: paddingLeftIcon, position: 'absolute' }}>
+                        <div>
+                            <span style={{
+                                color: titleColor,
+                                fontFamily: titleFont,
+                                fontSize: titleSize,
+                                fontWeight: titleWeight,
+                                textAlign: 'left'
+                            }}>
+                                {title}
+                            </span>
+                        </div>
+                        {IconLogo && (
+                            <div style={{ paddingRight: paddingRightIcon }}>
                                 {React.createElement(IconLogo, {
                                 size: iconSize,
                                 color: iconColor,
@@ -99,7 +105,7 @@ const TitleTextButton = ({
                         </span>
                     </div>
                 </div>
-            </button>
+            </div>
         </div>
     );
 };
