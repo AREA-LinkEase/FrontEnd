@@ -5,8 +5,8 @@ import { fontWeights } from '../../style/font/fontWeights';
 const SwitchButton = ({
   backgroundColorOn = colors.lightlightGrey,
   backgroundColorOff = colors.darkdarkGrey,
-  handleToggle,
-  isToggled,
+  isSwitched,
+  setIsSwitched,
   width = '327px',
   height = '64px',
   borderRadius = '90px',
@@ -18,34 +18,29 @@ const SwitchButton = ({
   TextWeight = fontWeights.bold,
   textColorOff = colors.white,
   textColorOn = colors.lightBlack,
-	isLittle,
+  isLittle,
 }) => {
-  const [isSwitched, setIsSwitched] = useState(isToggled || false);
   const [textSize, setTextSize] = useState(0);
   const [buttonWidth, setButtonWidth] = useState(0);
-	const [buttonHeight, setButtonHeight] = useState(0);
-
-  const toggleSwitch = () => {
-    setIsSwitched(!isSwitched);
-    if (handleToggle) {
-      handleToggle(!isSwitched);
-    }
-  };
+  const [buttonHeight, setButtonHeight] = useState(0);
 
   useEffect(() => {
-		const containerWidth = parseInt(width, 10);
-		const containerHeight = parseInt(height, 10);
-	
-		const calculatedTextSize = containerWidth * (isLittle ? 0.18 : 0.1);
-		setTextSize(calculatedTextSize);
+    const containerWidth = parseInt(width, 10);
+    const containerHeight = parseInt(height, 10);
 
-		const calculatedButtonWidth = (containerWidth * (isLittle ? 0.19 : 0.35)) / containerWidth * 100;
-		setButtonWidth(calculatedButtonWidth);
+    const calculatedTextSize = containerWidth * (isLittle ? 0.18 : 0.1);
+    setTextSize(calculatedTextSize);
 
-		const calculatedButtonHeight = (containerHeight * (isLittle ? 0.19 : 0.35)) / containerHeight * 100;
-		setButtonHeight(calculatedButtonHeight);
-	}, [width, height]);
-	
+    const calculatedButtonWidth = (containerWidth * (isLittle ? 0.19 : 0.35)) / containerWidth * 100;
+    setButtonWidth(calculatedButtonWidth);
+
+    const calculatedButtonHeight = (containerHeight * (isLittle ? 0.19 : 0.35)) / containerHeight * 100;
+    setButtonHeight(calculatedButtonHeight);
+  }, [width, height, isLittle]);
+
+  const toggleSwitch = () => {
+    setIsSwitched((prevSwitched) => !prevSwitched);
+  };
 
   return (
     <div
@@ -82,7 +77,7 @@ const SwitchButton = ({
           left: isSwitched ? `calc(100% - ${buttonWidth - 10}px)` : `${buttonWidth - 10}px`,
           transform: 'translate(-50%, -50%)',
           width: `${buttonWidth}px`,
-					height: `${buttonHeight}px`,
+          height: `${buttonHeight}px`,
           borderRadius: '50%',
           backgroundColor: isSwitched ? colorOn : colorOff,
           boxShadow: '0 0 3px rgba(0, 0, 0, 0.2)',
