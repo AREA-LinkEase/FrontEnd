@@ -5,8 +5,7 @@ import { fontWeights } from '../../style/font/fontWeights';
 const SwitchButton = ({
   backgroundColorOn = colors.lightlightGrey,
   backgroundColorOff = colors.darkdarkGrey,
-  isSwitched,
-  setIsSwitched,
+  isIndicator = true,
   width = '327px',
   height = '64px',
   borderRadius = '90px',
@@ -20,6 +19,7 @@ const SwitchButton = ({
   textColorOn = colors.lightBlack,
   isLittle,
 }) => {
+	const [isSwitched, setIsSwitched] = useState(false);
   const [textSize, setTextSize] = useState(0);
   const [buttonWidth, setButtonWidth] = useState(0);
   const [buttonHeight, setButtonHeight] = useState(0);
@@ -38,7 +38,8 @@ const SwitchButton = ({
     setButtonHeight(calculatedButtonHeight);
   }, [width, height, isLittle]);
 
-  const toggleSwitch = () => {
+  const toggleSwitch = (e) => {
+		e.stopPropagation();
     setIsSwitched((prevSwitched) => !prevSwitched);
   };
 
@@ -57,8 +58,9 @@ const SwitchButton = ({
         textAlign: 'center',
         padding: '0 20px',
         transition: 'background-color 0.4s ease',
+        scrollBehavior: 'smooth', // Ajout de l'animation de défilement
       }}
-      onClick={toggleSwitch}
+      onClick={isIndicator ? () => {} : toggleSwitch}
     >
       <span
         style={{
