@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { colors } from '../../style/color';
 import adjustColorBrightness from '../../utils/adjustColorBrightness';
 import { fontWeights } from '../../style/font/fontWeights';
@@ -6,6 +6,7 @@ import * as Icon from 'react-feather';
 import {formatTextBold} from '../../utils/formatTextBold.js';
 
 const TitleTextChildButton = ({
+    componentId,
     backgroundColor = '#1DB954',
     hoverBackgroundColor = adjustColorBrightness(backgroundColor, 20),
     borderColor = '#1DB954',
@@ -23,6 +24,9 @@ const TitleTextChildButton = ({
     textColor = colors.white,
     textWeight = fontWeights.normal,
     iconName = '',
+    isClickable,
+    isSelectable,
+    handleSelect,
     iconSize = '25px',
     iconColor = colors.white,
     paddingBottomFirst = '15px',
@@ -31,90 +35,130 @@ const TitleTextChildButton = ({
     onPressButton = () => console.log('TitleText Button clicked'),
     onMouseOverButton = (e) => {
         (e.currentTarget.style.backgroundColor = hoverBackgroundColor);
-        (e.currentTarget.style.borderColor = hoverBackgroundColor);
+        if (!isSelectable)
+            (e.currentTarget.style.borderColor = hoverBackgroundColor);
     },
     onMouseOutButton = (e) => {
         (e.currentTarget.style.backgroundColor = backgroundColor);
-        (e.currentTarget.style.borderColor = backgroundColor);
+        if (!isSelectable)
+            (e.currentTarget.style.borderColor = backgroundColor);
     },
     ComponentChildren,
 }) => {
 
     const IconLogo = iconName ? Icon[iconName] : null;
+    const SelectLogo = Icon["Check"];
+
+    const [isSelected, setIsSelected] = useState(false);
+
+    const handleClick = () => {
+        if (isClickable) {
+          onPressButton();
+        }
+    
+        if (isSelectable) {
+          setIsSelected((prevSelected) => !prevSelected);
+          handleSelect(componentId);
+        }
+      };
 
     return (
-        <div>
-            <div
-                onClick={onPressButton}
-                onMouseOver={onMouseOverButton}
-                onMouseOut={onMouseOutButton}
-                style={{
-                    backgroundColor: backgroundColor,
-                    borderRadius: borderRadius,
-                    border: `1px solid ${borderColor}`,
-                    cursor: 'pointer',
-                    width: width,
-                    height: height,
-                    display: 'flex',
-                    justifyContent: 'flex-start',
-                    paddingTop: '15px',
-                    paddingLeft: '15px',
-                    transition: 'background-color 0.3s',
-                    paddingRight: '2px'
-                }}
-            >
-                <div style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'flex-start',
-                    overflow: 'auto'
-                }}>
-                    <div style={{
-                        display: 'flex',
-                        flexDirection: 'row',
-                        justifyContent: 'space-between',
-                        width: '100%',
-                        paddingBottom: paddingBottomFirst
-                    }}>
-                        <div>
-                            <span style={{
-                                color: titleColor,
-                                fontFamily: titleFont,
-                                fontSize: titleSize,
-                                fontWeight: titleWeight,
-                                textAlign: 'left'
-                            }}>
-                                {title}
-                            </span>
-                        </div>
-                        {IconLogo && (
-                            <div style={{ paddingRight: paddingRightIcon }}>
-                                {React.createElement(IconLogo, {
-                                size: iconSize,
-                                color: iconColor,
-                                })}
-                            </div>
-                        )}
-                    </div>
-                    <div>
-                        <span style={{
-                            color: textColor,
-                            fontFamily: textFont,
-                            fontSize: textSize,
-                            fontWeight: textWeight,
-                            textAlign: 'left'
-                        }}>
-                            {formatTextBold(text)}
-                        </span>
-                    </div>
-                    {ComponentChildren && (
-                        <div style={{paddingTop: paddingBottomSecond}}>
-                            <ComponentChildren/>
-                        </div>
-                    )}
-                </div>
-            </div>
-        </div>
+			<div style={{ position: 'relative' }}>
+					<div
+							onClick={handleClick}
+							onMouseOver={onMouseOverButton}
+							onMouseOut={onMouseOutButton}
+							style={{
+									backgroundColor: backgroundColor,
+									borderRadius: borderRadius,
+									border: `2px solid ${isSelected ? colors.darkPurple : borderColor}`,
+									cursor: 'pointer',
+									width: width,
+									height: height,
+									display: 'flex',
+									justifyContent: 'flex-start',
+									paddingTop: '15px',
+									paddingLeft: '15px',
+									transition: 'background-color 0.3s',
+									paddingRight: '2px'
+							}}
+					>
+							{isSelected && (
+								<div
+									style={{
+										position: 'absolute',
+										top: '-7px',
+										left: '-7px',
+										borderRadius: '50%',
+										backgroundColor: colors.darkPurple,
+										padding: '2px',
+										width: '20px',
+										height: '20px',
+										display: 'flex',
+										alignItems: 'center',
+										justifyContent: 'center',
+									}}
+								>
+									<div style={{ paddingTop: '4px' }}>
+										{React.createElement(SelectLogo, {
+											size: '20px',
+											color: colors.white,
+										})}
+									</div>
+								</div>
+							)}
+							<div style={{
+									display: 'flex',
+									flexDirection: 'column',
+									alignItems: 'flex-start',
+									overflow: 'auto'
+							}}>
+									<div style={{
+											display: 'flex',
+											flexDirection: 'row',
+											justifyContent: 'space-between',
+											width: '100%',
+											paddingBottom: paddingBottomFirst
+									}}>
+											<div>
+													<span style={{
+															color: titleColor,
+															fontFamily: titleFont,
+															fontSize: titleSize,
+															fontWeight: titleWeight,
+															textAlign: 'left'
+													}}>
+															{title}
+													</span>
+											</div>
+											{IconLogo && (
+													<div style={{ paddingRight: paddingRightIcon }}>
+															{React.createElement(SelectLogo, {
+															size: iconSize,
+															color: iconColor
+															})}
+													</div>
+											)}
+									</div>
+									<div>
+											<span style={{
+													color: textColor,
+													fontFamily: textFont,
+													fontSize: textSize,
+													fontWeight: textWeight,
+													textAlign: 'left'
+											}}>
+													{formatTextBold(text)}
+											</span>
+									</div>
+									{ComponentChildren && (
+											<div style={{paddingTop: paddingBottomSecond}}>
+													<ComponentChildren/>
+											</div>
+									)}
+							</div>
+					</div>
+			</div>
     );
 };
 
