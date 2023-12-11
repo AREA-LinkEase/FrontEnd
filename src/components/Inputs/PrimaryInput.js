@@ -36,7 +36,8 @@ const PrimaryInput = ({
         padding: '10px',
         width: width,
         height: height,
-        justifyContent: 'center'
+        justifyContent: 'center',
+        boxSizing: 'unset'
       }}
     >
       <div
