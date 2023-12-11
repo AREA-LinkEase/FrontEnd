@@ -3,28 +3,30 @@ import { colors } from '../../style/color';
 import adjustColorBrightness from '../../utils/adjustColorBrightness';
 import { fontWeights } from '../../style/font/fontWeights';
 import * as Icon from 'react-feather';
-import { svgs } from '../../style/svgs/svgList';
+import {formatTextBold} from '../../utils/formatTextBold.js';
 
-const TitleTextButton = ({
+const TitleTextChildButton = ({
     backgroundColor = '#1DB954',
     hoverBackgroundColor = adjustColorBrightness(backgroundColor, 20),
     borderColor = '#1DB954',
     borderRadius = '15px',
     width = '361px',
     height = '129px',
-    title = 'New saved album',
+    title = 'Nom du Workspace',
     titleFont = 'Arial, sans-serif',
     titleSize = '24px',
     titleColor = colors.white,
     titleWeight = fontWeights.bold,
-    text = 'Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
+    text = 'par **Nom du createur**',
     textFont = 'Arial, sans-serif',
     textSize = '15px',
     textColor = colors.white,
     textWeight = fontWeights.normal,
-    iconName = 'ChevronRight',
+    iconName = '',
     iconSize = '25px',
     iconColor = colors.white,
+    paddingBottomFirst = '15px',
+    paddingBottomSecond = '15px',
     paddingRightIcon = '20px',
     onPressButton = () => console.log('TitleText Button clicked'),
     onMouseOverButton = (e) => {
@@ -34,7 +36,8 @@ const TitleTextButton = ({
     onMouseOutButton = (e) => {
         (e.currentTarget.style.backgroundColor = backgroundColor);
         (e.currentTarget.style.borderColor = backgroundColor);
-    }
+    },
+    ComponentChildren,
 }) => {
 
     const IconLogo = iconName ? Icon[iconName] : null;
@@ -71,7 +74,7 @@ const TitleTextButton = ({
                         flexDirection: 'row',
                         justifyContent: 'space-between',
                         width: '100%',
-                        paddingBottom: '10px'
+                        paddingBottom: paddingBottomFirst
                     }}>
                         <div>
                             <span style={{
@@ -101,13 +104,18 @@ const TitleTextButton = ({
                             fontWeight: textWeight,
                             textAlign: 'left'
                         }}>
-                            {text}
+                            {formatTextBold(text)}
                         </span>
                     </div>
+                    {ComponentChildren && (
+                        <div style={{paddingTop: paddingBottomSecond}}>
+                            <ComponentChildren/>
+                        </div>
+                    )}
                 </div>
             </div>
         </div>
     );
 };
 
-export default TitleTextButton;
+export default TitleTextChildButton;

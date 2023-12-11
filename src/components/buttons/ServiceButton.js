@@ -9,14 +9,14 @@ const ServiceButton = ({
     borderRadius = '15px',
     backgroundColor = '#1DB954',
     imgLink,
-    serviceName = 'Spotify'
+    serviceName,
 }) => {
 
     const [hover, setHover] = useState(false);
 
     return (
         <div
-            onClick={onClickButton}
+            onClick={onClickButton} 
             onMouseOver={() => setHover(true)}
             onMouseOut={() => setHover(false)}
             style={{
