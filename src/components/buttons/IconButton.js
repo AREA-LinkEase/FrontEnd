@@ -13,13 +13,13 @@ const IconButton = ({
   borderColor = 'black',
   backgroundColor = 'white',
   hoverBackgroundColor = 'lightGrey',
-  borderRadius = '30px',
+  borderRadius = '90px',
   width = '361px',
-  height = '81px',
+  height = '60px',
   textFont = 'Arial, sans-serif',
   textSize = '20px',
   textColor = 'black',
-  buttonText = 'GOOGLE',
+  buttonText = 'Google',
   paddingLeftIcon = '10px',
   transition = 'background-color 0.3s',
   onPressButton = () => console.log('Icon Button clicked'),
@@ -34,14 +34,13 @@ const IconButton = ({
   const IconLogo = (isIcon && iconSrc) ? Icon[iconSrc] : null;
 
   return (
-    <div>
       <button
         onClick={onPressButton}
         onMouseOver={onMouseOverButton}
         onMouseOut={onMouseOutButton}
         style={{
           alignItems: 'center',
-          border: `1px solid ${borderColor}`,
+          border: `0px solid ${borderColor}`,
           backgroundColor: backgroundColor,
           borderRadius: borderRadius,
           cursor: 'pointer',
@@ -69,7 +68,6 @@ const IconButton = ({
         )}
         {buttonText}
       </button>
-    </div>
   );
 };
 

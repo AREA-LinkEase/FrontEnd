@@ -1,4 +1,5 @@
 export const svgs = {
     google: 'Google',
-    apple: 'Apple'
+    apple: 'Apple',
+    microsoft: 'Microsoft',
 };

@@ -1,4 +1,3 @@
-/* src/styles.css */
 @font-face {
     font-family: 'AvenirNextLTProRegular';
     src: url('../public/fonts//AvenirNextLTPro/AvenirNextLTPro-Regular.otf') format('opentype');
@@ -18,4 +17,10 @@
     src: url('../public/fonts//AvenirNextLTPro/AvenirNextLTPro-Regular.otf') format('opentype');
     font-weight: bold;
     font-style: normal;
+}
+
+{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
