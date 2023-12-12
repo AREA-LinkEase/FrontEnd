@@ -76,14 +76,14 @@
     width: 100%;
     padding-bottom: 4%;
     color: darkgray;
+    font-family: AvenirNextLTProRegular;
 }
 
 .loginSingUpTextLink {
     color: #257CFF;
-    font-size: 75%;
+    font-size: 95%;;
 }
 
 .loginSingUp > * {
     margin: 0 7px;
-
 }

@@ -3,6 +3,8 @@ import { colors } from '../../style/color';
 import * as Icon from 'react-feather';
 import SvgIcon from '../SvgIcon';
 import { svgs } from '../../style/svgs/svgList';
+import {fonts} from "../../style/font/fonts";
+import {fontWeights} from "../../style/font/fontWeights";
 
 const IconButton = ({
   isIcon = false,
@@ -16,7 +18,8 @@ const IconButton = ({
   borderRadius = '90px',
   width = '361px',
   height = '60px',
-  textFont = 'Arial, sans-serif',
+  textFont = fonts.openSans,
+  fontWeight = fontWeights.bold,
   textSize = '20px',
   textColor = 'black',
   buttonText = 'Google',
@@ -47,6 +50,7 @@ const IconButton = ({
           fontFamily: textFont,
           fontSize: textSize,
           color: textColor,
+          fontWeight: fontWeight,
           textAlign: 'center',
           width: width,
           height: height,
