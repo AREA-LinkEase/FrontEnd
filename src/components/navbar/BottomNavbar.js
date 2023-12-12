@@ -1,41 +1,46 @@
 import React, { useState, useEffect } from 'react';
 import { colors } from '../../style/color';
 import * as Icon from 'react-feather';
+import { fontWeights } from '../../style/font/fontWeights';
 
 const styles = {
   footer: {
     backgroundColor: colors.darkPurple,
     position: 'fixed',
-    bottom: 0,
-    left: 0,
-    width: '100%',
+    bottom: 10,
+    left: '2%',
+    width: '96%',
+    borderRadius: '90px'
   },
   navbar: {
-    padding: '7px',
+    paddingTop: '7px',
+    paddingBottom: '7px',
     display: 'flex',
     justifyContent: 'space-around',
     alignItems: 'center',
     color: colors.lightPurple,
     fontSize: '10px',
+    fontWeight: fontWeights.bold,
   },
   navItem: {
     cursor: 'pointer',
     display: 'flex',
-    flexDirection: 'column',
+    flexDirection: 'row',
     alignItems: 'center',
+    paddingTop: '7px',
+    paddingBottom: '7px',
+    paddingRight: '21px',
+    paddingLeft: '21px',
+    transition: 'color 0.1s ease-in-out',
   },
   icon: {
-    paddingBottom: '5px',
+    paddingRight: '7px',
   },
   selected: {
-    color: colors.white,
-  },
-  separator: {
-    height: '2px',
-    width: '40px',
-    background: colors.white,
-    marginTop: '2px',
-  },
+    color: colors.darkPurple,
+    backgroundColor: colors.white,
+    borderRadius: '90px',
+  }
 };
 
 const BottomNavbar = () => {
@@ -51,17 +56,18 @@ const BottomNavbar = () => {
 
   const renderNavItem = (itemName, icon) => (
     <div
-      style={{ ...styles.navItem, ...(selectedItem === itemName && styles.selected) }}
+      className="nav-item"
+      style={{
+        ...styles.navItem,
+        ...(selectedItem === itemName && styles.selected),
+      }}
       onClick={() => handleItemClick(itemName)}
     >
       {icon}
-      {selectedItem !== itemName && (
+      {selectedItem === itemName && (
         <span>
           {itemName}
         </span>
-      )}
-      {selectedItem === itemName && (
-        <div style={styles.separator}></div>
       )}
     </div>
   );
@@ -69,11 +75,11 @@ const BottomNavbar = () => {
   return (
     <footer style={styles.footer}>
       <nav style={styles.navbar}>
-        {renderNavItem('Workspace', <Icon.Menu size="40" style={styles.icon} />)}
-        {renderNavItem('Rechercher', <Icon.Search size="40" style={styles.icon} />)}
-        {renderNavItem('Créer', <Icon.PlusCircle size="40" style={styles.icon} />)}
-        {renderNavItem('Forum', <Icon.MessageSquare size="40" style={styles.icon} />)}
-        {renderNavItem('Profil', <Icon.User size="40" style={styles.icon} />)}
+        {renderNavItem('Workspace', <Icon.Grid size="25" style={styles.icon} />)}
+        {renderNavItem('Rechercher', <Icon.Search size="25" style={styles.icon} />)}
+        {renderNavItem('Créer', <Icon.PlusCircle size="25" style={styles.icon} />)}
+        {renderNavItem('Forum', <Icon.MessageSquare size="25" style={styles.icon} />)}
+        {renderNavItem('Profil', <Icon.User size="25" style={styles.icon} />)}
       </nav>
     </footer>
   );
