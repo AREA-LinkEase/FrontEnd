@@ -10,7 +10,7 @@ const PrimaryInput = ({
   borderRadius = '15px',
   placeholder = 'Email',
   width = '301px',
-  height = '20px',
+  height = '40px',
   placeholderColor = colors.darkGrey,
   textFont = 'Arial, sans-serif',
   textSize = '20px',
@@ -36,7 +36,8 @@ const PrimaryInput = ({
         padding: '10px',
         width: width,
         height: height,
-        justifyContent: 'center'
+        justifyContent: 'center',
+        boxSizing: 'unset'
       }}
     >
       <div

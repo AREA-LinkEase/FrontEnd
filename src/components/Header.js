@@ -1,4 +1,4 @@
-import React from 'react';
+  import React from 'react';
 import * as Icon from 'react-feather';
 import { colors } from '../style/color';
 
