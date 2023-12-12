@@ -1,6 +1,8 @@
 import React from 'react';
 import { colors } from '../../style/color';
 import * as Icon from 'react-feather';
+import {fonts} from "../../style/font/fonts";
+import {fontWeights} from "../../style/font/fontWeights";
 
 const PrimaryInput = ({
   inputValue,
@@ -10,9 +12,10 @@ const PrimaryInput = ({
   borderRadius = '15px',
   placeholder = 'Email',
   width = '301px',
-  height = '20px',
+  height = '40px',
   placeholderColor = colors.darkGrey,
-  textFont = 'Arial, sans-serif',
+  textFont = fonts.openSans,
+  fontWeight = fontWeights.semiBold,
   textSize = '20px',
   textColor = 'black',
   inputType = 'email',
@@ -36,7 +39,8 @@ const PrimaryInput = ({
         padding: '10px',
         width: width,
         height: height,
-        justifyContent: 'center'
+        justifyContent: 'center',
+        boxSizing: 'unset',
       }}
     >
       <div
@@ -66,6 +70,7 @@ const PrimaryInput = ({
             fontSize: textSize,
             fontFamily: textFont,
             outline: 'none',
+            fontWeight: fontWeight,
             width: width,
             height: height
           }}
