@@ -1,5 +1,6 @@
 export const fonts = {
     avenirNextLTProRegular: 'avenirNextLTProRegular',
     avenirNextLTProIt: 'avenirNextLTProIt',
-    avenirNextLTProBold: 'avenirNextLTProBold'
+    avenirNextLTProBold: 'avenirNextLTProBold',
+    openSans: 'Open Sans'
 };
