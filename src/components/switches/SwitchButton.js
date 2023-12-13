@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { colors } from '../../style/color';
 import { fontWeights } from '../../style/font/fontWeights';
+import { fonts } from '../../style/font/fonts';
 
 const SwitchButton = ({
   backgroundColorOn = colors.lightlightGrey,
@@ -9,17 +10,18 @@ const SwitchButton = ({
   width = '327px',
   height = '64px',
   borderRadius = '90px',
+  isOn = false,
   colorOff = colors.grey,
   colorOn = colors.purple,
-  textOn = 'Désactiver',
-  textOff = 'Activer',
-  textFont = 'Arial, sans-serif',
+  textOn = 'Disable',
+  textOff = 'Enable',
+  textFont = fonts.openSans,
   TextWeight = fontWeights.bold,
   textColorOff = colors.white,
   textColorOn = colors.lightBlack,
   isLittle,
 }) => {
-	const [isSwitched, setIsSwitched] = useState(false);
+	const [isSwitched, setIsSwitched] = useState(isOn);
   const [textSize, setTextSize] = useState(0);
   const [buttonWidth, setButtonWidth] = useState(0);
   const [buttonHeight, setButtonHeight] = useState(0);
@@ -28,7 +30,7 @@ const SwitchButton = ({
     const containerWidth = parseInt(width, 10);
     const containerHeight = parseInt(height, 10);
 
-    const calculatedTextSize = containerWidth * (isLittle ? 0.18 : 0.1);
+    const calculatedTextSize = containerWidth * (isLittle ? 0.12 : 0.1);
     setTextSize(calculatedTextSize);
 
     const calculatedButtonWidth = (containerWidth * (isLittle ? 0.19 : 0.35)) / containerWidth * 100;
@@ -52,13 +54,14 @@ const SwitchButton = ({
         backgroundColor: isSwitched ? backgroundColorOn : backgroundColorOff,
         borderRadius: borderRadius,
         cursor: 'pointer',
+        paddingTop: '12px',
+        paddingBottom: '12px',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         textAlign: 'center',
-        padding: '0 20px',
         transition: 'background-color 0.4s ease',
-        scrollBehavior: 'smooth', // Ajout de l'animation de défilement
+        scrollBehavior: 'smooth'
       }}
       onClick={isIndicator ? () => {} : toggleSwitch}
     >
@@ -76,7 +79,7 @@ const SwitchButton = ({
         style={{
           position: 'absolute',
           top: '50%',
-          left: isSwitched ? `calc(100% - ${buttonWidth - 10}px)` : `${buttonWidth - 10}px`,
+          left: isSwitched ? `calc(100% - ${buttonWidth - 7}px)` : `${buttonWidth - 7}px`,
           transform: 'translate(-50%, -50%)',
           width: `${buttonWidth}px`,
           height: `${buttonHeight}px`,
