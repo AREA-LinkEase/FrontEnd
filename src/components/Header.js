@@ -4,11 +4,11 @@ import { colors } from '../style/color';
 
 const Header = ({
   backgroundColor = colors.white,
-  leftIconName = 'ArrowLeft',
-  leftIconSize = '48px',
+  leftIconName = 'ChevronLeft',
+  leftIconSize = '38px',
   leftIconColor = colors.black,
   rightIconName = 'Menu',
-  rightIconSize = '48px',
+  rightIconSize = '38px',
   rightIconColor = colors.black,
   CenterChildrenComponent,
   RightChildrenComponent,
@@ -25,7 +25,7 @@ const Header = ({
         alignItems: 'center',
         justifyContent: 'space-between',
         backgroundColor: backgroundColor,
-        paddingTop: '10px',
+        paddingTop: '30px',
         paddingBottom: '10px'
     }}>
         {LeftIcon && (

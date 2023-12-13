@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { colors } from '../../style/color';
 import * as Icon from 'react-feather';
 import { fontWeights } from '../../style/font/fontWeights';
+import { fonts } from '../../style/font/fonts';
 
 const styles = {
   footer: {
@@ -19,7 +20,8 @@ const styles = {
     justifyContent: 'space-around',
     alignItems: 'center',
     color: colors.lightPurple,
-    fontSize: '10px',
+    fontSize: '11px',
+    fontFamily: fonts.openSans,
     fontWeight: fontWeights.bold,
   },
   navItem: {
@@ -29,8 +31,8 @@ const styles = {
     alignItems: 'center',
     paddingTop: '7px',
     paddingBottom: '7px',
-    paddingRight: '21px',
-    paddingLeft: '21px',
+    paddingRight: '10px',
+    paddingLeft: '10px',
     transition: 'color 0.1s ease-in-out',
   },
   icon: {
@@ -75,11 +77,11 @@ const BottomNavbar = () => {
   return (
     <footer style={styles.footer}>
       <nav style={styles.navbar}>
-        {renderNavItem('Workspace', <Icon.Grid size="25" style={styles.icon} />)}
-        {renderNavItem('Rechercher', <Icon.Search size="25" style={styles.icon} />)}
-        {renderNavItem('Créer', <Icon.PlusCircle size="25" style={styles.icon} />)}
-        {renderNavItem('Forum', <Icon.MessageSquare size="25" style={styles.icon} />)}
-        {renderNavItem('Profil', <Icon.User size="25" style={styles.icon} />)}
+        {renderNavItem('Workspace', <Icon.Grid size="28" style={styles.icon} />)}
+        {renderNavItem('Rechercher', <Icon.Search size="28" style={styles.icon} />)}
+        {renderNavItem('Créer', <Icon.PlusCircle size="28" style={styles.icon} />)}
+        {renderNavItem('Forum', <Icon.MessageSquare size="28" style={styles.icon} />)}
+        {renderNavItem('Profil', <Icon.User size="28" style={styles.icon} />)}
       </nav>
     </footer>
   );
