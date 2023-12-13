@@ -6,6 +6,7 @@ import { texts } from "../../textValues/textLists";
 import parseTextWithLineBreaks from "../../utils/parseTextWithLineBreaks";
 import { colors } from "../../style/color";
 import PrimaryButton from "../../components/buttons/primaryButton";
+import BottomNavbar from "../../components/navbar/BottomNavbar";
 
 const AccueilPage = () => {
 		
@@ -19,7 +20,10 @@ const AccueilPage = () => {
             <div className={styles.accueilPText}>
 					    <PText text={parseTextWithLineBreaks(texts.travailQuotidien)} color={colors.lightlightGrey}/>
             </div>
-					  <PrimaryButton buttonText='Create' width='90%' height='70px'/>
+					  <PrimaryButton buttonText='Create' width='90%' height='65px'/>
+          </div>
+          <div>
+            <BottomNavbar/>
           </div>
         </div>
       );

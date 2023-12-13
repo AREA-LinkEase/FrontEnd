@@ -7,7 +7,7 @@ const H1Text = ({
   text,
   color = colors.lightlightGrey,
   size = '45px',
-  font = fonts.avenirNextLTProRegular,
+  font = fonts.openSans,
 	fontWeight = 900,
 }) => {
 

@@ -3,6 +3,7 @@ import "./LoginPage.css";
 import PrimaryInput from "../../components/Inputs/PrimaryInput";
 import PrimaryButton from "../../components/buttons/primaryButton";
 import IconButton from "../../components/buttons/IconButton";
+import {fonts} from "../../style/font/fonts";
 import {svgs} from "../../style/svgs/svgList";
 
 const LoginPage = () => {
