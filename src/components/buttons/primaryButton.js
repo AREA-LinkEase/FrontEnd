@@ -1,6 +1,7 @@
 import React from 'react';
 import { colors } from '../../style/color';
 import adjustColorBrightness from '../../utils/adjustColorBrightness';
+import { fontWeights } from '../../style/font/fontWeights';
 
 const PrimaryButton = ({
   onPressButton = () => console.log('Primary Button clicked'),
@@ -17,7 +18,8 @@ const PrimaryButton = ({
   width = '361px',
   height = '60px',
   textFont = 'Arial, sans-serif',
-  textSize = '20px',
+  textWeight = fontWeights.bold,
+  textSize = '22px',
   textColor = 'white',
   buttonText = 'Primary',
   transition = 'background-color 0.3s',
@@ -36,6 +38,7 @@ const PrimaryButton = ({
         fontFamily: textFont,
         fontSize: textSize,
         color: textColor,
+        fontWeight: textWeight,
         textAlign: 'center',
         width: width,
         height: height,

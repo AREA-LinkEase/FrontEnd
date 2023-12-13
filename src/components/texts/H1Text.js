@@ -1,12 +1,14 @@
 import React from 'react';
 import { fontWeights } from '../../style/font/fontWeights';
+import { fonts } from '../../style/font/fonts';
+import { colors } from '../../style/color';
 
 const H1Text = ({
   text,
-  color = 'black',
-  size = '70px',
-  font = 'Arial, sans-serif',
-	fontWeight = fontWeights.bold,
+  color = colors.lightlightGrey,
+  size = '45px',
+  font = fonts.avenirNextLTProRegular,
+	fontWeight = 900,
 }) => {
 
   return (

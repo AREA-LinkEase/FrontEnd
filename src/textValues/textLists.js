@@ -1,5 +1,7 @@
 import { reglementText } from "./reglement";
+import { travailQuotidien } from "./travailQuotidien";
 
 export const texts = {
-    reglement: reglementText
+    reglement: reglementText,
+    travailQuotidien: travailQuotidien
 };

@@ -1,12 +1,10 @@
-import PrimaryInput from "./components/Inputs/PrimaryInput";
-import IconButton from "./components/buttons/IconButton";
-import TitleTextChildButton from "./components/buttons/TitleTextChildButton";
-import LoginPage from "./pages/login/LoginPage.js";
+import AccueilPage from "./pages/accueil/AccueilPage.js";
 
 const App = () => {
 
   return (
     <div>
+      <AccueilPage/>
     </div>
   );
 }
