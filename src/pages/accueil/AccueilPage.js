@@ -5,7 +5,7 @@ import PText from "../../components/texts/PText";
 import { texts } from "../../textValues/textLists";
 import parseTextWithLineBreaks from "../../utils/parseTextWithLineBreaks";
 import { colors } from "../../style/color";
-import PrimaryButton from "../../components/buttons/primaryButton";
+import PrimaryButton from "../../components/buttons/PrimaryButton";
 import BottomNavbar from "../../components/navbar/BottomNavbar";
 
 const AccueilPage = () => {

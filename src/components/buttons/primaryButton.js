@@ -5,24 +5,6 @@ import { fonts } from '../../style/font/fonts';
 import { fontWeights } from '../../style/font/fontWeights';
 import PropTypes from "prop-types";
 
-PrimaryButton.propTypes = {
-    onPressButton: PropTypes.func,
-    onMouseOverButton: PropTypes.func,
-    onMouseOutButton: PropTypes.func,
-    borderColor: PropTypes.string,
-    backgroundColor: PropTypes.string,
-    hoverBackgroundColor: PropTypes.string,
-    borderRadius: PropTypes.string,
-    width: PropTypes.string,
-    height: PropTypes.string,
-    textFont: PropTypes.string,
-    fontWeight: PropTypes.string,
-    textSize: PropTypes.string,
-    textColor: PropTypes.string,
-    buttonText: PropTypes.string,
-    transition: PropTypes.string,
-};
-
 const PrimaryButton = ({
                            onMouseOverButton = (e) => {
                                e.target.style.backgroundColor = hoverBackgroundColor;
@@ -68,5 +50,24 @@ const PrimaryButton = ({
         </button>
     );
 };
+
+PrimaryButton.propTypes = {
+    onPressButton: PropTypes.func,
+    onMouseOverButton: PropTypes.func,
+    onMouseOutButton: PropTypes.func,
+    borderColor: PropTypes.string,
+    backgroundColor: PropTypes.string,
+    hoverBackgroundColor: PropTypes.string,
+    borderRadius: PropTypes.string,
+    width: PropTypes.string,
+    height: PropTypes.string,
+    textFont: PropTypes.string,
+    fontWeight: PropTypes.string,
+    textSize: PropTypes.string,
+    textColor: PropTypes.string,
+    buttonText: PropTypes.string,
+    transition: PropTypes.string,
+};
+
 
 export default PrimaryButton;

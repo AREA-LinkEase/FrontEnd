@@ -1,43 +1,17 @@
 import React, {useEffect, useState} from "react";
 import styles from "./HomeWorkspace.module.css";
 import Header from "../../components/Header";
-import PText from "../../components/texts/PText";
-import { fonts } from "../../style/font/fonts";
-import { fontWeights } from "../../style/font/fontWeights";
-import PrimaryInput from "../../components/Inputs/PrimaryInput";
 import TitleTextChildButton from "../../components/buttons/TitleTextChildButton";
-import BasicText from "../../components/texts/BasicText";
-import * as Icon from 'react-feather';
 import { colors } from "../../style/color";
-import { formatNumber } from "../../utils/formatNumber";
 import BottomNavbar from "../../components/navbar/BottomNavbar";
 import SwitchButton from "../../components/switches/SwitchButton";
 import adjustColorBrightness from "../../utils/adjustColorBrightness";
 
-const NumberPeople = ({numberPeople}) => {
-
-	const IconLogo = Icon["User"];
-
-	return (
-		<div style={{
-			display: 'flex',
-			flexDirection: 'row',
-			alignItems: 'center'
-		}}>
-			<div style={{paddingRight: '10px'}}>
-				<IconLogo color={colors.white}/>
-			</div>
-			<div>
-				<BasicText text={formatNumber(numberPeople)} color={colors.white}/>
-			</div>
-		</div>
-	)
-}
 
 const HomeWorkspace = () => {
 	
 	const [workspaceAccessValue, setWorkspaceAccessValue] = useState("All");
-	const [workspaceList, setWorkspaceList] = useState([{
+	const [workspaceList] = useState([{
 		name: 'SpotifyBangar',
 		creator: 'Adilou le fifou',
 		people: 3500000,
