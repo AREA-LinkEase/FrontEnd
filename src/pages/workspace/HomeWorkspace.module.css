@@ -13,29 +13,6 @@
     text-align: center;
 }
 
-.homeWorkspaceTitle {
-    width: 100%;
-    padding-bottom: 30px;
-}
-
-.homeWorkspaceInput {
-    width: 100%;
-    padding-bottom: 40px;
-}
-
-.homeWorkspaceInputWorkspace {
-    padding-top: 40px;
-    padding-bottom: 40px;
-    width: 100%;
-}
-
-.homeWorkspaceSeparationLine {
-    height: 1px;
-    width: 84%;
-    border-radius: 90px;
-    background-color: #B8B8B8;
-}
-
 .homeWorkspaceList {
     width: 100%;
 }

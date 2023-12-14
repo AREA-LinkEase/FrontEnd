@@ -1,10 +1,9 @@
-import AccueilPage from "./pages/accueil/AccueilPage.js";
+import React from "react";
 
 const App = () => {
 
   return (
     <div>
-      <AccueilPage/>
     </div>
   );
 }
