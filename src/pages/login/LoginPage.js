@@ -3,7 +3,6 @@ import "./LoginPage.css";
 import PrimaryInput from "../../components/Inputs/PrimaryInput";
 import PrimaryButton from "../../components/buttons/primaryButton";
 import IconButton from "../../components/buttons/IconButton";
-import {fonts} from "../../style/font/fonts";
 import {svgs} from "../../style/svgs/svgList";
 
 const LoginPage = () => {
@@ -28,7 +27,7 @@ const LoginPage = () => {
                 <IconButton width={"90%"} buttonText={"Microsoft"} iconSrc={svgs.microsoft}/>
             </div>
             <div className={"loginSingUp"}>
-                <p className={"loginSingUpText"}>Don't have an account?</p>
+                <p className={"loginSingUpText"}>Dont have an account?</p>
                 <p className={"loginSingUpTextLink"}>Sign Up</p>
             </div>
         </div>

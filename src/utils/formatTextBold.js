@@ -1,3 +1,4 @@
+import React from 'react';
 export const formatTextBold = (text) => {
     const parts = text.split('**');
     return parts.map((part, index) => {

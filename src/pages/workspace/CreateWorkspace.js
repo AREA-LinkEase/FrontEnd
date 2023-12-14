@@ -1,4 +1,5 @@
 import React, {useState} from "react";
+import PropTypes from 'prop-types';
 import styles from "./CreateWorkspace.module.css";
 import Header from "../../components/Header";
 import PText from "../../components/texts/PText";
@@ -37,7 +38,7 @@ const CreateWorkspace = () => {
 
 	const [nameValue, setNameValue] = useState("");
 	const [workspaceSearchValue, setWorkspaceSearchValue] = useState("");
-	const [workspaceList, setWorkspaceList] = useState([{
+	const [workspaceList] = useState([{
 		name: 'SpotifyBangar',
 		creator: 'Adilou le fifou',
 		people: 3500000
@@ -128,6 +129,10 @@ const CreateWorkspace = () => {
 			</div>
 		</div>
 	);
+};
+
+NumberPeople.propTypes = {
+	numberPeople: PropTypes.number
 };
 
 export default CreateWorkspace;
