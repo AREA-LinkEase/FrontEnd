@@ -2,8 +2,7 @@ import React, {useState} from "react";
 import "./LoginPage.css";
 import PrimaryInput from "../../components/Inputs/PrimaryInput";
 import PrimaryButton from "../../components/buttons/primaryButton";
-import IconButton from "../../components/buttons/IconButton";
-import {fonts} from "../../style/font/fonts";
+import IconButton from "../../components/buttons/IconButton";   
 import {svgs} from "../../style/svgs/svgList";
 
 const LoginPage = () => {
@@ -28,6 +27,7 @@ const LoginPage = () => {
                 <IconButton width={"90%"} buttonText={"Microsoft"} iconSrc={svgs.microsoft}/>
             </div>
             <div className={"loginSingUp"}>
+                {/* eslint-disable-next-line react/no-unescaped-entities */}
                 <p className={"loginSingUpText"}>Don't have an account?</p>
                 <p className={"loginSingUpTextLink"}>Sign Up</p>
             </div>
