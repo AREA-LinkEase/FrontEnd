@@ -39,6 +39,7 @@ const PrimaryButton = ({
         fontFamily: textFont,
         fontSize: textSize,
         color: textColor,
+        fontWeight: fontWeight,
         textAlign: 'center',
         width: width,
         height: height,
