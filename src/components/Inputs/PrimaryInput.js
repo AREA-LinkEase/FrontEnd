@@ -26,6 +26,8 @@ const PrimaryInput = ({
                           rightIconName,
                           rightIconSize = '25px',
                           rightIconColor = colors.darkBlue,
+                          isRightIconIsActive,
+                          onPressRightIcon = () => {console.log('Clicked on right icon')},
                       }) => {
     const LeftIcon = leftIconName ? Icon[leftIconName] : null;
     const RightIcon = rightIconName ? Icon[rightIconName] : null;
@@ -48,11 +50,11 @@ const PrimaryInput = ({
                 style={{
                     display: 'flex',
                     flexDirection: 'row',
-                    alignItems: 'center'
+                    alignItems: 'center',
                 }}
             >
                 {LeftIcon && (
-                    <div style={{ paddingRight: '10px', marginBottom: '-4px' }}>
+                    <div style={{ paddingRight: '15px', marginBottom: '-4px' }}>
                         {React.createElement(LeftIcon, {
                             size: leftIconSize,
                             color: leftIconColor,
@@ -77,11 +79,13 @@ const PrimaryInput = ({
                     }}
                 />
                 {RightIcon && (
-                    <div style={{ paddingLeft: '10px', marginBottom: '-4px' }}>
+                    <div
+                        onClick={() => {onPressRightIcon(isRightIconIsActive)}} 
+                        style={{ marginBottom: '-4px', paddingLeft: '10px'}}>
                         {React.createElement(RightIcon, {
                             size: rightIconSize,
                             color: rightIconColor,
-                        })}
+                        })} 
                     </div>
                 )}
             </div>
@@ -110,6 +114,8 @@ PrimaryInput.propTypes = {
     rightIconName: PropTypes.string,
     rightIconSize: PropTypes.string,
     rightIconColor: PropTypes.string,
+    isRightIconIsActive: PropTypes.bool.isRequired,
+    onPressRightIcon: PropTypes.func,
 };
 
 export default PrimaryInput;
