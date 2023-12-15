@@ -14,11 +14,11 @@ const AccueilPage = () => {
     return (
         <div className={styles.accueilBody}>
           <div className={styles.accueilH1Text}>
-				  	<H1Text text="Let's go !" color={colors.lightlightGrey}/>
+				    <H1Text text="Let's go !" color={colors.lightlightGrey}/>
           </div>
           <div className={styles.accueilCenterDiv}>
             <div className={styles.accueilPText}>
-					    <PText text={parseTextWithLineBreaks(texts.travailQuotidien)} color={colors.lightlightGrey}/>
+              <PText text={parseTextWithLineBreaks(texts.travailQuotidien)} color={colors.lightlightGrey}/>
             </div>
 					  <PrimaryButton buttonText='Create' width='90%' height='65px'/>
           </div>
