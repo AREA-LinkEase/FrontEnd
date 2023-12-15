@@ -4,7 +4,6 @@ import { colors } from '../../style/color';
 import adjustColorBrightness from '../../utils/adjustColorBrightness';
 import { fontWeights } from '../../style/font/fontWeights';
 import * as Icon from 'react-feather';
-import { svgs } from '../../style/svgs/svgList';
 
 const TitleTextButton = ({
                              backgroundColor = '#1DB954',
