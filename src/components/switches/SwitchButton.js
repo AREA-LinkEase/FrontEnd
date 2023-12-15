@@ -21,6 +21,7 @@ const SwitchButton = ({
                           textColorOff = colors.white,
                           textColorOn = colors.lightBlack,
                           isLittle,
+                          toggleSwitch,
                       }) => {
     const [isSwitched, setIsSwitched] = useState(isOn);
     const [textSize, setTextSize] = useState(0);
@@ -41,10 +42,12 @@ const SwitchButton = ({
         setButtonHeight(calculatedButtonHeight);
     }, [width, height, isLittle]);
 
-    const toggleSwitch = (e) => {
+
+    const toggleSwitchInternal = (e) => {
         e.stopPropagation();
         setIsSwitched((prevSwitched) => !prevSwitched);
-    };
+        toggleSwitch();
+      };
 
     return (
         <div
@@ -64,7 +67,7 @@ const SwitchButton = ({
                 transition: 'background-color 0.4s ease',
                 scrollBehavior: 'smooth',
             }}
-            onClick={isIndicator ? () => {} : toggleSwitch}
+            onClick={isIndicator ? () => {} : toggleSwitchInternal}
         >
       <span
           style={{
@@ -111,6 +114,7 @@ SwitchButton.propTypes = {
     textColorOff: PropTypes.string,
     textColorOn: PropTypes.string,
     isLittle: PropTypes.bool,
+    toggleSwitch: PropTypes.func,
 };
 
 export default SwitchButton;
