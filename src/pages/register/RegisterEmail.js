@@ -8,12 +8,22 @@ import PrimaryButton from "../../components/buttons/PrimaryButton";
 
 const RegisterEmail = ({
     Title = "Quel est ton email ?",
-    InputPlaceholder = "Email",
-    leftIconSrc = "User",
-    rightIconSrc = "",
-    ButtonText = "Continuer",
-                       }) => {
-    const [input, setInput] = useState("");
+    InputPlaceholder = "No place holder",
+    leftIconSrc = "",
+    rightIconSrcOn = "",
+    rightIconSrcOff = "",
+    ButtonText = "no text",
+    inputType = "password",
+    }) => {
+    const [inputValue, setInputValue] = useState('');
+    const [isActive, setIsActive] = useState(inputType !== 'password');
+    const onPressRightIcon = (value) => {
+        setIsActive(!value);
+    }
+
+    const rightIconName =
+        inputType === "email" ? "" : isActive ? rightIconSrcOn : rightIconSrcOff;
+
     return (
         <div className={"registerEmailBody"}>
             <Header rightIconName={""}/>
@@ -21,7 +31,7 @@ const RegisterEmail = ({
                 <H1Text text={Title} fontWeight={"550"} size={"38px"}/>
             </div>
             <div className={"registerInput"}>
-                <PrimaryInput placeholder={InputPlaceholder} leftIconName={leftIconSrc} setInputValue={input} inputValue={setInput} width={"80%"} rightIconName={rightIconSrc}/>
+                <PrimaryInput rightIconName={rightIconName} inputType={isActive ? 'email' : 'password'} isRightIconIsActive={isActive} onPressRightIcon={onPressRightIcon} inputValue={inputValue} setInputValue={setInputValue} placeholder={InputPlaceholder} leftIconName={leftIconSrc} />
             </div>
             <div className={"registerButton"}>
                 <PrimaryButton buttonText={ButtonText} width={"90%"}/>
@@ -35,7 +45,9 @@ RegisterEmail.propTypes = {
     InputPlaceholder: PropTypes.string,
     leftIconSrc: PropTypes.string,
     ButtonText: PropTypes.string,
-    rightIconSrc: PropTypes.string,
+    rightIconSrcOn: PropTypes.string,
+    rightIconSrcOff: PropTypes.string,
+    inputType: PropTypes.string,
 };
 
 export default RegisterEmail;
