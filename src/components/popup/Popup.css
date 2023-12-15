@@ -1,0 +1,37 @@
+.popupBody {
+    align-items: center;
+    justify-content: center;
+    display: flex;
+}
+
+.popupOverlay {
+    width: 100vw;
+    height: 100vh;
+    top: 0;
+    left: 0;
+    position: fixed;
+    background: rgba(49, 49, 49, 0.8);
+}
+
+.popupContent {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    line-height: 1.4;
+    background: #f1f1f1;
+    border-radius: 10px;
+    padding: 20px;
+    width: 90%;
+    height: 229px;
+}
+
+.popupText {
+    margin-top: 10px;
+}
+
+.popupButton {
+    position: absolute;
+    top: 170px;
+    left: 3%;
+}
