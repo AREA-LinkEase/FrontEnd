@@ -20,6 +20,8 @@ const Header = ({
                     setFilterSelected,
                     isNumberInfo = false,
                     numberItems = { "All": 0, "Private": 2, "Public": 0 },
+                    marginBottomLeftIcon = '4px',
+                    marginBottomRightIcon = '4px',
                     filterListTag = ["All", "Private", "Public"],
                     onClickIconLeft = () => { console.log("Icon Left clicked") },
                     onClickIconRight = () => { console.log("Icon Right clicked") }
@@ -71,7 +73,7 @@ const Header = ({
                 {LeftIcon && (
                     <div
                         onClick={onClickIconLeft}
-                        style={{ paddingLeft: '7px', marginBottom: '-4px', cursor: 'pointer' }}>
+                        style={{ paddingLeft: '7px', marginBottom: marginBottomLeftIcon, cursor: 'pointer' }}>
                         {React.createElement(LeftIcon, {
                             size: leftIconSize,
                             color: leftIconColor,
@@ -89,7 +91,7 @@ const Header = ({
                 {(RightIcon && !RightChildrenComponent) && (
                     <div
                         onClick={onClickIconRight}
-                        style={{ paddingRight: '10px', marginBottom: '-4px', cursor: 'pointer' }}>
+                        style={{ paddingRight: '10px', marginBottom: marginBottomRightIcon, cursor: 'pointer' }}>
                         {React.createElement(RightIcon, {
                             size: rightIconSize,
                             color: rightIconColor,
@@ -115,6 +117,8 @@ Header.propTypes = {
     filterSelected: PropTypes.string,
     setFilterSelected: PropTypes.func,
     isNumberInfo: PropTypes.bool,
+    marginBottomLeftIcon: PropTypes.string,
+    marginBottomRightIcon: PropTypes.string,
     numberItems: PropTypes.object,
     filterListTag: PropTypes.array,
     onClickIconLeft: PropTypes.func,

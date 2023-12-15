@@ -8,32 +8,34 @@ import { fonts } from '../../style/font/fonts';
 import { fontWeights } from '../../style/font/fontWeights';
 
 const IconButton = ({
-                        isIcon = false,
-                        isImage = true,
-                        iconSize = '25px',
-                        iconColor = colors.darkBlue,
-                        iconSrc = svgs.google,
-                        borderColor = 'black',
-                        backgroundColor = 'white',
-                        hoverBackgroundColor = 'lightGrey',
-                        borderRadius = '90px',
-                        width = '361px',
-                        height = '60px',
-                        textFont = fonts.openSans,
-                        fontWeight = fontWeights.bold,
-                        textSize = '20px',
-                        textColor = 'black',
-                        buttonText = 'Google',
-                        paddingLeftIcon = '10px',
-                        transition = 'background-color 0.3s',
-                        onPressButton = () => console.log('Icon Button clicked'),
-                        onMouseOverButton = (e) => {
-                            e.currentTarget.style.backgroundColor = hoverBackgroundColor;
-                        },
-                        onMouseOutButton = (e) => {
-                            e.currentTarget.style.backgroundColor = backgroundColor;
-                        },
-                    }) => {
+    isIcon = false,
+    isImage = true,
+    iconSize = '25px',
+    iconColor = colors.darkBlue,
+    iconSrc = svgs.google,
+    borderColor = 'black',
+    backgroundColor = 'white',
+    hoverBackgroundColor = 'lightGrey',
+    borderRadius = '90px',
+    width = '361px',
+    height = '60px',
+    textFont = fonts.openSans,
+    fontWeight = fontWeights.bold,
+    textSize = '20px',
+    textColor = 'black',
+    buttonText = 'Google',
+    paddingLeftIcon = '10px',
+    alignLeft = false,
+    paddingLeftText = '50px',
+    transition = 'background-color 0.3s',
+    onPressButton = () => console.log('Icon Button clicked'),
+    onMouseOverButton = (e) => {
+        e.currentTarget.style.backgroundColor = hoverBackgroundColor;
+    },
+    onMouseOutButton = (e) => {
+        e.currentTarget.style.backgroundColor = backgroundColor;
+    },
+}) => {
     const IconLogo = isIcon && iconSrc ? Icon[iconSrc] : null;
 
     return (
@@ -51,11 +53,11 @@ const IconButton = ({
                 fontSize: textSize,
                 color: textColor,
                 fontWeight,
-                textAlign: 'center',
+                textAlign: alignLeft ? 'left' : 'center',
                 width,
                 height,
                 transition,
-                position: 'relative', // Ajout d'une position relative
+                position: 'relative',
             }}
         >
             {IconLogo && (
@@ -71,7 +73,7 @@ const IconButton = ({
                     <SvgIcon svgName={iconSrc} />
                 </div>
             )}
-            {buttonText}
+            <span style={{ paddingLeft: alignLeft ? paddingLeftText : '0px' }}>{buttonText}</span>
         </button>
     );
 };
@@ -94,6 +96,8 @@ IconButton.propTypes = {
     textColor: PropTypes.string,
     buttonText: PropTypes.string,
     paddingLeftIcon: PropTypes.string,
+    alignLeft: PropTypes.bool,
+    paddingLeftText: PropTypes.string,
     transition: PropTypes.string,
     onPressButton: PropTypes.func,
     onMouseOverButton: PropTypes.func,

@@ -117,8 +117,8 @@ const HomeWorkspace = () => {
                     isSelectable={false}
                     componentId={index}
                     isClickable={true}
-                    backgroundColor={workspace.color}
-                    borderColor={workspace.color}
+                    backgroundColor={workspace.access === 'Public' ? workspace.color : '#777777'}
+                    borderColor={workspace.access === 'Public' ? workspace.color : '#777777'}
                     width="90%"
                     ComponentChildren={() => (
                       <SwitchButton

@@ -9,13 +9,14 @@ const PText = ({
                    size = '20px',
                    font = fonts.avenirNextLTProRegular,
                    fontWeight = fontWeights.regular,
+                   lineHeight = 'normal'
                }) => {
 
     return (
         <div>
-      <span style={{ color, fontSize: size, fontFamily: font, fontWeight }}>
-        {text}
-      </span>
+            <span style={{ color, fontSize: size, fontFamily: font, fontWeight, lineHeight }}>
+                {text}
+            </span>
         </div>
     );
 };
@@ -26,6 +27,7 @@ PText.propTypes = {
     size: PropTypes.string,
     font: PropTypes.string,
     fontWeight: PropTypes.string,
+    lineHeight: PropTypes.string,
 };
 
 export default PText;
