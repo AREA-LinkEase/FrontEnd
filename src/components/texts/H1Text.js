@@ -8,7 +8,7 @@ const H1Text = ({
                     text,
                     color = colors.lightlightGrey,
                     size = '45px',
-                    font = fonts.openSans,
+                    font = fonts.poppins,
                     fontWeight = fontWeights.bold,
                 }) => {
 

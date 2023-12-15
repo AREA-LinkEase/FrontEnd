@@ -2,5 +2,6 @@ export const fonts = {
     avenirNextLTProRegular: 'avenirNextLTProRegular',
     avenirNextLTProIt: 'avenirNextLTProIt',
     avenirNextLTProBold: 'avenirNextLTProBold',
-    openSans: 'Open Sans'
+    openSans: 'Open Sans',
+    poppins: 'Poppins'
 };
