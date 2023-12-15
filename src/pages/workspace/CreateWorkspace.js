@@ -127,8 +127,8 @@ const CreateWorkspace = () => {
 						) : null
 					}
 					{ (selectedWorkspaces.length !== 0 || nameValue !== "") && (
-						<div style={{position: 'fixed', bottom: 80}}>
-							<IconButton height="70px" buttonText='Add' iconSrc='Plus' iconColor={colors.white} iconSize="30px" isIcon={true} isImage={false} backgroundColor={colors.darkPurple} textColor={colors.white} hoverBackgroundColor={colors.darkPurple} />
+						<div style={{position: 'fixed', bottom: 80, width: '100%'}}>
+							<IconButton height="70px" buttonText='Add' width="90%" iconSrc='Plus' iconColor={colors.white} iconSize="30px" isIcon={true} isImage={false} backgroundColor={colors.darkPurple} textColor={colors.white} hoverBackgroundColor={colors.darkPurple} />
 						</div>
 					)}
 				<div>

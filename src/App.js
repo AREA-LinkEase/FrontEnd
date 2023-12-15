@@ -1,11 +1,13 @@
 import React from "react";
-import CreateAutomate from "./pages/automate/CreateAutomate";
+import CommuAutomate from "./pages/automate/CommuAutomate";
+// import CommuAutomate from "./pages/automate/CommuAutomate";
+// import HomeWorkspace from "./pages/workspace/HomeWorkspace";
 
 const App = () => {
 
   return (
     <div>
-      <CreateAutomate/>
+      <CommuAutomate/>
     </div>
   );
 }
