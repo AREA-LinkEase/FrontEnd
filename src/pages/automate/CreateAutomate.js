@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 import PropTypes from 'prop-types';
-import styles from "./CreateWorkspace.module.css";
+import styles from "./CreateAutomate.module.css";
 import Header from "../../components/Header";
 import PText from "../../components/texts/PText";
 import { fonts } from "../../style/font/fonts";
@@ -34,11 +34,11 @@ const NumberPeople = ({numberPeople}) => {
 	)
 }
 
-const CreateWorkspace = () => {
+const CreateAutomate = () => {
 
 	const [nameValue, setNameValue] = useState("");
-	const [workspaceSearchValue, setWorkspaceSearchValue] = useState("");
-	const workspaceList = [{
+	const [automateSearchValue, setAutomateSearchValue] = useState("");
+	const automateList = [{
 		name: 'SpotifyBangar',
 		creator: 'Adilou le fifou',
 		people: 3500000,
@@ -75,58 +75,58 @@ const CreateWorkspace = () => {
 		color: colors.purple,
 	}];
 
-  const [selectedWorkspaces, setSelectedWorkspaces] = useState([]);
+  const [selectedAutomates, setSelectedAutomates] = useState([]);
 
   const handleSelect = (index) => {
-    const isSelected = selectedWorkspaces.includes(index);
+    const isSelected = selectedAutomates.includes(index);
 
     if (isSelected) {
-      setSelectedWorkspaces(selectedWorkspaces.filter((item) => item !== index));
+      setSelectedAutomates(selectedAutomates.filter((item) => item !== index));
     } else {
-      setSelectedWorkspaces([...selectedWorkspaces, index]);
+      setSelectedAutomates([...selectedAutomates, index]);
     }
   };
 
 	return (
-		<div className={styles.createWorkspaceBody}>
+		<div className={styles.createAutomateBody}>
 			<div>
 				<Header rightIconName=''/>
 			</div>
-			<div className={styles.createWorkspaceContainer}>
-				<div className={styles.createWorkspaceTitle}>
-					<PText text='New Workspace' font={fonts.openSans} fontWeight={fontWeights.bold} size="30px"/>
+			<div className={styles.createAutomateContainer}>
+				<div className={styles.createAutomateTitle}>
+					<PText text='New Automate' font={fonts.openSans} fontWeight={fontWeights.bold} size="30px"/>
 				</div>
-				<div className={styles.createWorkspaceInput}>
+				<div className={styles.createAutomateInput}>
 					<PrimaryInput leftIconName='' placeholder='Name' inputValue={nameValue} setInputValue={setNameValue} width="85%"/>
 				</div>
-				<div className={styles.createWorkspaceSeparationLine}></div>
-				<div className={styles.createWorkspaceInputWorkspace}>
-					<PrimaryInput leftIconName='Search' placeholder='Workspace search...' inputValue={workspaceSearchValue} setInputValue={setWorkspaceSearchValue} width="85%"/>
+				<div className={styles.createAutomateSeparationLine}></div>
+				<div className={styles.createAutomateInputAutomate}>
+					<PrimaryInput leftIconName='Search' placeholder='Automate search...' inputValue={automateSearchValue} setInputValue={setAutomateSearchValue} width="85%"/>
 				</div>
-					{workspaceList.length !== 0 ? (
-						<div className={styles.createWorkspaceList}>
-							{workspaceList
-								.filter(workspace => workspace.name.toLowerCase().includes(workspaceSearchValue.toLowerCase()))
-								.map((workspace, index) => (
-									<div key={index} style={{ paddingBottom: index === workspaceList.length - 1 ? ((selectedWorkspaces.length !== 0 || nameValue !== "") ? '170px' : '90px') : '15px' }}>
+					{automateList.length !== 0 ? (
+						<div className={styles.createAutomateList}>
+							{automateList
+								.filter(automate => automate.name.toLowerCase().includes(automateSearchValue.toLowerCase()))
+								.map((automate, index) => (
+									<div key={index} style={{ paddingBottom: index === automateList.length - 1 ? ((selectedAutomates.length !== 0 || nameValue !== "") ? '170px' : '90px') : '15px' }}>
 										<TitleTextChildButton
-											title={workspace.name}
-											text={`Par **${workspace.creator}**`}
+											title={automate.name}
+											text={`Par **${automate.creator}**`}
 											isSelectable={true}
 											componentId={index}
+											backgroundColor={automate.color}
+											borderColor={automate.color}
 											isClickable={false}
-											backgroundColor={workspace.color}
-											borderColor={workspace.color}
 											handleSelect={handleSelect}
 											width="90%"
-											ComponentChildren={() => <NumberPeople numberPeople={workspace.people} />}
+											ComponentChildren={() => <NumberPeople numberPeople={automate.people} />}
 										/>
 									</div>
 								))}
 						</div>
 						) : null
 					}
-					{ (selectedWorkspaces.length !== 0 || nameValue !== "") && (
+					{ (selectedAutomates.length !== 0 || nameValue !== "") && (
 						<div style={{position: 'fixed', bottom: 80}}>
 							<IconButton height="70px" buttonText='Add' iconSrc='Plus' iconColor={colors.white} iconSize="30px" isIcon={true} isImage={false} backgroundColor={colors.darkPurple} textColor={colors.white} hoverBackgroundColor={colors.darkPurple} />
 						</div>
@@ -143,4 +143,4 @@ NumberPeople.propTypes = {
 	numberPeople: PropTypes.number
 };
 
-export default CreateWorkspace;
+export default CreateAutomate;
