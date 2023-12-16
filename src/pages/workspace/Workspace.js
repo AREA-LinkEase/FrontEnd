@@ -12,6 +12,7 @@ import SwitchButton from "../../components/switches/SwitchButton";
 import { calculatePixelSize } from "../../utils/calculatePixelSize";
 import IconButton from "../../components/buttons/IconButton";
 import BottomNavbar from "../../components/navbar/BottomNavbar";
+import * as Icon from 'react-feather';
 
 const Workspace = ({workspaceValues}) => {
 
@@ -35,18 +36,34 @@ const Workspace = ({workspaceValues}) => {
 		});
 	};
 
-  const handleSwitchChange = () => {
-    setIsSwitched((prevSwitched) => !prevSwitched);
-  };
+	const UserIcon = Icon['User'];
+
+	const onClickUserIcon = () => {
+		console.log("Clicked on user Icon");
+	};
+
+	const handleSwitchChange = () => {
+		setIsSwitched((prevSwitched) => !prevSwitched);
+	};
 
 	return (
 		<div className={styles.workspaceBody}>
-			<div style={{ position: 'fixed', zIndex: 1000, backgroundColor: 'white'}}>
+			<div style={{ position: 'fixed', zIndex: 1000, backgroundColor: 'white', width: '100%'}}>
 			<div className={styles.workspaceDescriptionContainer} style={{backgroundColor: isSwitched ? workspaceValues.color : "#777777"}}>
 				<Header rightIconName="Settings" backgroundColor={isSwitched ? workspaceValues.color : "#777777"} leftIconColor={colors.white} rightIconColor={colors.white} leftIconSize="30px" rightIconSize="25px" marginBottomRightIcon="-2px"/>
 				<div style={{paddingLeft: '20px', paddingRight: '20px'}}>
-					<div style={{paddingBottom: '7px'}}>
-						<PText text={workspaceValues.name} fontWeight={fontWeights.bold} font={fonts.openSans} color={colors.white} size="21px"/>
+					<div style={{paddingBottom: '7px', display: 'flex', flexDirection: 'row'}}>
+						<div>
+							<PText text={workspaceValues.name} fontWeight={fontWeights.bold} font={fonts.openSans} color={colors.white} size="21px"/>
+						</div>
+						<div
+							onClick={onClickUserIcon}
+							style={{cursor: 'pointer', marginLeft: 'auto', marginRight: '-12px'}}>
+							{React.createElement(UserIcon, {
+								size: '30px',
+								color: colors.white,
+							})}
+						</div>
 					</div>
 					<div  style={{paddingBottom: '15px'}}>
 						<PText text={formatTextBold(`Par **${workspaceValues.creator}**`)} font={fonts.openSans} color={colors.white} size="12px"/>

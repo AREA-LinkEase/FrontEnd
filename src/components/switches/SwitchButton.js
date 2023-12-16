@@ -22,6 +22,7 @@ const SwitchButton = ({
                           textColorOn = colors.lightBlack,
                           isLittle,
                           toggleSwitch,
+                          textSizeMax = '55px',
                       }) => {
     const [isSwitched, setIsSwitched] = useState(isOn);
     const [textSize, setTextSize] = useState(0);
@@ -31,9 +32,14 @@ const SwitchButton = ({
     useEffect(() => {
         const containerWidth = parseInt(width, 10);
         const containerHeight = parseInt(height, 10);
+        const maxFontSize = extractNumberFromString(textSizeMax);
 
         const calculatedTextSize = containerWidth * (isLittle ? 0.12 : 0.1);
-        setTextSize(calculatedTextSize);
+        if (calculatedTextSize > maxFontSize) {
+            setTextSize(maxFontSize);
+        }
+        else
+            setTextSize(calculatedTextSize);
 
         const calculatedButtonWidth = (containerWidth * (isLittle ? 0.19 : 0.35)) / containerWidth * 100;
         setButtonWidth(calculatedButtonWidth);
@@ -48,6 +54,11 @@ const SwitchButton = ({
         setIsSwitched((prevSwitched) => !prevSwitched);
         toggleSwitch();
       };
+    
+    function extractNumberFromString(str) {
+        const match = str.match(/\d+/);
+        return match ? parseInt(match[0], 10) : null;
+    }
 
     return (
         <div
@@ -115,6 +126,7 @@ SwitchButton.propTypes = {
     textColorOn: PropTypes.string,
     isLittle: PropTypes.bool,
     toggleSwitch: PropTypes.func,
+    textSizeMax: PropTypes.string,
 };
 
 export default SwitchButton;
