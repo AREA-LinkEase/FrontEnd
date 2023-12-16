@@ -23,6 +23,8 @@ const Header = ({
                     marginBottomLeftIcon = '4px',
                     marginBottomRightIcon = '4px',
                     filterListTag = ["All", "Private", "Public"],
+                    isRightIconClickable = true,
+                    isContentCenter = true,
                     onClickIconLeft = () => { console.log("Icon Left clicked") },
                     onClickIconRight = () => { console.log("Icon Right clicked") }
                 }) => {
@@ -64,7 +66,7 @@ const Header = ({
             <div style={{
                 display: 'flex',
                 flexDirection: 'row',
-                alignItems: 'center',
+                alignItems: isContentCenter ? 'center' : '',
                 justifyContent: 'space-between',
                 backgroundColor: backgroundColor,
                 paddingTop: '30px',
@@ -81,7 +83,7 @@ const Header = ({
                     </div>
                 )}
                 {CenterChildrenComponent && (
-                    <CenterChildrenComponent />
+                      <CenterChildrenComponent />
                 )}
                 {RightChildrenComponent && (
                     <div onClick={onClickIconRight}>
@@ -91,7 +93,7 @@ const Header = ({
                 {(RightIcon && !RightChildrenComponent) && (
                     <div
                         onClick={onClickIconRight}
-                        style={{ paddingRight: '10px', marginBottom: marginBottomRightIcon, cursor: 'pointer' }}>
+                        style={{ paddingRight: '10px', marginBottom: marginBottomRightIcon, cursor: isRightIconClickable ? 'pointer' : '' }}>
                         {React.createElement(RightIcon, {
                             size: rightIconSize,
                             color: rightIconColor,
@@ -123,6 +125,8 @@ Header.propTypes = {
     filterListTag: PropTypes.array,
     onClickIconLeft: PropTypes.func,
     onClickIconRight: PropTypes.func,
+    isRightIconClickable: PropTypes.bool,
+    isContentCenter: PropTypes.bool,
 };
 
 export default Header;
