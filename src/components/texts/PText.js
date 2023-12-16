@@ -14,7 +14,7 @@ const PText = ({
 
     return (
         <div>
-            <span style={{ color, fontSize: size, fontFamily: font, fontWeight, lineHeight }}>
+            <span style={{ color, fontSize: size, fontFamily: font, fontWeight, lineHeight}}>
                 {text}
             </span>
         </div>

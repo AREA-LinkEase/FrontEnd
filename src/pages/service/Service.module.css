@@ -1,0 +1,36 @@
+.serviceDescription {
+    text-align: center;
+    margin: 0 auto;
+    font-family: "AvenirNext LT Pro Regular", sans-serif;
+    font-size: 12px;
+    width: 80%;
+    color: #FFFFFF;
+}
+
+.serviceBackground {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    padding-top: 60px;
+}
+
+.serviceBackground > * {
+    margin-bottom: 20px;
+}
+.serviceFilter {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    width: 80%;
+    margin: 0 auto;
+}
+
+.serviceList {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    width: 80%;
+    margin: 0 auto;
+}
