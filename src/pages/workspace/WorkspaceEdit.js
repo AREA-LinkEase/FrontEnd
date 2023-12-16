@@ -25,10 +25,6 @@ const WorkspaceEdit = ({id, name, description}) => {
         setIsModified(false);
     }, [name, description]);
 
-    // const handleSaveChanges = () => {
-    //     setIsModified(false);
-    // }
-
     const handleNameChange = (newValue) => {
         setNameValue(newValue);
         setIsModified(newValue !== initialName || descriptionValue !== initialDescription);
@@ -39,7 +35,6 @@ const WorkspaceEdit = ({id, name, description}) => {
         setIsModified(nameValue !== initialName || newValue !== initialDescription);
     }
 
-    // Fonctions d'ouverture / fermerture popup
     const handleClickDeleteText = () => {
         setIsOpenPopup(!isOpenPopup);
     };
