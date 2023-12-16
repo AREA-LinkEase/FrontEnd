@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import PropTypes from 'prop-types';
 import styles from "./ActionReactionAutomate.module.css";
 import Header from "../../components/Header";
@@ -6,11 +6,7 @@ import PText from "../../components/texts/PText";
 import { fonts } from "../../style/font/fonts";
 import { fontWeights } from "../../style/font/fontWeights";
 import PrimaryInput from "../../components/Inputs/PrimaryInput";
-import TitleTextChildButton from "../../components/buttons/TitleTextChildButton";
-import BasicText from "../../components/texts/BasicText";
-import * as Icon from 'react-feather';
 import { colors } from "../../style/color";
-import { formatNumber } from "../../utils/formatNumber";
 import BottomNavbar from "../../components/navbar/BottomNavbar";
 import IconButton from "../../components/buttons/IconButton";
 import SelectComponent from "../../components/selects/SelectComponent";
@@ -71,7 +67,7 @@ const ActionReactionAutomate = ({id, automateName}) => {
 	return (
 		<div key={id} className={styles.actionReactionAutomateBody}>
             <div style={{paddingBottom: '15px'}}>
-			    <Header CenterChildrenComponent={() => <PText width="50%" font={fonts.openSans} fontWeight={fontWeights.bold} text={automateName} textAlign={true}/>} rightIconColor={colors.white} isRightIconClickable={false} onClickIconRight={() => {}} isContentCenter={false}/>
+			<Header CenterChildrenComponent={() => <PText width="50%" font={fonts.openSans} fontWeight={fontWeights.bold} text={automateName} textAlign={true}/>} rightIconColor={colors.white} isRightIconClickable={false} onClickIconRight={() => {}} isContentCenter={false}/>
             </div>
             <div className={styles.actionReactionAutomateContainer}>
                 <div style={{paddingLeft: '20px', paddingTop: '15px', paddingBottom: '15px'}}>

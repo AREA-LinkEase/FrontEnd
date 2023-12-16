@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { colors } from '../../style/color';
 import * as Icon from 'react-feather';
-import { formatTextBold } from '../../utils/formatTextBold';
 import { fonts } from '../../style/font/fonts';
 import PrimaryInput from '../Inputs/PrimaryInput';
 import { fontWeights } from '../../style/font/fontWeights';
@@ -194,7 +193,6 @@ SelectComponent.propTypes = {
     })
   ).isRequired,
   setSelectedOption: PropTypes.func.isRequired,
-  maxHeight: PropTypes.string,
 };
 
 export default SelectComponent;
