@@ -26,19 +26,14 @@ const PrimaryInput = ({
                           rightIconName,
                           rightIconSize = '25px',
                           rightIconColor = colors.darkBlue,
-                          isRightIconIsActive = false,
+                          isRightIconIsActive,
                           onPressRightIcon = () => {console.log('Clicked on right icon')},
                       }) => {
     const LeftIcon = leftIconName ? Icon[leftIconName] : null;
     const RightIcon = rightIconName ? Icon[rightIconName] : null;
 
-    const handleContainerClick = (e) => {
-        e.stopPropagation();
-      };
-
     return (
         <div
-            onClick={handleContainerClick}
             style={{
                 display: 'inline-block',
                 border: `1px solid ${borderColor}`,
@@ -119,7 +114,7 @@ PrimaryInput.propTypes = {
     rightIconName: PropTypes.string,
     rightIconSize: PropTypes.string,
     rightIconColor: PropTypes.string,
-    isRightIconIsActive: PropTypes.bool,
+    isRightIconIsActive: PropTypes.bool.isRequired,
     onPressRightIcon: PropTypes.func,
 };
 

@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { colors } from '../../style/color';
+import PropTypes from 'prop-types';
+import style from './BottomNavbar.module.css';
 import * as Icon from 'react-feather';
 import { fontWeights } from '../../style/font/fontWeights';
 import { fonts } from '../../style/font/fonts';
@@ -11,7 +13,8 @@ const styles = {
     bottom: 10,
     left: '2%',
     width: '96%',
-    borderRadius: '90px'
+    borderRadius: '90px',
+    zIndex: 9999
   },
   navbar: {
     paddingTop: '7px',
@@ -42,10 +45,10 @@ const styles = {
     color: colors.darkPurple,
     backgroundColor: colors.white,
     borderRadius: '90px',
-  }
+  },
 };
 
-const BottomNavbar = () => {
+const BottomNavbar = ({isPopupVisible = false}) => {
   const [selectedItem, setSelectedItem] = useState(null);
 
   useEffect(() => {
@@ -75,16 +78,23 @@ const BottomNavbar = () => {
   );
 
   return (
+    
     <footer style={styles.footer}>
-      <nav style={styles.navbar}>
-        {renderNavItem('Workspace', <Icon.Grid size="28" style={styles.icon} />)}
-        {renderNavItem('Rechercher', <Icon.Search size="28" style={styles.icon} />)}
-        {renderNavItem('Créer', <Icon.PlusCircle size="28" style={styles.icon} />)}
-        {renderNavItem('Forum', <Icon.MessageSquare size="28" style={styles.icon} />)}
-        {renderNavItem('Profil', <Icon.User size="28" style={styles.icon} />)}
-      </nav>
+      <div className={isPopupVisible ? style.blurred : ''}>
+        <nav style={styles.navbar}>
+          {renderNavItem('Workspace', <Icon.Grid size="28" style={styles.icon} />)}
+          {renderNavItem('Rechercher', <Icon.Search size="28" style={styles.icon} />)}
+          {renderNavItem('Créer', <Icon.PlusCircle size="28" style={styles.icon} />)}
+          {renderNavItem('Forum', <Icon.MessageSquare size="28" style={styles.icon} />)}
+          {renderNavItem('Profil', <Icon.User size="28" style={styles.icon} />)}
+        </nav>
+      </div>
     </footer>
   );
+};
+
+BottomNavbar.propTypes = {
+  isPopupVisible: PropTypes.bool
 };
 
 export default BottomNavbar;
