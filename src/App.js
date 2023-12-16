@@ -1,11 +1,11 @@
 import React from "react";
-import CreateAutomate from "./pages/automate/CreateAutomate";
+import ActionReactionAutomate from "./pages/automate/ActionReactionAutomate";
 
 const App = () => {
 
   return (
     <div>
-      <CreateAutomate/>
+      <ActionReactionAutomate id='0' automateName='Automate de musique Spotify'/>
     </div>
   );
 }
