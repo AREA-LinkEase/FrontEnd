@@ -27,28 +27,37 @@ const IconButton = ({
     paddingLeftIcon = '10px',
     alignLeft = false,
     paddingLeftText = '50px',
+    rightIconName = '',
+    rightIconSize = '25px',
+    isButtonClickable = true,
+    isRightIconClickable = false,
+    rightIconColor = colors.black,
     transition = 'background-color 0.3s',
-    onPressButton = () => console.log('Icon Button clicked'),
+    onPressButton = () => console.log('Left icon Button clicked'),
     onMouseOverButton = (e) => {
         e.currentTarget.style.backgroundColor = hoverBackgroundColor;
     },
     onMouseOutButton = (e) => {
         e.currentTarget.style.backgroundColor = backgroundColor;
     },
+    onPressRightIcon = () => console.log('Right icon clicked'),
 }) => {
     const IconLogo = isIcon && iconSrc ? Icon[iconSrc] : null;
+    const IconRightLogo = rightIconName !== '' ? Icon[rightIconName] : null;
 
     return (
         <button
-            onClick={onPressButton}
+            onClick={isButtonClickable ? onPressButton : () => {}}
             onMouseOver={onMouseOverButton}
             onMouseOut={onMouseOutButton}
             style={{
                 alignItems: 'center',
                 border: `0px solid ${borderColor}`,
                 backgroundColor,
+                display: 'flex',
+                flexDirection: 'row',
                 borderRadius,
-                cursor: 'pointer',
+                cursor: isButtonClickable ? 'pointer' : '',
                 fontFamily: textFont,
                 fontSize: textSize,
                 color: textColor,
@@ -73,7 +82,19 @@ const IconButton = ({
                     <SvgIcon svgName={iconSrc} />
                 </div>
             )}
-            <span style={{ paddingLeft: alignLeft ? paddingLeftText : '0px' }}>{buttonText}</span>
+            <div style={{display: 'flex', width: '100%', justifyContent: alignLeft ? '' : 'center'}}>
+                <span style={{ paddingLeft: alignLeft ? paddingLeftText : '0px'}}>{buttonText}</span>
+            </div>
+            {rightIconName !== '' && (
+                <div
+                    onClick={isRightIconClickable ? onPressRightIcon : () => {}}
+                    style={{ paddingLeft: paddingLeftIcon, marginLeft: 'auto', paddingRight: '12px', cursor: isRightIconClickable ? 'pointer' : ''}}>
+                    {React.createElement(IconRightLogo, {
+                        size: rightIconSize,
+                        color: rightIconColor,
+                    })}
+                </div>
+            )}
         </button>
     );
 };
@@ -102,6 +123,12 @@ IconButton.propTypes = {
     onPressButton: PropTypes.func,
     onMouseOverButton: PropTypes.func,
     onMouseOutButton: PropTypes.func,
+    rightIconName: PropTypes.string,
+    rightIconColor: PropTypes.string,
+    rightIconSize: PropTypes.string,
+    onPressRightIcon: PropTypes.func,
+    isButtonClickable: PropTypes.bool,
+    isRightIconClickable: PropTypes.bool,
 };
 
 export default IconButton;

@@ -26,7 +26,7 @@ const PrimaryInput = ({
                           rightIconName,
                           rightIconSize = '25px',
                           rightIconColor = colors.darkBlue,
-                          isRightIconIsActive,
+                          isRightIconIsActive = false,
                           onPressRightIcon = () => {console.log('Clicked on right icon')},
                       }) => {
     const LeftIcon = leftIconName ? Icon[leftIconName] : null;
@@ -114,7 +114,7 @@ PrimaryInput.propTypes = {
     rightIconName: PropTypes.string,
     rightIconSize: PropTypes.string,
     rightIconColor: PropTypes.string,
-    isRightIconIsActive: PropTypes.bool.isRequired,
+    isRightIconIsActive: PropTypes.bool,
     onPressRightIcon: PropTypes.func,
 };
 
