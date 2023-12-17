@@ -1,11 +1,11 @@
 import React from "react";
-import SearchPage from "./pages/search/SearchPage";
+import ServiceSetting from "./pages/service/ServiceSetting";
 
 const App = () => {
 
   return (
     <div>
-      <SearchPage/>
+      <ServiceSetting />
     </div>
   );
 }
