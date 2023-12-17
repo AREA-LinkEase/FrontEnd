@@ -8,8 +8,6 @@ export const colors = {
     darkBlue: '#233255',
     darkPurple: '#4A4185',
     lightPurple: '#8A81C6',
-    purple: '#9F3ACE',
-    lightBlack: '#2A2B2D',
     black: 'black',
     white: 'white'
 };
