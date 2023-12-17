@@ -26,6 +26,8 @@ jobs:
 
       - name: move to correct directory
         run: |
+          rm -rf FrontEnd || exit 0
+          mkdir FrontEnd
           cd ./FrontEnd
 
       - name: clone the current repository
