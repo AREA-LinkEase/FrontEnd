@@ -64,7 +64,7 @@ const WorkspaceEditUsers = ({workspaceId, users}) => {
                     <PrimaryInput width="90%" leftIconName='' fontWeight={fontWeights.normal} placeholder="Name" inputType="text" textSize="15px" inputValue={nameValue} setInputValue={handleNameChange}/>
                 </div>
                 { nameValue !== '' && (
-                    <div style={{width: '100%', textAlign: 'center'}}>
+                    <div style={{width: '100%', textAlign: 'center', display: 'flex', justifyContent:"center", margin: "0 auto"}}>
                         <IconButton width="90%" height="45px" buttonText='Add' iconSrc='' backgroundColor={colors.darkPurple} textColor={colors.white} hoverBackgroundColor={colors.darkPurple} />
                     </div>
                 )}
