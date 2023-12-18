@@ -119,7 +119,7 @@ const CommuAutomate = () => {
           </div>
         ) : null}
         {(selectedAutomates.length !== 0) && (
-						<div style={{position: 'fixed', bottom: 80, width: '100%'}}>
+						<div style={{position: 'fixed', bottom: 80, width: '100%', margin: '0 auto', display: 'flex', justifyContent: 'center'}}>
 							<IconButton height="70px" width="90%" buttonText='Add' iconSrc='Plus' iconColor={colors.white} iconSize="30px" isIcon={true} isImage={false} backgroundColor={colors.darkPurple} textColor={colors.white} hoverBackgroundColor={colors.darkPurple} />
 						</div>
 					)}
