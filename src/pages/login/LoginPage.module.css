@@ -1,6 +1,5 @@
 .loginBody {
     background-color: #4A4185;
-    height: 100vh;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -71,12 +70,11 @@
     align-items: center;
     justify-content: center;
     flex-direction: row;
-    position: fixed;
-    bottom: 0;
+    position: absolute;
     width: 100%;
     padding-bottom: 4%;
     color: darkgray;
-    font-family: AvenirNextLTProRegular;
+    font-family: AvenirNextLTProRegular, serif;
 }
 
 .loginSingUpTextLink {
