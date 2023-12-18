@@ -1,11 +1,11 @@
 import React from "react";
-import ServiceSetting from "./pages/service/ServiceSetting";
+import WorkspaceEdit from "./pages/workspace/WorkspaceEdit";
 
 const App = () => {
 
   return (
     <div>
-      <ServiceSetting />
+        <WorkspaceEdit />
     </div>
   );
 }
