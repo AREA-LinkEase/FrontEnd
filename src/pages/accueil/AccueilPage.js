@@ -7,23 +7,28 @@ import parseTextWithLineBreaks from "../../utils/parseTextWithLineBreaks";
 import { colors } from "../../style/color";
 import PrimaryButton from "../../components/buttons/PrimaryButton";
 import BottomNavbar from "../../components/navbar/BottomNavbar";
+import {useNavigate} from "react-router-dom";
 
 const AccueilPage = () => {
-		
+
+    const navigate = useNavigate();
+    const handleItemClick = () => {
+        navigate('/create');
+    };
 
     return (
         <div className={styles.accueilBody}>
           <div className={styles.accueilH1Text}>
-				  	<H1Text text="Let's go !" color={colors.lightlightGrey}/>
+              <H1Text text="Let's go !" color={colors.lightlightGrey}/>
           </div>
           <div className={styles.accueilCenterDiv}>
             <div className={styles.accueilPText}>
-					    <PText text={parseTextWithLineBreaks(texts.travailQuotidien)} color={colors.lightlightGrey}/>
+                <PText text={parseTextWithLineBreaks(texts.travailQuotidien)} color={colors.lightlightGrey}/>
             </div>
-					  <PrimaryButton buttonText='Create' width='90%' height='65px'/>
+              <PrimaryButton buttonText='Create' width='90%' height='65px' onPressButton={handleItemClick}/>
           </div>
           <div>
-            <BottomNavbar/>
+            <BottomNavbar itemPosition={'Workspace'}/>
           </div>
         </div>
       );

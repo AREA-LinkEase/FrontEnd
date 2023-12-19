@@ -10,6 +10,7 @@ import SwitchButton from "../../components/switches/SwitchButton";
 import PrimaryButton from "../../components/buttons/PrimaryButton";
 import adjustColorBrightness from "../../utils/adjustColorBrightness";
 import TitleTextChildButton from "../../components/buttons/TitleTextChildButton";
+import {useNavigate} from "react-router-dom/dist";
 
 
 const Service = ({
@@ -58,17 +59,26 @@ const Service = ({
             name: 'THOAAAAMS',
             creator: 'Adilou le fifou',
             people: 3500000,
-            color: colors.purple,
+            color: colors.lightPurple,
             access: "Workspace"
         },
         {
             name: 'PIZZA BIEN GARNIE',
             creator: 'Adilou le fifou',
             people: 3500000,
-            color: colors.purple,
+            color: colors.lightPurple,
             access: "Workspace"
         }]);
 
+    const navigate = useNavigate();
+
+    const handleClickBack = () => {
+        navigate("/search");
+    }
+
+    const handleClickServiceSetting = () => {
+        navigate("/serviceSetting");
+    }
   return (
     <div>
         <div style={{
@@ -78,23 +88,12 @@ const Service = ({
             zIndex: 2000, top: '0',
             width: '100%'
         }}>
+
             <div className={styles.serviceBackground}>
-                <img src={logo} alt="logo" />
-                {showIcon &&
-                    <div
-                    style={{cursor: 'pointer',
-                        marginLeft: 'auto',
-                        marginRight: '-12px',
-                        zIndex: "3000",
-                        position: "fixed",
-                        top: "57px",
-                        left: "87%"
-                    }}>
-                    {React.createElement(Settings, {
-                        size: '24px',
-                        color: colors.white,
-                    })}
-                </div>}
+                <div style={{height: '100px', position: "fixed", top: '20px', width: "100%", zIndex:"100"}}>
+                    <Header rightIconName={(showIcon)? "Settings" : ""}  rightIconColor={colors.white} rightIconSize={"24px"} onClickIconRight={handleClickServiceSetting} backgroundColor={color} leftIconColor={colors.white} onClickIconLeft={handleClickBack}/>
+                </div>
+                <img src={logo} alt="logo" style={{zIndex: "101"}}/>
                 <H1Text text={title} size={"24px"}/>
                 <p className={styles.serviceDescription}>{description}</p>
                 <PrimaryButton

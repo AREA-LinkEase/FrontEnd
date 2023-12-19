@@ -36,7 +36,6 @@ const LoginPage = () => {
         setIsError(false);
         setIsOpenPopup(false);
     };
-
     const handleLogin = async () => {
         if (username === '' || password === '') {
             console.log("Username or password is empty");

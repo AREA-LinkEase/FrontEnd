@@ -12,6 +12,7 @@ import Popup from "../../components/popup/Popup";
 import IconButton from "../../components/buttons/IconButton";
 import adjustColorBrightness from "../../utils/adjustColorBrightness";
 import ScrollLock from 'react-scrolllock';
+import {useNavigate} from "react-router-dom/dist";
 
 const WorkspaceEditUsers = ({workspaceId, users}) => {
     const [nameValue, setNameValue] = useState('');
@@ -39,6 +40,12 @@ const WorkspaceEditUsers = ({workspaceId, users}) => {
         setIsOpenPopup(false);
     };
 
+    const navigate = useNavigate();
+
+    const handleBackClick = () => {
+        navigate("/workspace");
+    }
+
     return (
         <div className={styles.workspaceEditUsersBody}>
             <div style={{paddingLeft: '20px', width: '100%', paddingTop: nameValue !== '' ? '380px' : '330px'}}>
@@ -53,7 +60,7 @@ const WorkspaceEditUsers = ({workspaceId, users}) => {
                 })}
             </div>
             <div style={{width: '100%', position: 'fixed', backgroundColor: colors.white}}>
-                <Header rightIconColor={colors.black} leftIconSize="30px" rightIconName=""/>
+                <Header rightIconColor={colors.black} leftIconSize="30px" rightIconName="" onClickIconLeft={handleBackClick}/>
                 <div style={{paddingBottom: '60px', paddingLeft: '20px', paddingRight: '20px'}}>
                     <PText text='Users management' fontWeight={fontWeights.bold} font={fonts.openSans} color={colors.lightBlack} size="21px"/>
                 </div>

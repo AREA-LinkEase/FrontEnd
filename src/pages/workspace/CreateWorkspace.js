@@ -132,7 +132,7 @@ const CreateWorkspace = () => {
 						</div>
 					)}
 				<div>
-					<BottomNavbar/>
+					<BottomNavbar itemPosition={"Create"}/>
 				</div>
 			</div>
 		</div>

@@ -130,6 +130,7 @@ IconButton.propTypes = {
     onPressRightIcon: PropTypes.func,
     isButtonClickable: PropTypes.bool,
     isRightIconClickable: PropTypes.bool,
+    marginBottomLeftIcon: PropTypes.string,
 };
 
 export default IconButton;

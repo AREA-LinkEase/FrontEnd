@@ -132,7 +132,7 @@ const CreateAutomate = () => {
 						</div>
 					)}
 				<div>
-					<BottomNavbar/>
+					<BottomNavbar itemPosition={"Workspace"}/>
 				</div>
 			</div>
 		</div>

@@ -10,6 +10,7 @@ import { colors } from "../../style/color";
 import BottomNavbar from "../../components/navbar/BottomNavbar";
 import IconButton from "../../components/buttons/IconButton";
 import SelectComponent from "../../components/selects/SelectComponent";
+import {useNavigate} from "react-router-dom/dist";
 
 const ActionReactionAutomate = ({id, automateName}) => {
 
@@ -64,10 +65,15 @@ const ActionReactionAutomate = ({id, automateName}) => {
         );
       };
 
+    const navigate = useNavigate();
+    const handleBackClick = () => {
+        navigate("/workspace");
+    }
+
 	return (
 		<div key={id} className={styles.actionReactionAutomateBody}>
             <div style={{paddingBottom: '15px'}}>
-			<Header CenterChildrenComponent={() => <PText width="50%" font={fonts.openSans} fontWeight={fontWeights.bold} text={automateName} textAlign={true}/>} rightIconColor={colors.white} isRightIconClickable={false} onClickIconRight={() => {}} isContentCenter={false}/>
+			<Header CenterChildrenComponent={() => <PText width="50%" font={fonts.openSans} fontWeight={fontWeights.bold} text={automateName} textAlign={true}/>} rightIconColor={colors.white} isRightIconClickable={false} isContentCenter={false} onClickIconLeft={handleBackClick}/>
             </div>
             <div className={styles.actionReactionAutomateContainer}>
                 <div style={{paddingLeft: '20px', paddingTop: '15px', paddingBottom: '15px'}}>
@@ -104,7 +110,7 @@ const ActionReactionAutomate = ({id, automateName}) => {
                     <IconButton height="60px" buttonText='Save' width="90%" iconSrc='Plus' iconColor={colors.white} iconSize="30px" isIcon={true} isImage={false} backgroundColor={colors.darkPurple} textColor={colors.white} hoverBackgroundColor={colors.darkPurple} />
                 </div>
             )}
-            <BottomNavbar/>
+            <BottomNavbar itemPosition={"Workspace"}/>
 		</div>
 	);
 };

@@ -10,6 +10,7 @@ import PrimaryInput from "../../components/Inputs/PrimaryInput";
 import BottomNavbar from "../../components/navbar/BottomNavbar";
 import Popup from "../../components/popup/Popup";
 import IconButton from "../../components/buttons/IconButton";
+import {useNavigate} from "react-router-dom/dist";
 
 const WorkspaceEdit = ({id, name, description}) => {
     const [nameValue, setNameValue] = useState(name);
@@ -49,9 +50,14 @@ const WorkspaceEdit = ({id, name, description}) => {
         setIsOpenPopup(false);
     }
 
+    const navigate = useNavigate();
+    const handleItemClick = () => {
+        navigate("/workspace");
+    }
+
     return (
         <div key={id} className={styles.workspaceEditBody}>
-            <Header rightIconColor={colors.white} leftIconSize="30px"/>
+            <Header rightIconColor={colors.white} leftIconSize="30px" onClickIconLeft={handleItemClick}/>
             <div style={{width: '100%'}}>
                 <div style={{paddingBottom: '60px', paddingLeft: '20px', paddingRight: '20px'}}>
                     <PText text='Workspace parameters' fontWeight={fontWeights.bold} font={fonts.openSans} color={colors.lightBlack} size="21px"/>
