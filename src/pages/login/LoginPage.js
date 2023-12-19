@@ -34,14 +34,14 @@ const LoginPage = () => {
         setIsOpenPopup(false);
     };
 
-    const handleConnect = () => {
-        console.log("ICI");
-        callApi('/login', 'POST', {username: username, password: password});
-    };
+    //const handleConnect = () => {
+      //  console.log("ICI");
+        //callApi('/login', 'POST', {username: username, password: password});
+    //};
 
     const handleLogin = async () => {
+        navigate("/acceuil")
         const response = await callApi('/login', 'POST', { username, password });
-
         console.log(response);
     };
 

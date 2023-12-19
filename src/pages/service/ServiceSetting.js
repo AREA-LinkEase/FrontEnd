@@ -6,6 +6,8 @@ import styles from "./ServiceSetting.module.css";
 import H1Text from "../../components/texts/H1Text";
 import BottomNavbar from "../../components/navbar/BottomNavbar";
 import Popup from "../../components/popup/Popup";
+import Header from "../../components/Header";
+import {useNavigate} from "react-router-dom/dist";
 
 const ServiceSetting = ({
                      color = "gray",
@@ -34,6 +36,11 @@ const ServiceSetting = ({
         setIsOpenPopup(false);
     };
 
+    const navigate = useNavigate();
+    const handleClickLeftIcon = () => {
+        navigate("/service");
+    }
+
     return (
         <div>
             <div style={{
@@ -44,20 +51,10 @@ const ServiceSetting = ({
                 width: '100%'
             }}>
                 <div className={styles.serviceBackground}>
-                    <div
-                        style={{cursor: 'pointer',
-                            marginLeft: 'auto',
-                            marginRight: '-12px',
-                            position: "fixed",
-                            top: "55px",
-                            right: "95%"
-                        }}>
-                        {React.createElement(Settings, {
-                            size: '24px',
-                            color: colors.white,
-                        })}
+                    <div style={{height: '100px', position: "fixed", top: '20px', width: "100%", zIndex:"1"}}>
+                        <Header leftIconSrc={Settings} onClickIconLeft={handleClickLeftIcon} rightIconName={""} backgroundColor={color} leftIconColor={colors.white}/>
                     </div>
-                    <img src={logo} alt="logo" />
+                    <img src={logo} alt="logo" style={{zIndex: "2"}} />
                     <H1Text text={title} size={"24px"}/>
                 </div>
             </div>
@@ -72,7 +69,7 @@ const ServiceSetting = ({
             { isOpenPopup && (
                 <Popup onPress={() => {handleClickDeleteButttonPopup('id')}} leavePopup={handleClosePopup} Title={`Are you sure to delete ${'serviceName'} service?!`} Content="You will no longer have access to this service." TextButton="Confirm" />
             )}
-            <BottomNavbar />
+            <BottomNavbar itemPosition={"Search"}/>
         </div>
     );
 }

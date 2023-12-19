@@ -6,6 +6,7 @@ import { colors } from "../../style/color";
 import BottomNavbar from "../../components/navbar/BottomNavbar";
 import SwitchButton from "../../components/switches/SwitchButton";
 import adjustColorBrightness from "../../utils/adjustColorBrightness";
+import {useNavigate} from "react-router-dom";
 
 
 const HomeWorkspace = () => {
@@ -43,14 +44,14 @@ const HomeWorkspace = () => {
 		name: 'THOAAAAMS',
 		creator: 'Adilou le fifou',
 		people: 3500000,
-		color: colors.purple,
+		color: colors.lightGrey,
 		access: "Public"
 	},
 	{
 		name: 'PIZZA BIEN GARNIE',
 		creator: 'Adilou le fifou',
 		people: 3500000,
-		color: colors.purple,
+		color: colors.lightPurple,
 		access: "Private"
 	}]);
 
@@ -78,15 +79,22 @@ const HomeWorkspace = () => {
 		countWorkspaceTypes();
 	}, [workspaceList]);
 
+
+	const navigate = useNavigate();
+
+	const handleItemClick = () => {
+		navigate("/workspace");
+	}
+
 	return (
     <div className={styles.homeWorkspaceBody}>
       <div style={{ paddingLeft: '4%', position: 'fixed', width: '100%', zIndex: 1000 }}>
         <Header
           isFilter={true}
-					isNumberInfo={true}
+		  isNumberInfo={true}
           filterSelected={workspaceAccessValue}
           setFilterSelected={setWorkspaceAccessValue}
-					numberItems={numberItems}
+		  numberItems={numberItems}
         />
       </div>
       <div
@@ -117,6 +125,7 @@ const HomeWorkspace = () => {
                     isSelectable={false}
                     componentId={index}
                     isClickable={true}
+					onPressButton={handleItemClick}
                     backgroundColor={workspace.access === 'Public' ? workspace.color : '#777777'}
                     borderColor={workspace.access === 'Public' ? workspace.color : '#777777'}
                     width="90%"
@@ -126,7 +135,7 @@ const HomeWorkspace = () => {
                         backgroundColorOn={adjustColorBrightness(workspace.color, -50)}
                         colorOn={workspace.color}
                         textColorOn={colors.white}
-                        isOn={workspace.access === "Private" ? false : true}
+                        isOn={workspace.access !== "Private"}
                         isLittle={true}
                         width="120px"
                         height="20px"
@@ -138,7 +147,7 @@ const HomeWorkspace = () => {
           </div>
         ) : null}
         <div>
-          <BottomNavbar />
+          <BottomNavbar itemPosition={"Workspace"}/>
         </div>
       </div>
     </div>

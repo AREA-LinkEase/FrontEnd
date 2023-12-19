@@ -10,6 +10,7 @@ import * as Icon from 'react-feather';
 import BasicText from "../../components/texts/BasicText";
 import { formatNumber } from "../../utils/formatNumber";
 import PrimaryInput from "../../components/Inputs/PrimaryInput";
+import {useNavigate} from "react-router-dom/dist";
 
 const NumberPeople = ({numberPeople}) => {
 
@@ -71,7 +72,7 @@ const SearchPage = () => {
 		name: 'THOAAAAMS',
 		creator: 'Adilou le fifou',
 		people: 3500000,
-		color: colors.purple,
+		color: colors.lightPurple,
 		type: "Workspace"
 	},
 	{
@@ -86,7 +87,7 @@ const SearchPage = () => {
 		name: 'PIZZA BIEN GARNIE',
 		creator: 'Adilou le fifou',
 		people: 3500000,
-		color: colors.purple,
+		color: colors.lightPurple,
 		type: "Automate"
 	},
 	{
@@ -111,11 +112,18 @@ const SearchPage = () => {
 		type: "Service",
 	},
 ]);
-
-    const handleClickOnService = (itemId) => {
-        console.log(`ItemId : ${itemId}`);
-        return;
+	const navigate = useNavigate();
+    const handleClickOnService = () => {
+        navigate("/service")
     };
+
+	const handleClickAutomate = () => {
+			navigate("/actionReactionAutomate")
+	};
+
+	const handleClickWorkspace = () => {
+			navigate("/workspace")
+	}
 
 	return (
     <div className={styles.searchPageBody}>
@@ -172,6 +180,8 @@ const SearchPage = () => {
                         isClickable={true}
                         backgroundColor={item.color}
                         borderColor={item.color}
+						onPressButton={item.type === 'Workspace' ? () => handleClickWorkspace() : () => handleClickAutomate()}
+						//onPressButton={(item.type === 'Workspace') ? console.log('ok') : (item.type === 'Automate') ? handleClickAutomate(): null}
                         height="155px"
                         ComponentChildren={() => <NumberPeople numberPeople={item.people} />}
                     />
@@ -182,7 +192,7 @@ const SearchPage = () => {
     </div>
   ) : null}
         <div>
-          <BottomNavbar />
+          <BottomNavbar itemPosition={"Search"}/>
         </div>
       </div>
     </div>
