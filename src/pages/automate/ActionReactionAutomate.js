@@ -11,63 +11,59 @@ import BottomNavbar from "../../components/navbar/BottomNavbar";
 import IconButton from "../../components/buttons/IconButton";
 import SelectComponent from "../../components/selects/SelectComponent";
 import {useNavigate} from "react-router-dom/dist";
+import {putAutomate} from "../../models/automates";
 
 const ActionReactionAutomate = ({id, automateName}) => {
 
     const [isOpenMenuTrigger, setIsOpenMenuTrigger] = useState(false);
     const [triggerValue, setTriggerValue] = useState('');
-    const [selectedTriggerOption, setSelectedTriggerOption] = useState({id: '', value: ''});
+    const [selectedTriggerOption, setSelectedTriggerOption] = useState({id: -1, value: ''});
 
     const [isOpenMenuAction, setIsOpenMenuAction] = useState(false);
     const [actionValue, setActionValue] = useState('');
-    const [selectedActionOption, setSelectedActionOption] = useState({id: '', value: ''});
+    const [selectedActionOption, setSelectedActionOption] = useState({id: -1, value: ''});
 
     const triggers = [
         {
-            id: '1',
-            value: "Quand j'écoute l'album de ...",
+            id: 1,
+            value: "Quand j'écoute",
         },
         {
-            id: '2',
-            value: "Quand je coupe la musique ...",
-        },
-        {
-            id: '3',
-            value: "Quand je lance la musique ...",
-        },
-        {
-            id: '4',
-            value: "Chaque trois musiques de ...",
-        },
-        {
-            id: '5',
-            value: "Au bout de 50 minutes écoutés du chanteur ...",
-        },
-        {
-            id: '6',
-            value: "Quand il y'a la musique gamberge de Gazo ...",
+            id: 0,
+            value: "Quand j'écoute pas",
         }
     ]
 
     const actions = [
         {
-            id: '1',
-            value: "Met la musique de ...",
+            id: 1,
+            value: "Rajoute à la queue ...",
+        },
+        {
+            id: 0,
+            value: "Relancer la musique",
         }
     ]
 
     const areStatesNotEmpty = () => {
         return (
           selectedTriggerOption.id !== '' &&
-          triggerValue !== '' &&
-          selectedActionOption.id !== '' &&
-          actionValue !== ''
+          selectedActionOption.id !== ''
         );
       };
 
     const navigate = useNavigate();
     const handleBackClick = () => {
         navigate("/workspace");
+    }
+
+    const onSubmit = () => {
+        let trigger = selectedTriggerOption.id
+        let action = selectedActionOption.id
+        let triggerOption = triggerValue
+        let actionOption = actionValue
+
+        putAutomate()
     }
 
 	return (
@@ -107,7 +103,7 @@ const ActionReactionAutomate = ({id, automateName}) => {
             </div>
             { areStatesNotEmpty() && (
                 <div style={{position: 'fixed', bottom: 80, width: '100%', textAlign: 'center'}}>
-                    <IconButton height="60px" buttonText='Save' width="90%" iconSrc='Plus' iconColor={colors.white} iconSize="30px" isIcon={true} isImage={false} backgroundColor={colors.darkPurple} textColor={colors.white} hoverBackgroundColor={colors.darkPurple} />
+                    <IconButton height="60px" buttonText='Save' width="90%" iconSrc='Plus' iconColor={colors.white} iconSize="30px" isIcon={true} isImage={false} backgroundColor={colors.darkPurple} textColor={colors.white} hoverBackgroundColor={colors.darkPurple} onPressButton={onSubmit} />
                 </div>
             )}
             <BottomNavbar itemPosition={"Workspace"}/>

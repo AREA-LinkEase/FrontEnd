@@ -37,16 +37,16 @@ export async function postAutomate(title, workspace_id, workflow, variables, sec
     return sendRequest(`/automates/${workspace_id}`, opts);
 }
 
-export async function putAutomate(title, workspace_id, workflow, variables, secrets) {
+export async function putAutomate(workspace_id, action_option, action, trigger, trigger_option) {
     const opts = {
         method: "POST",
         headers: getHeader(),
         body: JSON.stringify({
-            title: title,
             workspace_id: workspace_id,
-            workflow: workflow,
-            variables: variables,
-            secrets: secrets
+            action_option,
+            action: action,
+            trigger: trigger,
+            trigger_option: trigger_option,
         })
     };
     return sendRequest(`/automates/${workspace_id}`, opts);
