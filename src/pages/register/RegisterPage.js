@@ -8,8 +8,7 @@ import PrimaryButton from "../../components/buttons/PrimaryButton";
 import { useLocation, useNavigate } from "react-router-dom";
 import { isValidEmail } from "../../utils/isValidEmail";
 import Popup from "../../components/popup/Popup";
-import callApi from "../../utils/callApi";
-import { registerUser } from "../../models/register";
+import { register } from "../../models/users";
 
 const RegisterPage = ({
   Title = "Quel est ton email ?",
@@ -106,8 +105,21 @@ const RegisterPage = ({
         } else {
             setPassword(inputValue);
             setInputValue('');
-            // appelApi
-
+            const response = await register(username, email, password);
+            console.log(response);
+            if (response.status === 409) {
+                navigate("/login", {
+                    state: {
+                        isNew: true,
+                    },
+                });
+            } else if (response.status === 409) {
+                setIsError(true);
+                setErrorInfo('already exist');
+            } else {
+                setIsError(true);
+                setErrorInfo('unknown');
+            }
         }
     };
 
@@ -174,7 +186,7 @@ const RegisterPage = ({
         />
         </div>
         { (isError && errorInfo !== '') && (
-            <Popup onPress={handleClickButttonPopup} leavePopup={handleClosePopup} Title={`An error occured.`} Content={errorInfo === "already exist" ? "This user already Exist." : "An unexpected error has occurred."} TextButton="Continue" />
+            <Popup onPress={handleClickButttonPopup} leavePopup={handleClosePopup} Title={`An error occured.`} Content={errorInfo === "already exist" ? "This user already exist." : "An unexpected error has occurred."} TextButton="Continue" />
         )}
         { (isError && errorInfo === '') && (
             <Popup onPress={handleClickButttonPopup} leavePopup={handleClosePopup} Title={`An error occured.`} Content={typeValue === "email" ? "Content of email is wrong." : "Content of password is wrong."} TextButton="Continue" />
@@ -198,26 +210,3 @@ RegisterPage.propTypes = {
 };
 
 export default RegisterPage;
-
-
-// try {
-//     const response = await callApi('/register', 'POST', { username: username, password: inputValue, email: email });
-//     console.log(response);
-//     if (response.status === 201) {
-//         navigate("/login", {
-//             state: {
-//                 isNew: true,
-//             },
-//         });
-//     } else if (response.status === 409) {
-//         console.log('ici');
-//         setIsError(true);
-//         setErrorInfo('already exist');
-//     } else {
-//         console.log('i');
-//         setIsError(true);
-//         setErrorInfo('unknown');
-//     }
-// } catch (error) {
-//     console.log(error);
-// }

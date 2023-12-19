@@ -6,7 +6,7 @@ import IconButton from "../../components/buttons/IconButton";
 import {svgs} from "../../style/svgs/svgList";
 import { useLocation, useNavigate } from "react-router-dom/dist";
 import Popup from "../../components/popup/Popup";
-import callApi from "../../utils/callApi";
+import { login } from "../../models/users";
 
 const LoginPage = () => {
     const [username, setUsername] = useState("");
@@ -36,23 +36,21 @@ const LoginPage = () => {
         setIsError(false);
         setIsOpenPopup(false);
     };
+
     const handleLogin = async () => {
         if (username === '' || password === '') {
             console.log("Username or password is empty");
             return;
         }
         try {
-            const response = await callApi('/login', 'POST', {username: username, password: password });
-            console.log(response);
-            const jwt = response.jwt;
-            console.log("Token:", jwt);
+            const response = await login(username, password);
+            const jwt = response.content.jwt;
             if (jwt) {
                 localStorage.setItem('token', jwt);
-                navigate("/home");
+                navigate("/accueil");
             } else {
                 setIsOpenPopup(true);
                 setIsError(true);
-                console.log("Token manquant dans la réponse");
             }
     
         } catch (error) {
@@ -86,7 +84,7 @@ const LoginPage = () => {
                 <p onClick={handleSignUpClick} style={{cursor: 'pointer'}} className={styles.loginSingUpTextLink}>Sign Up</p>
             </div>
             { isOpenPopup && (
-                <Popup onPress={handleClickButttonPopup} leavePopup={handleClosePopup} Title={!isError ? 'Welcome to LinkEase !' : 'An error occured.'} Content={!isError ? "Your account creation is successful": 'Bad username or password'} TextButton="Continue" />
+                <Popup onPress={handleClickButttonPopup} leavePopup={handleClosePopup} Title={!isError ? 'Welcome to LinkEase !' : 'An error occured.'} Content={!isError ? "Your account has been successfully created.": 'Bad username or password'} TextButton="Continue" />
             )}
         </div>
     );

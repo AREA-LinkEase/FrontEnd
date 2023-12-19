@@ -7,59 +7,81 @@ import BottomNavbar from "../../components/navbar/BottomNavbar";
 import SwitchButton from "../../components/switches/SwitchButton";
 import adjustColorBrightness from "../../utils/adjustColorBrightness";
 import {useNavigate} from "react-router-dom";
+import { getWorkspaces } from "../../models/workspaces";
+import Popup from "../../components/popup/Popup";
 
 
 const HomeWorkspace = () => {
 	
 	const [workspaceAccessValue, setWorkspaceAccessValue] = useState("All");
-	const [workspaceList] = useState([{
-		name: 'SpotifyBangar',
-		creator: 'Adilou le fifou',
-		people: 3500000,
-		color: colors.lightPurple,
-		access: "Public"
-	},
-	{
-		name: 'Baboss',
-		creator: 'Adilou le fifou',
-		people: 3500000,
-		color: colors.darkGrey,
-		access: "Private"
-	},
-	{
-		name: 'Mamen',
-		creator: 'Adilou le fifou',
-		people: 3500000,
-		color: colors.lightPurple,
-		access: "Public"
-	},
-	{
-		name: '3ataï',
-		creator: 'Adilou le fifou',
-		people: 3500000,
-		color: colors.lightlightGrey,
-		access: "Public"
-	},
-	{
-		name: 'THOAAAAMS',
-		creator: 'Adilou le fifou',
-		people: 3500000,
-		color: colors.lightGrey,
-		access: "Public"
-	},
-	{
-		name: 'PIZZA BIEN GARNIE',
-		creator: 'Adilou le fifou',
-		people: 3500000,
-		color: colors.lightPurple,
-		access: "Private"
-	}]);
+  const [isError, setIsError] = useState(false);
+  const [workspaces, setWorkspaces] = useState([{}]);
+	// const [workspaceList] = useState([{
+	// 	name: 'SpotifyBangar',
+	// 	creator: 'Adilou le fifou',
+	// 	people: 3500000,
+	// 	color: colors.lightPurple,
+	// 	access: "Public"
+	// },
+	// {
+	// 	name: 'Baboss',
+	// 	creator: 'Adilou le fifou',
+	// 	people: 3500000,
+	// 	color: colors.darkGrey,
+	// 	access: "Private"
+	// },
+	// {
+	// 	name: 'Mamen',
+	// 	creator: 'Adilou le fifou',
+	// 	people: 3500000,
+	// 	color: colors.lightPurple,
+	// 	access: "Public"
+	// },
+	// {
+	// 	name: '3ataï',
+	// 	creator: 'Adilou le fifou',
+	// 	people: 3500000,
+	// 	color: colors.lightlightGrey,
+	// 	access: "Public"
+	// },
+	// {
+	// 	name: 'THOAAAAMS',
+	// 	creator: 'Adilou le fifou',
+	// 	people: 3500000,
+	// 	color: colors.lightGrey,
+	// 	access: "Public"
+	// },
+	// {
+	// 	name: 'PIZZA BIEN GARNIE',
+	// 	creator: 'Adilou le fifou',
+	// 	people: 3500000,
+	// 	color: colors.lightPurple,
+	// 	access: "Private"
+	// }]);
 
 	const [numberItems, setNumberItems] = useState({
     "All": 0,
     "Private": 0,
     "Public": 0,
   });
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await getWorkspaces();
+        console.log(response);
+        if (response.status === 200) {
+          setWorkspaces(response.content.result);
+        } else {
+          setIsError(true);
+        }
+      } catch (error) {
+          console.error("Error fetching workspaces:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
 	useEffect(() => {
 		const countWorkspaceTypes = () => {
@@ -69,16 +91,15 @@ const HomeWorkspace = () => {
         "Public": 0,
       };
 
-      workspaceList.forEach((workspace) => {
+      workspaces.forEach((workspace) => {
         counts.All += 1;
-        counts[workspace.access] += 1;
+        counts[workspace.is_private ? "Private" : "Public"] += 1;
       });
 
       setNumberItems(counts);
 		}
 		countWorkspaceTypes();
-	}, [workspaceList]);
-
+	}, [workspaces]);
 
 	const navigate = useNavigate();
 
@@ -101,15 +122,15 @@ const HomeWorkspace = () => {
         className={styles.homeWorkspaceContainer}
         style={{ marginTop: '80px'}}
       >
-        {workspaceList.length !== 0 ? (
+        {workspaces.length !== 0 ? (
           <div className={styles.homeWorkspaceList}>
-            {workspaceList
-              .filter(
-                (workspace) =>
-                  workspaceAccessValue === "All" ||
-                  workspace.access
-                    .toLowerCase()
-                    .includes(workspaceAccessValue.toLowerCase())
+            {workspaces
+              .filter((workspace) =>
+              workspaceAccessValue === "All"
+                ? true
+                : workspaceAccessValue === "Private"
+                ? workspace.is_private
+                : !workspace.is_private
               )
               .map((workspace, index, filteredList) => (
                 <div
@@ -120,22 +141,22 @@ const HomeWorkspace = () => {
                   }}
                 >
                   <TitleTextChildButton
-                    title={workspace.name}
+                    title={workspace.title}
                     text={`Par **${workspace.creator}**`}
                     isSelectable={false}
                     componentId={index}
                     isClickable={true}
-					onPressButton={handleItemClick}
-                    backgroundColor={workspace.access === 'Public' ? workspace.color : '#777777'}
-                    borderColor={workspace.access === 'Public' ? workspace.color : '#777777'}
+					          onPressButton={handleItemClick}
+                    backgroundColor={workspace.enabled === true ? colors.lightPurple : '#777777'}
+                    borderColor={workspace.enabled === true ? colors.lightPurple : '#777777'}
                     width="90%"
                     ComponentChildren={() => (
                       <SwitchButton
                         textColorOff={colors.white}
-                        backgroundColorOn={adjustColorBrightness(workspace.color, -50)}
-                        colorOn={workspace.color}
+                        backgroundColorOn={adjustColorBrightness(colors.lightPurple, -50)}
+                        colorOn={colors.lightPurple}
                         textColorOn={colors.white}
-                        isOn={workspace.access !== "Private"}
+                        isOn={workspace.access !== workspace.is_private}
                         isLittle={true}
                         width="120px"
                         height="20px"
@@ -147,9 +168,12 @@ const HomeWorkspace = () => {
           </div>
         ) : null}
         <div>
-          <BottomNavbar itemPosition={"Workspace"}/>
+          <BottomNavbar itemPosition={"Workspace"} isPopupVisible={isError}/>
         </div>
       </div>
+      { isError && (
+        <Popup onPress={handleClickButttonPopup} leavePopup={handleClosePopup} Title={'Error'} Content={'Error'} TextButton="Continue" />
+      )}
     </div>
   );
 };

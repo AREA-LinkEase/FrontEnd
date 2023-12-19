@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import PropTypes from 'prop-types';
 import styles from "./CreateWorkspace.module.css";
 import Header from "../../components/Header";
@@ -13,6 +13,9 @@ import { colors } from "../../style/color";
 import { formatNumber } from "../../utils/formatNumber";
 import BottomNavbar from "../../components/navbar/BottomNavbar";
 import IconButton from "../../components/buttons/IconButton";
+import { getWorkspaceView, postWorkspace } from "../../models/workspaces";
+import { useNavigate } from "react-router";
+import Popup from "../../components/popup/Popup";
 
 const NumberPeople = ({numberPeople}) => {
 
@@ -36,7 +39,10 @@ const NumberPeople = ({numberPeople}) => {
 
 const CreateWorkspace = () => {
 
+	const navigate = useNavigate();
 	const [nameValue, setNameValue] = useState("");
+	const [popupSuccess, setPopupSuccess] = useState(false);
+	const [popupError, setPopupError] = useState(false);
 	const [workspaceSearchValue, setWorkspaceSearchValue] = useState("");
 	const workspaceList = [{
 		name: 'SpotifyBangar',
@@ -75,6 +81,25 @@ const CreateWorkspace = () => {
 		color: colors.purple,
 	}];
 
+	useEffect(() => {
+		const fetchData = async () => {
+		  try {
+			const response = await getWorkspaceView();
+			console.log(response);
+			// if (response.status === 200) {
+			//   setWorkspaces(response.content.result);
+			// } else {
+			//   console.log('ok');
+			//   setIsError(true);
+			// }
+		  } catch (error) {
+			  console.error("Error fetching workspaces:", error);
+		  }
+		};
+  
+		fetchData();
+	}, []);
+
   const [selectedWorkspaces, setSelectedWorkspaces] = useState([]);
 
   const handleSelect = (index) => {
@@ -86,6 +111,42 @@ const CreateWorkspace = () => {
       setSelectedWorkspaces([...selectedWorkspaces, index]);
     }
   };
+
+  const handleClickButttonPopup = () => {
+	if (popupSuccess) {
+		setPopupError(false);
+		setPopupSuccess(false);
+		navigate('/homeWorkspace');
+		return;
+	}
+	setPopupError(false);
+	setPopupSuccess(false);
+  };
+
+  const handleClosePopup = () => {
+	if (popupSuccess) {
+		setPopupError(false);
+		setPopupSuccess(false);
+		navigate('/homeWorkspace');
+		return;
+	}
+	setPopupError(false);
+	setPopupSuccess(false);
+  };
+
+	const handleAddWorkspace = async () => {
+		try {
+			const response = await postWorkspace(nameValue, "description par défaut", true);
+			console.log(response);
+			if (response.status === 201) {
+				setPopupSuccess(true);
+			} else {
+				setPopupError(true);
+			}
+		} catch (error) {
+			console.error("Error fetching workspaces:", error);
+		}
+	};
 
 	return (
 		<div className={styles.createWorkspaceBody}>
@@ -128,13 +189,19 @@ const CreateWorkspace = () => {
 					}
 					{ (selectedWorkspaces.length !== 0 || nameValue !== "") && (
 						<div style={{position: 'fixed', bottom: 80, width: '100%'}}>
-							<IconButton height="70px" buttonText='Add' width="90%" iconSrc='Plus' iconColor={colors.white} iconSize="30px" isIcon={true} isImage={false} backgroundColor={colors.darkPurple} textColor={colors.white} hoverBackgroundColor={colors.darkPurple} />
+							<IconButton height="70px" onPressButton={handleAddWorkspace} buttonText='Add' width="90%" iconSrc='Plus' iconColor={colors.white} iconSize="30px" isIcon={true} isImage={false} backgroundColor={colors.darkPurple} textColor={colors.white} hoverBackgroundColor={colors.darkPurple} />
 						</div>
 					)}
 				<div>
 					<BottomNavbar itemPosition={"Create"}/>
 				</div>
 			</div>
+			{ popupError && (
+				<Popup onPress={handleClickButttonPopup} leavePopup={handleClosePopup} Title={'Error'} Content={'An error at creation.'} TextButton="Continue" />
+			)}
+			{ popupSuccess && (
+				<Popup onPress={handleClickButttonPopup} leavePopup={handleClosePopup} Title={'Success'} Content={'Your workspace has been created.'} TextButton="Continue" />
+			)}
 		</div>
 	);
 };

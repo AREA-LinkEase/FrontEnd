@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import LoginPage from './pages/login/LoginPage';
 import RegisterPage from "./pages/register/RegisterPage";
@@ -15,6 +15,7 @@ import CreateAutomate from "./pages/automate/CreateAutomate";
 import Service from "./pages/service/Service";
 import ServiceSetting from "./pages/service/ServiceSetting";
 import ProtectedRoute from './components/ProtectedRoute';
+import { getWorkspaces } from './models/workspaces';
 
 const App = () => {
     const workspaceList = [{
@@ -38,7 +39,6 @@ const App = () => {
         // Add more user objects as needed
     ];
 
-
     return (
     <Router>
       <Routes>
@@ -60,7 +60,7 @@ const App = () => {
           {workspaceList.map((workspace, index) => (
               <Route key={index} path="/workspace" element={<Workspace workspaceValues={workspace} />} />
           ))}
-          <Route path="/acceuil" element={
+          <Route path="/accueil" element={
             <ProtectedRoute>
               <AccueilPage/>
             </ProtectedRoute>
