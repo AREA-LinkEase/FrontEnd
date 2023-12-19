@@ -5,11 +5,11 @@ export function setToken(token) {
 export function getHeader() {
     const token = localStorage.getItem('token');
     const headers = {
-      'Content-Type': 'application/json',
+        'Content-Type': 'application/json',
     };
     if (token) {
-      headers['Authorization'] = `${token}`;
+        headers['Authorization'] = `${token}`;
     }
-  
+
     return headers;
 }
