@@ -21,6 +21,13 @@ export async function getWorkspaces() {
     return sendRequest(`/workspaces`, opts);
 }
 
+export async function getWorkspaceView() {
+    const opts = {
+        headers: getHeader()
+    };
+    return sendRequest(`/workspaces/viewWorkspaces`, opts);
+}
+
 export async function getWorkspaceById(workspace_id) {
     const opts = {
         headers: getHeader()
