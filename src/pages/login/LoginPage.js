@@ -12,6 +12,7 @@ const LoginPage = () => {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [isOpenPopup, setIsOpenPopup] = useState(false);
+    const [isError, setIsError] = useState(false);
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -27,23 +28,40 @@ const LoginPage = () => {
     };
 
     const handleClickButttonPopup = () => {
+        setIsError(false);
         setIsOpenPopup(false);
     };
 
     const handleClosePopup = () => {
+        setIsError(false);
         setIsOpenPopup(false);
     };
-
-    //const handleConnect = () => {
-      //  console.log("ICI");
-        //callApi('/login', 'POST', {username: username, password: password});
-    //};
-
     const handleLogin = async () => {
-        navigate("/acceuil")
-        const response = await callApi('/login', 'POST', { username, password });
-        console.log(response);
+        if (username === '' || password === '') {
+            console.log("Username or password is empty");
+            return;
+        }
+        try {
+            const response = await callApi('/login', 'POST', {username: username, password: password });
+            console.log(response);
+            const jwt = response.jwt;
+            console.log("Token:", jwt);
+            if (jwt) {
+                localStorage.setItem('token', jwt);
+                navigate("/home");
+            } else {
+                setIsOpenPopup(true);
+                setIsError(true);
+                console.log("Token manquant dans la réponse");
+            }
+    
+        } catch (error) {
+            console.log(error);
+            setIsOpenPopup(true);
+            setIsError(true);
+        }
     };
+    
 
     return (
         <div className={styles.loginBody}>
@@ -68,7 +86,7 @@ const LoginPage = () => {
                 <p onClick={handleSignUpClick} style={{cursor: 'pointer'}} className={styles.loginSingUpTextLink}>Sign Up</p>
             </div>
             { isOpenPopup && (
-                <Popup onPress={handleClickButttonPopup} leavePopup={handleClosePopup} Title={`Welcome to LinkEase !`} Content={"Your account creation is successful"} TextButton="Continue" />
+                <Popup onPress={handleClickButttonPopup} leavePopup={handleClosePopup} Title={!isError ? 'Welcome to LinkEase !' : 'An error occured.'} Content={!isError ? "Your account creation is successful": 'Bad username or password'} TextButton="Continue" />
             )}
         </div>
     );

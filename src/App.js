@@ -1,5 +1,5 @@
-import React from "react";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import LoginPage from './pages/login/LoginPage';
 import { Navigate } from "react-router-dom/dist";
 import RegisterPage from "./pages/register/RegisterPage";
@@ -15,6 +15,8 @@ import ActionReactionAutomate from "./pages/automate/ActionReactionAutomate";
 import CreateAutomate from "./pages/automate/CreateAutomate";
 import Service from "./pages/service/Service";
 import ServiceSetting from "./pages/service/ServiceSetting";
+import ProtectedRoute from './components/ProtectedRoute';
+
 const App = () => {
     const workspaceList = [{
         name: 'SpotifyBangar',
@@ -40,12 +42,10 @@ const App = () => {
 
     return (
     <Router>
-      <div>
       <Routes>
           <Route path="/" element={<Navigate to="/login" />}/>
           <Route path="/login" element={<LoginPage/>} />
           <Route path="/register" element={<RegisterPage ButtonText="Continue" rightIconSrcOff="EyeOff" rightIconSrcOn="Eye" Title="What is your Email ?" InputPlaceholder="Email" inputType="email" leftIconSrc="User"/>} />
-          <Route path="/acceuil" element={<AccueilPage/>}/>
           <Route path="/search" element={<SearchPage />}/>
           <Route path="/homeWorkspace" element={<HomeWorkspace/>}/>
           <Route path="/workspaceEdit" element={<WorkspaceEdit/>} />
@@ -61,10 +61,14 @@ const App = () => {
           {workspaceList.map((workspace, index) => (
               <Route key={index} path="/workspace" element={<Workspace workspaceValues={workspace} />} />
           ))}
+          <Route path="/acceuil" element={
+            <ProtectedRoute>
+              <AccueilPage/>
+            </ProtectedRoute>
+        }/>
       </Routes>
-      </div>
     </Router>
   );
-}
+};
 
 export default App;

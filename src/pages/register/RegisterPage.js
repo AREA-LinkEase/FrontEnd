@@ -9,6 +9,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { isValidEmail } from "../../utils/isValidEmail";
 import Popup from "../../components/popup/Popup";
 import callApi from "../../utils/callApi";
+import { registerUser } from "../../models/register";
 
 const RegisterPage = ({
   Title = "Quel est ton email ?",
@@ -31,7 +32,8 @@ const RegisterPage = ({
     const [buttonText, setButtonText] = useState(initialButtonText);
     const [inputType, setInputType] = useState(initialInputType);
     const [typeValue, setTypeValue] = useState(type);
-    const [isError, setIsError] = useState(false);  
+    const [isError, setIsError] = useState(false);
+    const [errorInfo, setErrorInfo] = useState('');
     const [email, setEmail] = useState('');
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
@@ -61,16 +63,18 @@ const RegisterPage = ({
     };
 
     const handleClickButttonPopup = () => {
+        setErrorInfo('');
         setIsError(false);
     };
 
     const handleClosePopup = () => {
+        setErrorInfo('');
         setIsError(false);
     };
 
     const rightIconName = isActive ? "isActiveIcon" : "isActiveIcon";
 
-    const handleClickButton = () => {
+    const handleClickButton = async () => {
         if (typeValue === "email") {
             setEmail(inputValue);
 
@@ -102,12 +106,8 @@ const RegisterPage = ({
         } else {
             setPassword(inputValue);
             setInputValue('');
-            callApi('/register', 'POST', {username: username, password: inputValue, email: email});
-            navigate("/login", {
-                state: {
-                    isNew: true,
-                },
-            });
+            // appelApi
+
         }
     };
 
@@ -173,7 +173,10 @@ const RegisterPage = ({
             width={"90%"}
         />
         </div>
-        { isError && (
+        { (isError && errorInfo !== '') && (
+            <Popup onPress={handleClickButttonPopup} leavePopup={handleClosePopup} Title={`An error occured.`} Content={errorInfo === "already exist" ? "This user already Exist." : "An unexpected error has occurred."} TextButton="Continue" />
+        )}
+        { (isError && errorInfo === '') && (
             <Popup onPress={handleClickButttonPopup} leavePopup={handleClosePopup} Title={`An error occured.`} Content={typeValue === "email" ? "Content of email is wrong." : "Content of password is wrong."} TextButton="Continue" />
         )}
     </div>
@@ -195,3 +198,26 @@ RegisterPage.propTypes = {
 };
 
 export default RegisterPage;
+
+
+// try {
+//     const response = await callApi('/register', 'POST', { username: username, password: inputValue, email: email });
+//     console.log(response);
+//     if (response.status === 201) {
+//         navigate("/login", {
+//             state: {
+//                 isNew: true,
+//             },
+//         });
+//     } else if (response.status === 409) {
+//         console.log('ici');
+//         setIsError(true);
+//         setErrorInfo('already exist');
+//     } else {
+//         console.log('i');
+//         setIsError(true);
+//         setErrorInfo('unknown');
+//     }
+// } catch (error) {
+//     console.log(error);
+// }
