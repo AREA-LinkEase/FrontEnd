@@ -1,7 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import LoginPage from './pages/login/LoginPage';
-import { Navigate } from "react-router-dom/dist";
 import RegisterPage from "./pages/register/RegisterPage";
 import AccueilPage from "./pages/accueil/AccueilPage";
 import Workspace from "./pages/workspace/Workspace";
