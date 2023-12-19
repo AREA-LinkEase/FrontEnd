@@ -8,7 +8,7 @@ export function getHeader() {
       'Content-Type': 'application/json',
     };
     if (token) {
-      headers['Authorization'] = `Bearer ${token}`;
+      headers['Authorization'] = `${token}`;
     }
   
     return headers;
