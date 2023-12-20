@@ -61,6 +61,10 @@ npm start
 - **pages:** Stocke la logique des pages.
 - **models:** Sert à effectuer des requêtes API.
 
+## Contribution
+
+Vous pourrez trouver les informations nécessaire sur [ce page](contributing.md)
+
 ## Contributeurs
 
 - Younes Bahri - DevOps, Développeur Front-End
