@@ -10,8 +10,8 @@ import SwitchButton from "../../components/switches/SwitchButton";
 import PrimaryButton from "../../components/buttons/PrimaryButton";
 import adjustColorBrightness from "../../utils/adjustColorBrightness";
 import TitleTextChildButton from "../../components/buttons/TitleTextChildButton";
-import {useNavigate} from "react-router-dom/dist";
-
+import {useLocation, useNavigate} from "react-router-dom/dist";
+import { getHeader } from "../../models/authUtils";
 
 const Service = ({
     color = "gray",
@@ -20,10 +20,19 @@ const Service = ({
     description = "Description du service je suis la description du service et je raconte que fait ce service et aussi comment il peut ettre utilise dans linkease"
                  }) => {
 
+    const location = useLocation();
+    const { id } = location.state || {};
     const [showIcon, setShowIcon] = useState(false);
     const Settings = Icon['Settings'];
     const handleClick = () => {
         setShowIcon(!showIcon);
+        try {
+            console.log('ID', id)
+            const token = getHeader().Authorization.split(' ')[1]
+            window.open(`http://135.181.165.228:8080/services/connect/${id}/${token}`, "_blank")
+        } catch (error) {
+            console.error("Error fetching service:", error);
+        }
     };
 
     const [BoxAccessValue, setBoxAccessValue] = useState("All");

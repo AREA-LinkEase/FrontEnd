@@ -155,14 +155,14 @@ const SearchPage = () => {
   useEffect(() => {
     const manuallyAddedServices = [
       {
-        id: '21',
+        id: '2',
         title: 'Spotify',
         color: '#1DB954',
         imgLink: 'https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/spotify-white-icon.png',
         type: "Service",
       },
       {
-        id: '25',
+        id: '1',
         title: 'Discord',
         color: '#7289da',
         imgLink: 'https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/discord-white-icon.png',
@@ -181,8 +181,13 @@ const SearchPage = () => {
 
 	const navigate = useNavigate();
 
-  const handleClickOnService = () => {
-        navigate("/service")
+  const handleClickOnService = (id) => {
+    console.log('SERVICE')
+        navigate("/service", {
+          state: {
+            id: id
+          }
+        })
   };
 
 	const handleClickAutomate = (automate) => {
