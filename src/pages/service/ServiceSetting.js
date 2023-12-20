@@ -7,7 +7,7 @@ import H1Text from "../../components/texts/H1Text";
 import BottomNavbar from "../../components/navbar/BottomNavbar";
 import Popup from "../../components/popup/Popup";
 import Header from "../../components/Header";
-import {useNavigate} from "react-router-dom/dist";
+import {useLocation, useNavigate} from "react-router-dom/dist";
 
 const ServiceSetting = ({
                      color = "gray",
@@ -18,6 +18,8 @@ const ServiceSetting = ({
 
         const [isOpenPopup, setIsOpenPopup] = useState(false);
         const Settings = Icon['ChevronLeft'];
+        const location = useLocation();
+    const { service } = location.state || {};
 
         
     const handleClickDeleteUser = (id) => {
@@ -54,8 +56,8 @@ const ServiceSetting = ({
                     <div style={{height: '100px', position: "fixed", top: '20px', width: "100%", zIndex:"1"}}>
                         <Header leftIconSrc={Settings} onClickIconLeft={handleClickLeftIcon} rightIconName={""} backgroundColor={color} leftIconColor={colors.white}/>
                     </div>
-                    <img src={logo} alt="logo" style={{zIndex: "2"}} />
-                    <H1Text text={title} size={"24px"}/>
+                    <img src={service.imgLink} alt="logo" style={{zIndex: "101", width: '100px', height: '100px'}}/>
+                    <H1Text text={service.title} size={"24px"}/>
                 </div>
             </div>
             <div className={styles.serviceSettingDetails}>

@@ -13,6 +13,8 @@ import { colors } from "../../style/color";
 import { formatNumber } from "../../utils/formatNumber";
 import BottomNavbar from "../../components/navbar/BottomNavbar";
 import IconButton from "../../components/buttons/IconButton";
+import { postAutomate } from "../../models/automates";
+import { useLocation, useNavigate } from "react-router";
 
 const NumberPeople = ({numberPeople}) => {
 
@@ -37,42 +39,27 @@ const NumberPeople = ({numberPeople}) => {
 const CreateAutomate = () => {
 
 	const [nameValue, setNameValue] = useState("");
+	const location = useLocation();
+	const navigate = useNavigate();
+	const { workspace, name } = location.state || {};
 	const [automateSearchValue, setAutomateSearchValue] = useState("");
 	const automateList = [{
-		name: 'SpotifyBangar',
-		creator: 'Adilou le fifou',
-		people: 3500000,
+		name: 'ListenTaylorSwift',
+		creator: 'Nadil',
+		people: 2350000,
 		color: colors.lightPurple,
 	},
 	{
-		name: 'Baboss',
-		creator: 'Adilou le fifou',
-		people: 3500000,
+		name: 'SendMessageIfMusique',
+		creator: 'Nouvo',
+		people: 4000,
 		color: colors.darkGrey
 	},
 	{
-		name: 'Mamen',
-		creator: 'Adilou le fifou',
-		people: 3500000,
+		name: 'PauseMusiqueIfMessage',
+		creator: 'Simon',
+		people: 35000,
 		color: colors.lightPurple,
-	},
-	{
-		name: '3ataï',
-		creator: 'Adilou le fifou',
-		people: 3500000,
-		color: colors.lightlightGrey,
-	},
-	{
-		name: 'THOAAAAMS',
-		creator: 'Adilou le fifou',
-		people: 3500000,
-		color: colors.purple,
-	},
-	{
-		name: 'PIZZA BIEN GARNIE',
-		creator: 'Adilou le fifou',
-		people: 3500000,
-		color: colors.purple,
 	}];
 
   const [selectedAutomates, setSelectedAutomates] = useState([]);
@@ -87,10 +74,39 @@ const CreateAutomate = () => {
     }
   };
 
+  const handleCreateAutomate = async () => {
+	try {
+		console.log(workspace.id);
+		const response = await postAutomate(nameValue, workspace.id); // ici
+		console.log(response);
+		if (response.status === 201) {
+			navigate("/workspace", {
+				state: {
+					workspace: workspace,
+					name: name,
+				},
+			});
+		} else {
+
+		}
+	} catch (error) {
+		console.error("Error fetching create automate:", error);
+	}
+  };
+
+  const handleClickBack = () => {
+	navigate("/workspace", {
+		state: {
+			workspace: workspace,
+			name: name,
+		},
+	});
+  };
+
 	return (
 		<div className={styles.createAutomateBody}>
 			<div>
-				<Header rightIconName=''/>
+				<Header rightIconName='' onClickIconLeft={handleClickBack}/>
 			</div>
 			<div className={styles.createAutomateContainer}>
 				<div className={styles.createAutomateTitle}>
@@ -128,7 +144,7 @@ const CreateAutomate = () => {
 					}
 					{ (selectedAutomates.length !== 0 || nameValue !== "") && (
 						<div style={{position: 'fixed', bottom: 80, width: '100%'}}>
-							<IconButton height="70px" buttonText='Add'width="90%" iconSrc='Plus' iconColor={colors.white} iconSize="30px" isIcon={true} isImage={false} backgroundColor={colors.darkPurple} textColor={colors.white} hoverBackgroundColor={colors.darkPurple} />
+							<IconButton height="70px" onPressButton={handleCreateAutomate} buttonText='Add'width="90%" iconSrc='Plus' iconColor={colors.white} iconSize="30px" isIcon={true} isImage={false} backgroundColor={colors.darkPurple} textColor={colors.white} hoverBackgroundColor={colors.darkPurple} />
 						</div>
 					)}
 				<div>

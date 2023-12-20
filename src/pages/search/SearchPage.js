@@ -159,6 +159,7 @@ const SearchPage = () => {
         title: 'Spotify',
         color: '#1DB954',
         imgLink: 'https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/spotify-white-icon.png',
+        description: 'Voici le service de Spotify',
         type: "Service",
       },
       {
@@ -166,6 +167,7 @@ const SearchPage = () => {
         title: 'Discord',
         color: '#7289da',
         imgLink: 'https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/discord-white-icon.png',
+        description: 'Voici le service de Discord',
         type: "Service",
       },
     ];
@@ -181,13 +183,12 @@ const SearchPage = () => {
 
 	const navigate = useNavigate();
 
-  const handleClickOnService = (id) => {
-    console.log('SERVICE')
-        navigate("/service", {
-          state: {
-            id: id
-          }
-        })
+  const handleClickOnService = (item) => {
+    navigate("/service", {
+      state: {
+        service: item
+      }
+    })
   };
 
 	const handleClickAutomate = (automate) => {
@@ -249,7 +250,7 @@ const SearchPage = () => {
                   serviceName={item.title}
                   backgroundColor={item.color}
                   onClickButton={() => {
-                    handleClickOnService(item.id);
+                    handleClickOnService(item);
                   }}
                 />
               </div>

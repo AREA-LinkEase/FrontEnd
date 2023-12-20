@@ -22,16 +22,16 @@ export async function getAutomateById(workspace_id, automate_id) {
     return sendRequest(`/automates/${workspace_id}/${automate_id}`, opts);
 }
 
-export async function postAutomate(title, workspace_id, workflow, variables, secrets) {
+export async function postAutomate(title, workspace_id) {
     const opts = {
         method: "POST",
         headers: getHeader(),
         body: JSON.stringify({
             title: title,
             workspace_id: workspace_id,
-            workflow: workflow,
-            variables: variables,
-            secrets: secrets
+            workflow: null,
+            variables: null,
+            secrets: null
         })
     };
     return sendRequest(`/automates/${workspace_id}`, opts);

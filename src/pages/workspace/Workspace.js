@@ -115,7 +115,13 @@ const Workspace = ({ workspaceValues }) => {
 	};
 
 	const handleClickNewAutomate = () => {
-		navigate("/createAutomate");
+		// navigate("/createAutomate");
+		navigate("/createAutomate", {
+            state: {
+				workspace: workspace,
+				name: name, 
+            },
+        });
 	};
 
 	const handleClickButttonPopup = () => {

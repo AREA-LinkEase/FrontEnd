@@ -13,7 +13,7 @@ import IconButton from "../../components/buttons/IconButton";
 import adjustColorBrightness from "../../utils/adjustColorBrightness";
 import ScrollLock from 'react-scrolllock';
 import {useLocation, useNavigate} from "react-router-dom/dist";
-import { getUser, getUserById } from "../../models/users";
+import { getIdByUsername, getUser, getUserById } from "../../models/users";
 
 const WorkspaceEditUsers = ({workspaceId, users}) => {
     const location = useLocation();
@@ -95,7 +95,8 @@ const WorkspaceEditUsers = ({workspaceId, users}) => {
 
     const handleAddUser = async () => {
         try {
-            const response = await getUser();
+            console.log(nameValue);
+            const response = await getIdByUsername(nameValue);
             console.log(response);
         } catch (error) {
             console.error("Error fetching user:", error);
@@ -110,6 +111,10 @@ const WorkspaceEditUsers = ({workspaceId, users}) => {
                     const isLastItem = index === userList.length - 1;
                     const paddingBottomStyle = isLastItem ? {paddingBottom: '80px'} : {paddingBottom: '20px'};
                     const username = usernames[index] || "";
+
+                    if (user === myUser.id) {
+                        return null;
+                    }
 
                     return (
                         <div key={index} style={paddingBottomStyle}>
