@@ -9,55 +9,15 @@ import adjustColorBrightness from "../../utils/adjustColorBrightness";
 import {useNavigate} from "react-router-dom";
 import { getWorkspaces } from "../../models/workspaces";
 import Popup from "../../components/popup/Popup";
+import { getUserById } from "../../models/users";
 
 
 const HomeWorkspace = () => {
 	
 	const [workspaceAccessValue, setWorkspaceAccessValue] = useState("All");
+  const [userName, setUsername] = useState("");
   const [isError, setIsError] = useState(false);
   const [workspaces, setWorkspaces] = useState([{}]);
-	// const [workspaceList] = useState([{
-	// 	name: 'SpotifyBangar',
-	// 	creator: 'Adilou le fifou',
-	// 	people: 3500000,
-	// 	color: colors.lightPurple,
-	// 	access: "Public"
-	// },
-	// {
-	// 	name: 'Baboss',
-	// 	creator: 'Adilou le fifou',
-	// 	people: 3500000,
-	// 	color: colors.darkGrey,
-	// 	access: "Private"
-	// },
-	// {
-	// 	name: 'Mamen',
-	// 	creator: 'Adilou le fifou',
-	// 	people: 3500000,
-	// 	color: colors.lightPurple,
-	// 	access: "Public"
-	// },
-	// {
-	// 	name: '3ataï',
-	// 	creator: 'Adilou le fifou',
-	// 	people: 3500000,
-	// 	color: colors.lightlightGrey,
-	// 	access: "Public"
-	// },
-	// {
-	// 	name: 'THOAAAAMS',
-	// 	creator: 'Adilou le fifou',
-	// 	people: 3500000,
-	// 	color: colors.lightGrey,
-	// 	access: "Public"
-	// },
-	// {
-	// 	name: 'PIZZA BIEN GARNIE',
-	// 	creator: 'Adilou le fifou',
-	// 	people: 3500000,
-	// 	color: colors.lightPurple,
-	// 	access: "Private"
-	// }]);
 
 	const [numberItems, setNumberItems] = useState({
     "All": 0,
@@ -66,6 +26,22 @@ const HomeWorkspace = () => {
   });
 
   useEffect(() => {
+    const fetchUserName = async () => {
+      try {
+        const id = workspaces[0].owner_id;
+        console.log(id);
+        const response = await getUserById(id);
+        console.log(response);
+        // if (response.status === 200) {
+        //   setWorkspaces(response.content.result);
+        // } else {
+        //   setIsError(true);
+        // }
+      } catch (error) {
+          console.error("Error fetching workspaces:", error);
+      }
+    };
+
     const fetchData = async () => {
       try {
         const response = await getWorkspaces();
@@ -80,7 +56,9 @@ const HomeWorkspace = () => {
       }
     };
 
+    
     fetchData();
+    fetchUserName();
   }, []);
 
 	useEffect(() => {
@@ -103,9 +81,21 @@ const HomeWorkspace = () => {
 
 	const navigate = useNavigate();
 
-	const handleItemClick = () => {
-		navigate("/workspace");
+	const handleItemClick = (workspace) => {
+		navigate("/workspace", {
+      state: {
+        workspace: workspace,
+      },
+    });
 	}
+
+  const handleClickButttonPopup = () => {
+    setIsError(false);
+  };
+
+  const handleClosePopup = () => {
+      setIsError(false);
+  };
 
 	return (
     <div className={styles.homeWorkspaceBody}>
@@ -146,7 +136,7 @@ const HomeWorkspace = () => {
                     isSelectable={false}
                     componentId={index}
                     isClickable={true}
-					          onPressButton={handleItemClick}
+					          onPressButton={() => {handleItemClick(workspace)}}
                     backgroundColor={workspace.enabled === true ? colors.lightPurple : '#777777'}
                     borderColor={workspace.enabled === true ? colors.lightPurple : '#777777'}
                     width="90%"
@@ -156,7 +146,7 @@ const HomeWorkspace = () => {
                         backgroundColorOn={adjustColorBrightness(colors.lightPurple, -50)}
                         colorOn={colors.lightPurple}
                         textColorOn={colors.white}
-                        isOn={workspace.access !== workspace.is_private}
+                        isOn={workspace.enabled}
                         isLittle={true}
                         width="120px"
                         height="20px"

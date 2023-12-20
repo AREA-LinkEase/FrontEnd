@@ -77,6 +77,7 @@ const LoginPage = () => {
             </div>
             <div className={styles.loginSocialMedia}>
                 <IconButton width={"90%"} marginBottomLeftIcon="20px"/>
+                <div style={{paddingBottom: '15px'}}/>
                 <IconButton width={"90%"} buttonText={"Microsoft"} marginBottomLeftIcon="20px" iconSrc={svgs.microsoft}/>
             </div>
             <div className={styles.loginSingUp}>

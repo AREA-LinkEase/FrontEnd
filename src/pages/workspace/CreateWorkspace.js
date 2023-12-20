@@ -43,55 +43,20 @@ const CreateWorkspace = () => {
 	const [nameValue, setNameValue] = useState("");
 	const [popupSuccess, setPopupSuccess] = useState(false);
 	const [popupError, setPopupError] = useState(false);
+	const [publicWorkspaces, setPublicWorkspaces] = useState([]);
 	const [workspaceSearchValue, setWorkspaceSearchValue] = useState("");
-	const workspaceList = [{
-		name: 'SpotifyBangar',
-		creator: 'Adilou le fifou',
-		people: 3500000,
-		color: colors.lightPurple,
-	},
-	{
-		name: 'Baboss',
-		creator: 'Adilou le fifou',
-		people: 3500000,
-		color: colors.darkGrey
-	},
-	{
-		name: 'Mamen',
-		creator: 'Adilou le fifou',
-		people: 3500000,
-		color: colors.lightPurple,
-	},
-	{
-		name: '3ataï',
-		creator: 'Adilou le fifou',
-		people: 3500000,
-		color: colors.lightlightGrey,
-	},
-	{
-		name: 'THOAAAAMS',
-		creator: 'Adilou le fifou',
-		people: 3500000,
-		color: colors.purple,
-	},
-	{
-		name: 'PIZZA BIEN GARNIE',
-		creator: 'Adilou le fifou',
-		people: 3500000,
-		color: colors.purple,
-	}];
 
 	useEffect(() => {
 		const fetchData = async () => {
 		  try {
 			const response = await getWorkspaceView();
 			console.log(response);
-			// if (response.status === 200) {
-			//   setWorkspaces(response.content.result);
-			// } else {
-			//   console.log('ok');
-			//   setIsError(true);
-			// }
+			if (response.status === 200) {
+				// console.log(response.content.result);
+				setPublicWorkspaces(response.content.result);
+			} else {
+			  setPopupError(true);
+			}
 		  } catch (error) {
 			  console.error("Error fetching workspaces:", error);
 		  }
@@ -148,10 +113,14 @@ const CreateWorkspace = () => {
 		}
 	};
 
+	const handleLeftIconClick = () => {
+		navigate('/homeWorkspace');
+	};
+
 	return (
 		<div className={styles.createWorkspaceBody}>
 			<div>
-				<Header rightIconName=''/>
+				<Header rightIconName='' onClickIconLeft={handleLeftIconClick}/>
 			</div>
 			<div className={styles.createWorkspaceContainer}>
 				<div className={styles.createWorkspaceTitle}>
@@ -164,23 +133,23 @@ const CreateWorkspace = () => {
 				<div className={styles.createWorkspaceInputWorkspace}>
 					<PrimaryInput leftIconName='Search' placeholder='Workspace search...' inputValue={workspaceSearchValue} setInputValue={setWorkspaceSearchValue} width="85%"/>
 				</div>
-					{workspaceList.length !== 0 ? (
+					{publicWorkspaces.length !== 0 ? (
 						<div className={styles.createWorkspaceList}>
-							{workspaceList
-								.filter(workspace => workspace.name.toLowerCase().includes(workspaceSearchValue.toLowerCase()))
+							{publicWorkspaces
+								.filter(workspace => workspace.title.toLowerCase().includes(workspaceSearchValue.toLowerCase()))
 								.map((workspace, index) => (
-									<div key={index} style={{ paddingBottom: index === workspaceList.length - 1 ? ((selectedWorkspaces.length !== 0 || nameValue !== "") ? '170px' : '90px') : '15px' }}>
+									<div key={index} style={{ paddingBottom: index === publicWorkspaces.length - 1 ? ((selectedWorkspaces.length !== 0 || nameValue !== "") ? '170px' : '90px') : '15px' }}>
 										<TitleTextChildButton
-											title={workspace.name}
-											text={`Par **${workspace.creator}**`}
+											title={workspace.title}
+											text={`Par **${'undefined'}**`} // a changer
 											isSelectable={true}
 											componentId={index}
 											isClickable={false}
-											backgroundColor={workspace.color}
-											borderColor={workspace.color}
+											backgroundColor={colors.lightPurple} // a changer
+											borderColor={colors.lightPurple} // a changer
 											handleSelect={handleSelect}
 											width="90%"
-											ComponentChildren={() => <NumberPeople numberPeople={workspace.people} />}
+											ComponentChildren={() => <NumberPeople numberPeople={5000} />} // a changer
 										/>
 									</div>
 								))}

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import PropTypes from 'prop-types';
 import styles from "./WorkspaceEditUsers.module.css";
 import Header from "../../components/Header";
@@ -12,12 +12,38 @@ import Popup from "../../components/popup/Popup";
 import IconButton from "../../components/buttons/IconButton";
 import adjustColorBrightness from "../../utils/adjustColorBrightness";
 import ScrollLock from 'react-scrolllock';
-import {useNavigate} from "react-router-dom/dist";
+import {useLocation, useNavigate} from "react-router-dom/dist";
+import { getUserById } from "../../models/users";
 
 const WorkspaceEditUsers = ({workspaceId, users}) => {
+    const location = useLocation();
+	const { workspace } = location.state || {};
+    const navigate = useNavigate();
     const [nameValue, setNameValue] = useState('');
     const [isOpenPopup, setIsOpenPopup] = useState(false);
     const [userSelect, setUserSelect] = useState({id: '', name: ''});
+    const [userList, setUserList] = useState([]);
+
+    useEffect(() => {
+        console.log(workspace);
+        setUserList(workspace.users_id);
+    }, []);
+
+    useEffect(() => {
+        const fetchData = async (id) => {
+            try {
+                const response = await getUserById(id);
+                console.log(response);
+            } catch (error) {
+                console.error("Error fetching user:", error);
+            }
+        };
+        // console.log(userList);
+        // for (const user of userList) {
+        //     console.log(user);
+        //     // fetchData(user.id);
+        // }
+    }, [userList]);
 
     const handleNameChange = (newValue) => {
         setNameValue(newValue);
@@ -40,10 +66,12 @@ const WorkspaceEditUsers = ({workspaceId, users}) => {
         setIsOpenPopup(false);
     };
 
-    const navigate = useNavigate();
-
     const handleBackClick = () => {
-        navigate("/workspace");
+        navigate("/workspace", {
+			state: {
+			  workspace: workspace,
+			},
+		});
     }
 
     return (

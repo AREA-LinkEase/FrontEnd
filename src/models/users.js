@@ -60,3 +60,5 @@ export async function editUser(username, email, password, user_id) {
     };
     return sendRequest('/users' + user_id, opts);
 }
+
+// ajouter getUser

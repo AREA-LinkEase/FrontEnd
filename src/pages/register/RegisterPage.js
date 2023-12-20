@@ -107,7 +107,7 @@ const RegisterPage = ({
             setInputValue('');
             const response = await register(username, email, password);
             console.log(response);
-            if (response.status === 409) {
+            if (response.status === 201) {
                 navigate("/login", {
                     state: {
                         isNew: true,

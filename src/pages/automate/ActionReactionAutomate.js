@@ -10,12 +10,15 @@ import { colors } from "../../style/color";
 import BottomNavbar from "../../components/navbar/BottomNavbar";
 import IconButton from "../../components/buttons/IconButton";
 import SelectComponent from "../../components/selects/SelectComponent";
-import {useNavigate} from "react-router-dom/dist";
+import {useLocation, useNavigate} from "react-router-dom/dist";
 import {putAutomate} from "../../models/automates";
+import Popup from "../../components/popup/Popup";
 
 const ActionReactionAutomate = ({id, automateName}) => {
-
+    const location = useLocation();
+	const { automate, workspace } = location.state || {};
     const [isOpenMenuTrigger, setIsOpenMenuTrigger] = useState(false);
+    const [isError, setIsError] = useState(false);
     const [triggerValue, setTriggerValue] = useState('');
     const [selectedTriggerOption, setSelectedTriggerOption] = useState({id: -1, value: ''});
 
@@ -47,29 +50,52 @@ const ActionReactionAutomate = ({id, automateName}) => {
 
     const areStatesNotEmpty = () => {
         return (
-          selectedTriggerOption.id !== '' &&
-          selectedActionOption.id !== ''
+            selectedTriggerOption.id !== -1 &&
+            selectedActionOption.id !== -1
         );
-      };
+    };
 
     const navigate = useNavigate();
     const handleBackClick = () => {
-        navigate("/workspace");
+        navigate("/workspace", {
+            state: {
+              workspace: workspace,
+            },
+          });
     }
 
-    const onSubmit = () => {
-        let trigger = selectedTriggerOption.id
-        let action = selectedActionOption.id
-        let triggerOption = triggerValue
-        let actionOption = actionValue
+    const onSubmit = async () => {
+        let trigger = selectedTriggerOption.id;
+        let action = selectedActionOption.id;
+        let triggerOption = triggerValue;
+        let actionOption = actionValue;
 
-        putAutomate()
-    }
+        console.log(workspace.id);
+        try {
+			const response = await putAutomate(workspace.id, actionOption, action, trigger, triggerOption);
+			console.log(response);
+			if (response.status === 200) {
+                console.log("its okay");
+            } else {
+                setIsError(true);
+            }
+		} catch (error) {
+			console.error("Error fetching putAutomate:", error);
+		}
+    };
+
+    const handleClickButttonPopup = () => {
+		setIsError(false);
+	};
+	
+	const handleClosePopup = () => {
+		setIsError(false);
+	};
 
 	return (
 		<div key={id} className={styles.actionReactionAutomateBody}>
             <div style={{paddingBottom: '15px'}}>
-			<Header CenterChildrenComponent={() => <PText width="50%" font={fonts.openSans} fontWeight={fontWeights.bold} text={automateName} textAlign={true}/>} rightIconColor={colors.white} isRightIconClickable={false} isContentCenter={false} onClickIconLeft={handleBackClick}/>
+			<Header CenterChildrenComponent={() => <PText width="50%" font={fonts.openSans} fontWeight={fontWeights.bold} text={automate.title} textAlign={true}/>} rightIconColor={colors.white} isRightIconClickable={false} isContentCenter={false} onClickIconLeft={handleBackClick}/>
             </div>
             <div className={styles.actionReactionAutomateContainer}>
                 <div style={{paddingLeft: '20px', paddingTop: '15px', paddingBottom: '15px'}}>
@@ -106,6 +132,9 @@ const ActionReactionAutomate = ({id, automateName}) => {
                     <IconButton height="60px" buttonText='Save' width="90%" iconSrc='Plus' iconColor={colors.white} iconSize="30px" isIcon={true} isImage={false} backgroundColor={colors.darkPurple} textColor={colors.white} hoverBackgroundColor={colors.darkPurple} onPressButton={onSubmit} />
                 </div>
             )}
+            { isError && (
+				<Popup onPress={handleClickButttonPopup} leavePopup={handleClosePopup} Title={'Error'} Content={'Error'} TextButton="Continue" />
+			)}
             <BottomNavbar itemPosition={"Workspace"}/>
 		</div>
 	);

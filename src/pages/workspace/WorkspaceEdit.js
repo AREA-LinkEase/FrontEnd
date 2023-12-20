@@ -10,9 +10,12 @@ import PrimaryInput from "../../components/Inputs/PrimaryInput";
 import BottomNavbar from "../../components/navbar/BottomNavbar";
 import Popup from "../../components/popup/Popup";
 import IconButton from "../../components/buttons/IconButton";
-import {useNavigate} from "react-router-dom/dist";
+import {useLocation, useNavigate} from "react-router-dom/dist";
 
 const WorkspaceEdit = ({id, name, description}) => {
+    const location = useLocation();
+    const navigate = useNavigate();
+	const { workspace } = location.state || {};
     const [nameValue, setNameValue] = useState(name);
     const [descriptionValue, setDescriptionValue] = useState(description);
     const [isOpenPopup, setIsOpenPopup] = useState(false);
@@ -20,6 +23,10 @@ const WorkspaceEdit = ({id, name, description}) => {
     const [initialName, setInitialName] = useState(name);
     const [initialDescription, setInitialDescription] = useState(description);
 
+    useEffect(() => {
+        setNameValue(workspace.title);
+        setDescriptionValue(workspace.description);
+    }, []);
     useEffect(() => {
         setInitialName(name);
         setInitialDescription(description);
@@ -50,9 +57,12 @@ const WorkspaceEdit = ({id, name, description}) => {
         setIsOpenPopup(false);
     }
 
-    const navigate = useNavigate();
     const handleItemClick = () => {
-        navigate("/workspace");
+        navigate("/workspace", {
+			state: {
+			  workspace: workspace,
+			},
+		});
     }
 
     return (

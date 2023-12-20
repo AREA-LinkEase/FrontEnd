@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import styles from "./SearchPage.module.css";
 import PropTypes from 'prop-types';
 import Header from "../../components/Header";
@@ -11,6 +11,8 @@ import BasicText from "../../components/texts/BasicText";
 import { formatNumber } from "../../utils/formatNumber";
 import PrimaryInput from "../../components/Inputs/PrimaryInput";
 import {useNavigate} from "react-router-dom/dist";
+import { getAutomates } from "../../models/automates";
+import { getWorkspaces } from "../../models/workspaces";
 
 const NumberPeople = ({numberPeople}) => {
 
@@ -34,7 +36,11 @@ const NumberPeople = ({numberPeople}) => {
 
 const SearchPage = () => {
 	
-	const [workspaceAccessValue, setWorkspaceAccessValue] = useState("All");
+    const [workspaceAccessValue, setWorkspaceAccessValue] = useState("All");
+    const [isError, setIsError] = useState(false);
+    const [workspaces, setWorkspaces] = useState([]);
+    const [automates, setAutomates] = useState([]);
+    const [allDatas, setAllDatas] = useState([]);
     const [itemSearchValue, setItemSearchValue] = useState("");
     const [itemsList] = useState([{
 		name: 'SpotifyBangar',
@@ -91,17 +97,10 @@ const SearchPage = () => {
 		type: "Automate"
 	},
 	{
-        id: '1',
+    id: '1',
 		name: 'Spotify',
 		color: '#1DB954',
-        imgLink: 'https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/spotify-white-icon.png',
-		type: "Service",
-	},
-	{
-        id: '1',
-		name: 'Netflix',
-		color: 'black',
-        imgLink: 'https://cdn4.iconfinder.com/data/icons/logos-and-brands/512/227_Netflix_logo-512.png',
+    imgLink: 'https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/spotify-white-icon.png',
 		type: "Service",
 	},
 	{
@@ -111,19 +110,100 @@ const SearchPage = () => {
         imgLink: 'https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/discord-white-icon.png',
 		type: "Service",
 	},
+	{
+        id: '1',
+		name: 'Netflix',
+		color: 'black',
+        imgLink: 'https://cdn4.iconfinder.com/data/icons/logos-and-brands/512/227_Netflix_logo-512.png',
+		type: "Service",
+	},
 ]);
-	const navigate = useNavigate();
-    const handleClickOnService = () => {
-        navigate("/service")
+
+  useEffect(() => {
+    const fetchDataWorkspaces = async () => {
+      try {
+        const response = await getWorkspaces();
+        console.log(response);
+        if (response.status === 200) {
+          setWorkspaces(response.content.result);
+        } else {
+          setIsError(true);
+        }
+      } catch (error) {
+          console.error("Error fetching workspaces:", error);
+      }
     };
 
-	const handleClickAutomate = () => {
+    const fetchDataAutomates = async () => {
+      try {
+        const response = await getAutomates();
+        console.log(response);
+        if (response.status === 200) {
+          setAutomates(response.content.result);
+        } else {
+          setIsError(true);
+        }
+      } catch (error) {
+          console.error("Error fetching automates:", error);
+      }
+    };
+
+    fetchDataWorkspaces();
+    fetchDataAutomates();
+  }, []);
+
+  useEffect(() => {
+    const manuallyAddedServices = [
+      {
+        id: '21',
+        title: 'Spotify',
+        color: '#1DB954',
+        imgLink: 'https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/spotify-white-icon.png',
+        type: "Service",
+      },
+      {
+        id: '25',
+        title: 'Discord',
+        color: '#7289da',
+        imgLink: 'https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/discord-white-icon.png',
+        type: "Service",
+      },
+    ];
+
+    const allDatas = [
+      ...workspaces.map(workspace => ({ ...workspace, type: 'Workspace' })),
+      ...automates.map(automate => ({ ...automate, type: 'Automate' })),
+      ...manuallyAddedServices,
+    ];
+
+    setAllDatas(allDatas);
+  }, [workspaces, automates]);
+
+	const navigate = useNavigate();
+
+  const handleClickOnService = () => {
+        navigate("/service")
+  };
+
+	const handleClickAutomate = (automate) => {
 			navigate("/actionReactionAutomate")
 	};
 
-	const handleClickWorkspace = () => {
-			navigate("/workspace")
-	}
+  const handleClickWorkspace = (workspace) => {
+    navigate("/workspace", {
+      state: {
+        workspace: workspace,
+      },
+    });
+  }
+
+	// const handleClickWorkspace = () => {
+  //   navigate("/workspace", {
+  //     state: {
+  //         id: "id"
+  //     },
+  // });
+	// }
 
 	return (
     <div className={styles.searchPageBody}>
@@ -147,13 +227,13 @@ const SearchPage = () => {
     flexDirection: 'column',
   }}
 >
-  {itemsList.length !== 0 ? (
+  {allDatas.length !== 0 ? (
     <div style={{ width: '100%', display: 'flex', flexWrap: 'wrap', flexDirection: 'row', justifyContent: 'space-between', paddingBottom: '70px' }}>
-      {itemsList
+      {allDatas
         .filter(
             (item) =>
             (workspaceAccessValue === 'All' || item.type.toLowerCase().includes(workspaceAccessValue.toLowerCase())) &&
-            (itemSearchValue === '' || item.name.toLowerCase().includes(itemSearchValue.toLowerCase()))
+            (itemSearchValue === '' || item.title.toLowerCase().includes(itemSearchValue.toLowerCase()))
         )
         .map((item, index) => {
           if (item.type && item.type === 'Service') {
@@ -161,7 +241,7 @@ const SearchPage = () => {
               <div key={index} style={{ paddingRight: '10px', paddingLeft: '10px', paddingBottom: '20px' }}>
                 <ServiceButton
                   imgLink={item.imgLink}
-                  serviceName={item.name}
+                  serviceName={item.title}
                   backgroundColor={item.color}
                   onClickButton={() => {
                     handleClickOnService(item.id);
@@ -173,17 +253,16 @@ const SearchPage = () => {
             return (
                 <div key={index} style={{ paddingRight: '10px', paddingLeft: '10px', paddingBottom: '20px'}}>
                     <TitleTextChildButton
-                        title={`${item.type === 'Workspace' ? 'Workspace' : 'Automate'} - ${item.name}`}
+                        title={`${item.type === 'Workspace' ? 'Ws' : 'Aut'} - ${item.title}`}
                         text={`Par **${item.creator}**`}
                         isSelectable={false}
                         componentId={item.id}
                         isClickable={true}
-                        backgroundColor={item.color}
-                        borderColor={item.color}
-						onPressButton={item.type === 'Workspace' ? () => handleClickWorkspace() : () => handleClickAutomate()}
-						//onPressButton={(item.type === 'Workspace') ? console.log('ok') : (item.type === 'Automate') ? handleClickAutomate(): null}
+                        backgroundColor={item.type === 'Workspace' ? colors.lightPurple : colors.darkPurple} // item.color
+                        borderColor={item.type === 'Workspace' ? colors.lightPurple : colors.darkPurple}
+						            onPressButton={item.type === 'Workspace' ? () => handleClickWorkspace(item) : () => handleClickAutomate(item)}
                         height="155px"
-                        ComponentChildren={() => <NumberPeople numberPeople={item.people} />}
+                        ComponentChildren={() => <NumberPeople numberPeople={5000} />} //item.people
                     />
                 </div>
             )
@@ -195,6 +274,9 @@ const SearchPage = () => {
           <BottomNavbar itemPosition={"Search"}/>
         </div>
       </div>
+      { isError && (
+              <Popup onPress={handleClickButttonPopup} leavePopup={handleClosePopup} Title={'Error'} Content={'Error'} TextButton="Continue" />
+      )}
     </div>
   );
 };

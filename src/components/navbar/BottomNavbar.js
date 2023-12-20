@@ -55,10 +55,11 @@ const BottomNavbar = ({isPopupVisible = false, itemPosition}) => {
   useEffect(() => {
     setSelectedItem(itemPosition);
   }, []);
-
   const navigate = useNavigate();
+
   const handleItemClick = (itemName) => {
-    if (itemName === 'Workspace') itemName = 'homeWorkspace';
+    if (itemName === 'Workspace')
+      itemName = 'homeWorkspace';
     navigate("/" + itemName.toLowerCase());
   };
 

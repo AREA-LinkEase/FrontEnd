@@ -13,21 +13,71 @@ import { calculatePixelSize } from "../../utils/calculatePixelSize";
 import IconButton from "../../components/buttons/IconButton";
 import BottomNavbar from "../../components/navbar/BottomNavbar";
 import * as Icon from 'react-feather';
-import {useNavigate} from "react-router-dom/dist";
+import {useLocation, useNavigate} from "react-router-dom/dist";
+import { getUserById } from "../../models/users";
+import { getAutomatesByWorkspace } from "../../models/automates";
+import { updateEnableWorkspace } from "../../models/workspaces";
 
 const Workspace = ({ workspaceValues }) => {
+	const location = useLocation();
+	const { workspace } = location.state || {};
+	const [isError, setIsError] = useState(false);
 	const [isSwitched, setIsSwitched] = useState(workspaceValues.access !== "Private");
+	const [automates, setAutomates] = useState([]);
 	const [windowSize, setWindowSize] = useState({
 		width: window.innerWidth,
 		height: window.innerHeight,
 	});
 
 	useEffect(() => {
+		const fetchUserName = async () => {
+			try {
+				if (workspace === {})
+					return;
+				const id = workspace.owner_id;
+				console.log(id);
+				const response = await getUserById(id);
+				console.log(response);
+				// if (response.status === 200) {
+				//   setWorkspaces(response.content.result);
+				// } else {
+				//   setIsError(true);
+				// }
+			} catch (error) {
+				console.error("Error fetching workspaces:", error);
+			}
+		}
+
+		const fetchAutomates = async () => {
+			try {
+				if (workspace === {})
+					return;
+				const id = workspace.id;
+				console.log(id);
+				const response = await getAutomatesByWorkspace(id);
+				console.log(response);
+				if (response.status === 200) {
+					setAutomates(response.content.result);
+				} else {
+				setIsError(true);
+				}
+			} catch (error) {
+				console.error("Error fetching workspaces:", error);
+			}
+		}
+
+		setIsSwitched(workspace.enabled);
+		fetchUserName();
+		fetchAutomates();
 		window.addEventListener("resize", handleResize);
 		return () => {
 			window.removeEventListener("resize", handleResize);
 		};
 	}, []);
+
+	useEffect(() => {
+		console.log(automates);
+	}, [automates]);
 
 	const handleResize = () => {
 		setWindowSize({
@@ -39,37 +89,72 @@ const Workspace = ({ workspaceValues }) => {
 	const UserIcon = Icon['User'];
 
 	const onClickUserIcon = () => {
-		navigate("/workspaceEditUsers");
+		navigate("/workspaceEditUsers", {
+			state: {
+			  workspace: workspace,
+			},
+		});
 	};
 
-	const handleSwitchChange = () => {
+	const handleSwitchChange = async () => {
 		setIsSwitched((prevSwitched) => !prevSwitched);
+		try {
+			const response = await updateEnableWorkspace(workspace.id, !isSwitched);
+			console.log(response);
+			if (response.status !== 200) {
+				setIsError(true);
+			}
+		} catch (error) {
+			console.error("Error fetching workspaces:", error);
+		}
 	};
 
 	const navigate = useNavigate();
 	const handleSettingClick = () => {
-		navigate("/workspaceEdit");
+		navigate("/workspaceEdit", {
+			state: {
+			  workspace: workspace,
+			},
+		  });
 	}
 
 	const handleBackClick = () => {
 		navigate("/homeWorkspace");
 	}
 
-	const handleClickAutomate = () => {
-		navigate("/actionReactionAutomate");
+	const handleClickAutomate = (automate) => {
+		navigate("/actionReactionAutomate", {
+            state: {
+                automate: automate,
+				workspace: workspace,
+            },
+        });
 	}
 
 	const handleClickNewAutomate = () => {
 		navigate("/createAutomate");
 	}
 
+	const handleClickButttonPopup = () => {
+		setIsError(false);
+	  };
+	
+	const handleClosePopup = () => {
+		setIsError(false);
+	};
+
+	if (!workspace) // à corriger
+		return;
+	
+	const keyForSwitchButton = isSwitched ? 'switched' : 'not-switched';
+
 	return (
 		<div className={styles.workspaceBody}>
 			<div style={{ position: 'fixed', zIndex: 1000, backgroundColor: 'white', width: '100%' }}>
-				<div className={styles.workspaceDescriptionContainer} style={{ backgroundColor: isSwitched ? workspaceValues.color : "#777777" }}>
+				<div className={styles.workspaceDescriptionContainer} style={{ backgroundColor: isSwitched ? colors.lightPurple : "#777777" }}>
 					<Header
 						rightIconName="Settings"
-						backgroundColor={isSwitched ? workspaceValues.color : "#777777"}
+						backgroundColor={isSwitched ? colors.lightPurple : "#777777"}
 						leftIconColor={colors.white}
 						rightIconColor={colors.white}
 						leftIconSize="30px"
@@ -81,7 +166,7 @@ const Workspace = ({ workspaceValues }) => {
 					<div style={{ paddingLeft: '20px', paddingRight: '20px' }}>
 						<div style={{ paddingBottom: '7px', display: 'flex', flexDirection: 'row' }}>
 							<div>
-								<PText text={workspaceValues.name} fontWeight={fontWeights.bold} font={fonts.openSans} color={colors.white} size="21px" />
+								<PText text={workspace.title} fontWeight={fontWeights.bold} font={fonts.openSans} color={colors.white} size="21px" />
 							</div>
 							<div
 								onClick={onClickUserIcon}
@@ -93,18 +178,19 @@ const Workspace = ({ workspaceValues }) => {
 							</div>
 						</div>
 						<div style={{ paddingBottom: '15px' }}>
-							<PText text={formatTextBold(`Par **${workspaceValues.creator}**`)} font={fonts.openSans} color={colors.white} size="12px" />
+							<PText text={formatTextBold(`Par **${workspace.creator}**`)} font={fonts.openSans} color={colors.white} size="12px" />
 						</div>
 						<div style={{ paddingBottom: '15px' }}>
-							<PText text={workspaceValues.description} font={fonts.openSans} color={colors.white} size="11px" lineHeight="0" />
+							<PText text={workspace.description} font={fonts.openSans} color={colors.white} size="11px" lineHeight="0" />
 						</div>
 					</div>
 				</div>
 				<div className={styles.workspaceSwitch} style={{ paddingTop: '20px' }}>
 					<SwitchButton
+						key={keyForSwitchButton}
 						textColorOff={colors.white}
 						backgroundColorOn={colors.lightlightGrey}
-						colorOn={workspaceValues.color}
+						colorOn={colors.lightPurple}
 						toggleSwitch={handleSwitchChange}
 						textColorOn={colors.lightBlack}
 						isIndicator={false}
@@ -120,9 +206,9 @@ const Workspace = ({ workspaceValues }) => {
 					<PText text='Automates :' font={fonts.openSans} color={colors.black} size="18px" />
 				</div>
 			</div>
-			<div style={{ paddingLeft: '20px', paddingTop: '370px' }}>
-				{workspaceValues.automates?.map((automate, index) => {
-					const isLastItem = index === workspaceValues.automates.length - 1;
+			<div style={{ paddingLeft: '20px', paddingTop: '340px' }}>
+				{automates?.map((automate, index) => {
+					const isLastItem = index === automates.length - 1;
 					const paddingBottomStyle = isLastItem ? { paddingBottom: '20px' } : { paddingBottom: '20px' };
 					return (
 						<div key={index} style={paddingBottomStyle}>
@@ -132,14 +218,14 @@ const Workspace = ({ workspaceValues }) => {
 								hoverBackgroundColor={adjustColorBrightness(colors.lightlightBlue, -10)}
 								textColor="#233255"
 								iconColor="#233255"
-								buttonText={automate.name}
+								buttonText={automate.title}
 								isIcon={true}
 								iconSrc="Command"
 								backgroundColor={colors.lightlightBlue}
 								width="95%"
 								height="50px"
 								borderRadius='15px'
-								onPressButton={handleClickAutomate}
+								onPressButton={() => {handleClickAutomate(automate)}}
 							/>
 						</div>
 					);
@@ -161,6 +247,9 @@ const Workspace = ({ workspaceValues }) => {
 					/>
 				</div>
 			</div>
+			{ isError && (
+				<Popup onPress={handleClickButttonPopup} leavePopup={handleClosePopup} Title={'Error'} Content={'Error'} TextButton="Continue" />
+			)}
 			<BottomNavbar itemPosition={"Workspace"}/>
 		</div>
 	);

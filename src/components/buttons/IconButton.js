@@ -52,6 +52,7 @@ const IconButton = ({
             onMouseOver={onMouseOverButton}
             onMouseOut={onMouseOutButton}
             style={{
+                margin: 'auto',
                 alignItems: 'center',
                 border: `0px solid ${borderColor}`,
                 backgroundColor,
