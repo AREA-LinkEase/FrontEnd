@@ -40,6 +40,20 @@ export async function getUserById(user_id) {
     return sendRequest('/users/' + user_id, opts);
 }
 
+export async function getUser() {
+    const opts = {
+        headers: getHeader()
+    };
+    return sendRequest('/users/self', opts);
+}
+
+export async function getIdByUsername(username) {
+    const opts = {
+        headers: getHeader()
+    };
+    return sendRequest('/users/username/' + username, opts);
+}
+
 export async function deleteUser(user_id) {
     const opts = {
         method: "DELETE",

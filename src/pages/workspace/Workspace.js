@@ -20,7 +20,7 @@ import { updateEnableWorkspace } from "../../models/workspaces";
 
 const Workspace = ({ workspaceValues }) => {
 	const location = useLocation();
-	const { workspace } = location.state || {};
+	const { workspace, name } = location.state || {};
 	const [isError, setIsError] = useState(false);
 	const [isSwitched, setIsSwitched] = useState(workspaceValues.access !== "Private");
 	const [automates, setAutomates] = useState([]);
@@ -30,28 +30,8 @@ const Workspace = ({ workspaceValues }) => {
 	});
 
 	useEffect(() => {
-		const fetchUserName = async () => {
-			try {
-				if (workspace === {})
-					return;
-				const id = workspace.owner_id;
-				console.log(id);
-				const response = await getUserById(id);
-				console.log(response);
-				// if (response.status === 200) {
-				//   setWorkspaces(response.content.result);
-				// } else {
-				//   setIsError(true);
-				// }
-			} catch (error) {
-				console.error("Error fetching workspaces:", error);
-			}
-		}
-
 		const fetchAutomates = async () => {
 			try {
-				if (workspace === {})
-					return;
 				const id = workspace.id;
 				console.log(id);
 				const response = await getAutomatesByWorkspace(id);
@@ -67,7 +47,6 @@ const Workspace = ({ workspaceValues }) => {
 		}
 
 		setIsSwitched(workspace.enabled);
-		fetchUserName();
 		fetchAutomates();
 		window.addEventListener("resize", handleResize);
 		return () => {
@@ -92,6 +71,7 @@ const Workspace = ({ workspaceValues }) => {
 		navigate("/workspaceEditUsers", {
 			state: {
 			  workspace: workspace,
+			  name: name,
 			},
 		});
 	};
@@ -114,37 +94,37 @@ const Workspace = ({ workspaceValues }) => {
 		navigate("/workspaceEdit", {
 			state: {
 			  workspace: workspace,
+			  name: name,
 			},
 		  });
 	}
 
 	const handleBackClick = () => {
 		navigate("/homeWorkspace");
-	}
+	};
 
 	const handleClickAutomate = (automate) => {
+		console.log(automate);
 		navigate("/actionReactionAutomate", {
             state: {
                 automate: automate,
 				workspace: workspace,
+				name: name,
             },
         });
-	}
+	};
 
 	const handleClickNewAutomate = () => {
 		navigate("/createAutomate");
-	}
+	};
 
 	const handleClickButttonPopup = () => {
 		setIsError(false);
-	  };
+	};
 	
 	const handleClosePopup = () => {
 		setIsError(false);
 	};
-
-	if (!workspace) // à corriger
-		return;
 	
 	const keyForSwitchButton = isSwitched ? 'switched' : 'not-switched';
 
@@ -178,7 +158,7 @@ const Workspace = ({ workspaceValues }) => {
 							</div>
 						</div>
 						<div style={{ paddingBottom: '15px' }}>
-							<PText text={formatTextBold(`Par **${workspace.creator}**`)} font={fonts.openSans} color={colors.white} size="12px" />
+							<PText text={formatTextBold(`Par **${name}**`)} font={fonts.openSans} color={colors.white} size="12px" />
 						</div>
 						<div style={{ paddingBottom: '15px' }}>
 							<PText text={workspace.description} font={fonts.openSans} color={colors.white} size="11px" lineHeight="0" />

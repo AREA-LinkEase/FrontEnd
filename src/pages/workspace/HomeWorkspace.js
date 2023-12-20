@@ -17,7 +17,8 @@ const HomeWorkspace = () => {
 	const [workspaceAccessValue, setWorkspaceAccessValue] = useState("All");
   const [userName, setUsername] = useState("");
   const [isError, setIsError] = useState(false);
-  const [workspaces, setWorkspaces] = useState([{}]);
+  const [workspaces, setWorkspaces] = useState([]);
+  const [ownersInfo, setOwnersInfo] = useState([]);
 
 	const [numberItems, setNumberItems] = useState({
     "All": 0,
@@ -26,21 +27,6 @@ const HomeWorkspace = () => {
   });
 
   useEffect(() => {
-    const fetchUserName = async () => {
-      try {
-        const id = workspaces[0].owner_id;
-        console.log(id);
-        const response = await getUserById(id);
-        console.log(response);
-        // if (response.status === 200) {
-        //   setWorkspaces(response.content.result);
-        // } else {
-        //   setIsError(true);
-        // }
-      } catch (error) {
-          console.error("Error fetching workspaces:", error);
-      }
-    };
 
     const fetchData = async () => {
       try {
@@ -56,10 +42,85 @@ const HomeWorkspace = () => {
       }
     };
 
-    
     fetchData();
-    fetchUserName();
   }, []);
+
+  // useEffect(() => {
+  //   console.log(trueWorkspaces);
+  // }, [trueWorkspaces]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await getWorkspaces();
+        console.log(response);
+        if (response.status === 200) {
+          setWorkspaces(response.content.result);
+        } else {
+          setIsError(true);
+        }
+      } catch (error) {
+        console.error("Error fetching workspaces:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
+  // useEffect(() => {
+  //   console.log("nnaaa");
+  //   const fetchUserName = async (id) => {
+  //     try {
+  //       const response = await getUserById(id);
+  //       if (response.status === 200) {
+  //         console.log('i');
+  //         setWorkspaces(prevWorkspaces => {
+  //           const updatedWorkspaces = prevWorkspaces.map(workspace => {
+  //             console.log("name");
+  //             console.log(response.content.result.username);
+  //             if (workspace.owner_id === id) {
+  //               return { ...workspace, ownerName: response.content.result.username };
+  //             }
+  //             return workspace;
+  //           });
+  //           return updatedWorkspaces;
+  //         });
+  //       }
+  //     } catch (error) {
+  //         console.error("Error fetching workspaces:", error);
+  //     }
+  //   };
+
+  //   for (const workspace of workspaces) {
+  //     fetchUserName(workspace.owner_id);
+  //   }
+  //   // setTrueWorkspaces(workspaces);
+  // }, []); // je veux mettre workspaces
+
+  useEffect(() => {
+    const fetchUserName = async (id) => {
+      try {
+        const response = await getUserById(id);
+        if (response.status === 200) {
+          setOwnersInfo((prevOwnersInfo) => ({
+            ...prevOwnersInfo,
+            [id]: response.content.result.username,
+          }));
+        }
+      } catch (error) {
+        console.error("Error fetching workspaces:", error);
+      }
+    };
+
+    workspaces.forEach((workspace) => {
+      if (!ownersInfo[workspace.owner_id]) {
+        fetchUserName(workspace.owner_id);
+      }
+    });
+  }, [workspaces, ownersInfo]);
+
+  useEffect(() => {
+    console.log(ownersInfo);
+  }, [ownersInfo]);
 
 	useEffect(() => {
 		const countWorkspaceTypes = () => {
@@ -85,6 +146,7 @@ const HomeWorkspace = () => {
 		navigate("/workspace", {
       state: {
         workspace: workspace,
+        name: ownersInfo[workspace.owner_id]
       },
     });
 	}
@@ -132,7 +194,7 @@ const HomeWorkspace = () => {
                 >
                   <TitleTextChildButton
                     title={workspace.title}
-                    text={`Par **${workspace.creator}**`}
+                    text={`Par **${ownersInfo[workspace.owner_id]}**`}
                     isSelectable={false}
                     componentId={index}
                     isClickable={true}

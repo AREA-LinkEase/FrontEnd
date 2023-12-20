@@ -13,36 +13,54 @@ import IconButton from "../../components/buttons/IconButton";
 import adjustColorBrightness from "../../utils/adjustColorBrightness";
 import ScrollLock from 'react-scrolllock';
 import {useLocation, useNavigate} from "react-router-dom/dist";
-import { getUserById } from "../../models/users";
+import { getUser, getUserById } from "../../models/users";
 
 const WorkspaceEditUsers = ({workspaceId, users}) => {
     const location = useLocation();
-	const { workspace } = location.state || {};
+	const { workspace, name } = location.state || {};
     const navigate = useNavigate();
     const [nameValue, setNameValue] = useState('');
     const [isOpenPopup, setIsOpenPopup] = useState(false);
     const [userSelect, setUserSelect] = useState({id: '', name: ''});
     const [userList, setUserList] = useState([]);
+    const [usernames, setUsernames] = useState([]);
+    const [myUser, setMyUser] = useState({});
 
     useEffect(() => {
         console.log(workspace);
-        setUserList(workspace.users_id);
-    }, []);
+        setUserList(JSON.parse(workspace.users_id).ids);
+    }, [workspace]);
 
     useEffect(() => {
-        const fetchData = async (id) => {
+        const fetchSelfData = async () => {
             try {
-                const response = await getUserById(id);
-                console.log(response);
+                const response = await getUser();
+                if (response.status === 200) {
+                    setMyUser(response.content.result);
+                }
             } catch (error) {
                 console.error("Error fetching user:", error);
             }
         };
-        // console.log(userList);
-        // for (const user of userList) {
-        //     console.log(user);
-        //     // fetchData(user.id);
-        // }
+
+        const fetchUsernames = async () => {
+            const usernames = await Promise.all(
+              userList.map(async (userId) => {
+                try {
+                  const response = await getUserById(userId);
+                  return response.content.result.username;
+                } catch (error) {
+                  console.error("Error fetching user:", error);
+                  return "";
+                }
+              })
+            );
+            setUsernames(usernames);
+          };
+      
+        
+        fetchUsernames();
+        fetchSelfData();
     }, [userList]);
 
     const handleNameChange = (newValue) => {
@@ -70,19 +88,32 @@ const WorkspaceEditUsers = ({workspaceId, users}) => {
         navigate("/workspace", {
 			state: {
 			  workspace: workspace,
+              name: name,
 			},
 		});
-    }
+    };
+
+    const handleAddUser = async () => {
+        try {
+            const response = await getUser();
+            console.log(response);
+        } catch (error) {
+            console.error("Error fetching user:", error);
+        }
+    };
+
 
     return (
         <div className={styles.workspaceEditUsersBody}>
             <div style={{paddingLeft: '20px', width: '100%', paddingTop: nameValue !== '' ? '380px' : '330px'}}>
-                {users.map((user, index) => {
-                    const isLastItem = index === users.length - 1;
+                {userList.map((user, index) => {
+                    const isLastItem = index === userList.length - 1;
                     const paddingBottomStyle = isLastItem ? {paddingBottom: '80px'} : {paddingBottom: '20px'};
+                    const username = usernames[index] || "";
+
                     return (
                         <div key={index} style={paddingBottomStyle}>
-                            <IconButton onPressRightIcon={() => {handleClickDeleteUser(user)}} isRightIconClickable={true} isButtonClickable={false} rightIconName='Trash2' alignLeft={true} textSize='17px' hoverBackgroundColor={adjustColorBrightness(colors.lightlightBlue, -10)} textColor="#808DA3" iconColor="#233255" buttonText={user.name} isIcon={true} iconSrc="User" backgroundColor={colors.lightlightBlue} width="95%" height="50px" borderRadius='15px' />
+                            <IconButton onPressRightIcon={() => {handleClickDeleteUser(user)}} isRightIconClickable={true} isButtonClickable={false} rightIconName='Trash2' alignLeft={true} textSize='17px' hoverBackgroundColor={adjustColorBrightness(colors.lightlightBlue, -10)} textColor="#808DA3" iconColor="#233255" buttonText={username} isIcon={true} iconSrc="User" backgroundColor={colors.lightlightBlue} width="95%" height="50px" borderRadius='15px' />
                         </div>
                     );
                 })}
@@ -100,7 +131,7 @@ const WorkspaceEditUsers = ({workspaceId, users}) => {
                 </div>
                 { nameValue !== '' && (
                     <div style={{width: '100%', textAlign: 'center'}}>
-                        <IconButton width="90%" height="45px" buttonText='Add' iconSrc='' backgroundColor={colors.darkPurple} textColor={colors.white} hoverBackgroundColor={colors.darkPurple} />
+                        <IconButton onPressButton={handleAddUser} width="90%" height="45px" buttonText='Add' iconSrc='' backgroundColor={colors.darkPurple} textColor={colors.white} hoverBackgroundColor={colors.darkPurple} />
                     </div>
                 )}
                 <div style={{paddingTop: '15px'}}/>

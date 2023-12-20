@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import PropTypes from 'prop-types';
 import styles from "./ActionReactionAutomate.module.css";
 import Header from "../../components/Header";
@@ -16,12 +16,12 @@ import Popup from "../../components/popup/Popup";
 
 const ActionReactionAutomate = ({id, automateName}) => {
     const location = useLocation();
-	const { automate, workspace } = location.state || {};
+    const navigate = useNavigate();
+	const { automate, workspace, name } = location.state || {};
     const [isOpenMenuTrigger, setIsOpenMenuTrigger] = useState(false);
     const [isError, setIsError] = useState(false);
     const [triggerValue, setTriggerValue] = useState('');
     const [selectedTriggerOption, setSelectedTriggerOption] = useState({id: -1, value: ''});
-
     const [isOpenMenuAction, setIsOpenMenuAction] = useState(false);
     const [actionValue, setActionValue] = useState('');
     const [selectedActionOption, setSelectedActionOption] = useState({id: -1, value: ''});
@@ -35,7 +35,7 @@ const ActionReactionAutomate = ({id, automateName}) => {
             id: 0,
             value: "Quand j'écoute pas",
         }
-    ]
+    ];
 
     const actions = [
         {
@@ -46,7 +46,20 @@ const ActionReactionAutomate = ({id, automateName}) => {
             id: 0,
             value: "Relancer la musique",
         }
-    ]
+    ];
+
+    useEffect(() => {
+        const findTriggerById = (id) => triggers.find(trigger => trigger.id === id);
+        const findActionById = (id) => actions.find(action => action.id === id);
+    
+        const selectedTrigger = automate.trigger !== -1 ? findTriggerById(automate.trigger) : { id: -1, value: '' };
+        const selectedAction = automate.action !== -1 ? findActionById(automate.action) : { id: -1, value: '' };
+    
+        setSelectedTriggerOption(selectedTrigger);
+        setSelectedActionOption(selectedAction);
+        setTriggerValue(automate.trigger_option);
+        setActionValue(automate.action_option);
+    }, []);
 
     const areStatesNotEmpty = () => {
         return (
@@ -55,11 +68,11 @@ const ActionReactionAutomate = ({id, automateName}) => {
         );
     };
 
-    const navigate = useNavigate();
     const handleBackClick = () => {
         navigate("/workspace", {
             state: {
               workspace: workspace,
+              name: name,
             },
           });
     }

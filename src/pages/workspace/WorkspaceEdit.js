@@ -12,15 +12,15 @@ import Popup from "../../components/popup/Popup";
 import IconButton from "../../components/buttons/IconButton";
 import {useLocation, useNavigate} from "react-router-dom/dist";
 
-const WorkspaceEdit = ({id, name, description}) => {
+const WorkspaceEdit = ({id, named, description}) => {
     const location = useLocation();
     const navigate = useNavigate();
-	const { workspace } = location.state || {};
-    const [nameValue, setNameValue] = useState(name);
+	const { workspace, name } = location.state || {};
+    const [nameValue, setNameValue] = useState(named);
     const [descriptionValue, setDescriptionValue] = useState(description);
     const [isOpenPopup, setIsOpenPopup] = useState(false);
     const [isModified, setIsModified] = useState(false);
-    const [initialName, setInitialName] = useState(name);
+    const [initialName, setInitialName] = useState(named);
     const [initialDescription, setInitialDescription] = useState(description);
 
     useEffect(() => {
@@ -28,10 +28,10 @@ const WorkspaceEdit = ({id, name, description}) => {
         setDescriptionValue(workspace.description);
     }, []);
     useEffect(() => {
-        setInitialName(name);
+        setInitialName(named);
         setInitialDescription(description);
         setIsModified(false);
-    }, [name, description]);
+    }, [named, description]);
 
     const handleNameChange = (newValue) => {
         setNameValue(newValue);
@@ -61,6 +61,7 @@ const WorkspaceEdit = ({id, name, description}) => {
         navigate("/workspace", {
 			state: {
 			  workspace: workspace,
+              name: name,
 			},
 		});
     }
@@ -107,7 +108,7 @@ const WorkspaceEdit = ({id, name, description}) => {
 
 WorkspaceEdit.propTypes = {
     id: PropTypes.string,
-    name: PropTypes.string,
+    named: PropTypes.string,
     description: PropTypes.string,
 };
 
