@@ -66,6 +66,16 @@ const LoginV1 = () => {
     setValues({ ...values, showPassword: !values.showPassword })
   }
 
+  const onSubmit = data => {
+    const { email, password } = data
+    auth.login({ email, password, rememberMe }, () => {
+      setError('email', {
+        type: 'manual',
+        message: 'Email or Password is invalid'
+      })
+    })
+  }
+
   return (
     <Box className='content-center'>
       <AuthIllustrationV1Wrapper>
@@ -159,7 +169,7 @@ const LoginV1 = () => {
                   Forgot Password?
                 </Typography>
               </Box>
-              <Button fullWidth type='submit' variant='contained' sx={{ mb: 4 }}>
+              <Button fullWidth type='submit' variant='contained' sx={{ mb: 4 }} onClick={onSubmit}>
                 Login
               </Button>
               <Box sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'center' }}>

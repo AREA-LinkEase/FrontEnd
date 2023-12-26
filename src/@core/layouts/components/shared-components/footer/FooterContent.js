@@ -7,10 +7,9 @@ import { styled } from '@mui/material/styles'
 import Typography from '@mui/material/Typography'
 import useMediaQuery from '@mui/material/useMediaQuery'
 
-const StyledCompanyName = styled(Link)(({ theme }) => ({
+const StyledCompanyName = styled('span')(({ theme }) => ({
   fontWeight: 500,
-  textDecoration: 'none',
-  color: `${theme.palette.primary.main} !important`
+  color: theme.palette.primary.main,
 }))
 
 const LinkStyled = styled(Link)(({ theme }) => ({
@@ -32,28 +31,22 @@ const FooterContent = () => {
         <Box component='span' sx={{ mx: 1, color: 'error.main' }}>
           ❤️
         </Box>
-        {`by`}
-        <Typography sx={{ ml: 1 }} target='_blank' href='https://pixinvent.com' component={StyledCompanyName}>
-          Pixinvent
+        {`by `}
+        <Typography sx={{ ml: 1 }} component={StyledCompanyName}>
+          MonkeyTeam
         </Typography>
       </Typography>
       {hidden ? null : (
         <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', '& :not(:last-child)': { mr: 4 } }}>
-          <Typography target='_blank' component={LinkStyled} href='https://themeforest.net/licenses/standard'>
+          <Typography component={Link} href="/license">
             License
-          </Typography>
-          <Typography target='_blank' component={LinkStyled} href='https://1.envato.market/pixinvent_portfolio'>
-            More Themes
           </Typography>
           <Typography
             target='_blank'
             component={LinkStyled}
-            href='https://demos.pixinvent.com/vuexy-nextjs-admin-template/documentation'
+            href='https://github.com/AREA-LinkEase/project/blob/main/README.md'
           >
             Documentation
-          </Typography>
-          <Typography target='_blank' component={LinkStyled} href='https://pixinvent.ticksy.com'>
-            Support
           </Typography>
         </Box>
       )}
