@@ -1,70 +1,88 @@
-# Getting Started with Create React App
+# LinkEase
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Description du Projet
 
-## Available Scripts
+LinkEase est une application web offrant une expérience similaire à IFTTT (If This Then That), permettant aux utilisateurs de créer des automatisations simples en connectant différents services en ligne.
 
-In the project directory, you can run:
+## Captures d'écran (Exemples)
 
-### `npm start`
+![image 1](https://cdn.discordapp.com/attachments/906932555868143636/1186975755792551976/WorkSpaceActivate.png?ex=65953451&is=6582bf51&hm=1be4ea642a56463fa46240577fe54613e5690ddc9b9fed635101b6f0aa4ea7b4&)
+![image 2](https://media.discordapp.net/attachments/906932555868143636/1186975756115521576/AutomatPoc.png?ex=65953451&is=6582bf51&hm=a9516258d1c775166178610120c253d26fc4f146a0e4ecdce85209a1a09b39c2&=&format=webp&quality=lossless&width=256&height=554)
+![image 3](https://media.discordapp.net/attachments/906932555868143636/1186975756593664110/LogInPage.png?ex=65953451&is=6582bf51&hm=0b189f1b63ddd1cd4e7fcc6c28d668f9255a3d89804b98d18d6360a66b573e94&=&format=webp&quality=lossless&width=256&height=554)
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Technologies Utilisées
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+- JavaScript
+- ReactJS
+- Ionic
 
-### `npm test`
+## Installation
 
-Launches the test runner in the interactive watch mode .\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### Via Dockerfile
 
-### `npm run build`
+1. Assurez-vous d'avoir Docker installé sur votre machine.
+2. Clonez ce dépôt.
+3. Naviguez dans le répertoire du projet.
+4. Exécutez la commande suivante pour construire l'image Docker :
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+```bash
+docker build -t linkease-app .
+```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+5. Une fois la construction terminée, lancez le conteneur avec la commande :
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+```bash
+docker run -p 8081:8081 linkease-app
+```
 
-### `npm run eject`
+6. Accédez à l'application dans votre navigateur à l'adresse [http://localhost:8081](http://localhost:8081).
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+### Via npm start
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+1. Clonez ce dépôt.
+2. Naviguez dans le répertoire du projet.
+3. Exécutez la commande suivante pour installer les dépendances :
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+```bash
+npm install
+```
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+4. Lancez l'application avec la commande :
 
-## Learn More
+```bash
+npm start
+```
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+5. Accédez à l'application dans votre navigateur à l'adresse [http://localhost:8081](http://localhost:8081).
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## Structure du Projet
 
-### Code Splitting
+- **components:** Stocke les composants réutilisables.
+- **pages:** Stocke la logique des pages.
+- **models:** Sert à effectuer des requêtes API.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+## Contribution
 
-### Analyzing the Bundle Size
+Vous pourrez trouver les informations nécessaire sur [ce page](contributing.md)
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+## Contributeurs
 
-### Making a Progressive Web App
+- Younes Bahri - DevOps, Développeur Front-End
+- Thomas Papaix - Développeur Front-End
+- Adil Nouiri - Développeur Front-End
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+## Licence
 
-### Advanced Configuration
+Ce projet est sous licence MIT. Consultez le fichier [LICENSE](LICENSE) pour plus de détails.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+## Statut du Projet
 
-### Deployment
+En Développement
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+## Contact
 
-### `npm run build` fails to minify
+Pour toute question ou contribution, veuillez contacter les membres de l'équipe dans l'ordre de priorité suivant :
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+- Younes Bahri - [younes1.bahri@epitech.eu](mailto:younes1.bahri@epitech.eu)
+- Adil Nouiri - [adil.nouiri@epitech.eu](mailto:adil.nouiri@epitech.eu)
+- Thomas Papaix - [thomas.papaix@epitech.eu](mailto:thomas.papaix@epitech.eu)
