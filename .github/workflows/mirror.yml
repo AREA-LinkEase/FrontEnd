@@ -18,9 +18,12 @@ jobs:
       - uses: actions/checkout@v2
         with:
           repository: ${{ env.MIRROR_URL }}
+          path: './project'
 
       - name: setup user git
         run: |
+          cd project
+          ls -la
           git config user.name "GitHub Actions Bot"
           git config user.email "<>"
 
@@ -28,17 +31,14 @@ jobs:
         run: |
           rm -rf FrontEnd || exit 0
 
-      - name: move to correct directory
-        run: |
-          mkdir FrontEnd && cd ./FrontEnd
-
       - name: clone the current repository
         uses: actions/checkout@v2
+        with:
+          path: "./FrontEnd"
 
       - name: delete useless folder
         run: |
-          rm -rf .git
-          cd ..
+          rm -rf ./FrontEnd/.git
           ls -lR
 
       - name: push
