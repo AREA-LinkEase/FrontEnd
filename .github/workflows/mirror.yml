@@ -11,20 +11,13 @@ env:
 jobs:
   compile:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
     steps:
-      - name: Force Install GIT latest
-        run: |
-          apt-get install -y software-properties-common \
-          && apt-get update \
-          && add-apt-repository -y ppa:git-core/ppa \
-          && apt-get update \
-          && apt-get install -y git
-
       - uses: actions/checkout@v2
         with:
           repository: ${{ env.MIRROR_URL }}
-          ref: 'main'
 
       - name: setup user git
         run: |
@@ -50,4 +43,6 @@ jobs:
 
       - name: push
         run: |
+          git add .
+          git commit -m "ADD FrontEnd"
           git push
