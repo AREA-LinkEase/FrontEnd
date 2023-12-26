@@ -23,9 +23,12 @@ jobs:
           git config user.name "GitHub Actions Bot"
           git config user.email "<>"
 
-      - name: move to correct directory
+      - name: delete directory
         run: |
           rm -rf FrontEnd || exit 0
+
+      - name: move to correct directory
+        run: |
           mkdir FrontEnd
           cd ./FrontEnd
 
