@@ -10,20 +10,28 @@ import PrimaryInput from "../../components/Inputs/PrimaryInput";
 import BottomNavbar from "../../components/navbar/BottomNavbar";
 import Popup from "../../components/popup/Popup";
 import IconButton from "../../components/buttons/IconButton";
+import {useLocation, useNavigate} from "react-router-dom/dist";
 
-const WorkspaceEdit = ({id, name, description}) => {
-    const [nameValue, setNameValue] = useState(name);
+const WorkspaceEdit = ({id, named, description}) => {
+    const location = useLocation();
+    const navigate = useNavigate();
+	const { workspace, name } = location.state || {};
+    const [nameValue, setNameValue] = useState(named);
     const [descriptionValue, setDescriptionValue] = useState(description);
     const [isOpenPopup, setIsOpenPopup] = useState(false);
     const [isModified, setIsModified] = useState(false);
-    const [initialName, setInitialName] = useState(name);
+    const [initialName, setInitialName] = useState(named);
     const [initialDescription, setInitialDescription] = useState(description);
 
     useEffect(() => {
-        setInitialName(name);
+        setNameValue(workspace.title);
+        setDescriptionValue(workspace.description);
+    }, []);
+    useEffect(() => {
+        setInitialName(named);
         setInitialDescription(description);
         setIsModified(false);
-    }, [name, description]);
+    }, [named, description]);
 
     const handleNameChange = (newValue) => {
         setNameValue(newValue);
@@ -49,9 +57,18 @@ const WorkspaceEdit = ({id, name, description}) => {
         setIsOpenPopup(false);
     }
 
+    const handleItemClick = () => {
+        navigate("/workspace", {
+			state: {
+			  workspace: workspace,
+              name: name,
+			},
+		});
+    }
+
     return (
         <div key={id} className={styles.workspaceEditBody}>
-            <Header rightIconColor={colors.white} leftIconSize="30px"/>
+            <Header rightIconColor={colors.white} leftIconSize="30px" onClickIconLeft={handleItemClick}/>
             <div style={{width: '100%'}}>
                 <div style={{paddingBottom: '60px', paddingLeft: '20px', paddingRight: '20px'}}>
                     <PText text='Workspace parameters' fontWeight={fontWeights.bold} font={fonts.openSans} color={colors.lightBlack} size="21px"/>
@@ -91,7 +108,7 @@ const WorkspaceEdit = ({id, name, description}) => {
 
 WorkspaceEdit.propTypes = {
     id: PropTypes.string,
-    name: PropTypes.string,
+    named: PropTypes.string,
     description: PropTypes.string,
 };
 

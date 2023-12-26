@@ -5,6 +5,7 @@ import style from './BottomNavbar.module.css';
 import * as Icon from 'react-feather';
 import { fontWeights } from '../../style/font/fontWeights';
 import { fonts } from '../../style/font/fonts';
+import {useNavigate} from "react-router-dom";
 
 const styles = {
   footer: {
@@ -48,15 +49,18 @@ const styles = {
   },
 };
 
-const BottomNavbar = ({isPopupVisible = false}) => {
+const BottomNavbar = ({isPopupVisible = false, itemPosition}) => {
   const [selectedItem, setSelectedItem] = useState(null);
 
   useEffect(() => {
-    setSelectedItem('Workspace');
+    setSelectedItem(itemPosition);
   }, []);
+  const navigate = useNavigate();
 
   const handleItemClick = (itemName) => {
-    setSelectedItem(itemName);
+    if (itemName === 'Workspace')
+      itemName = 'homeWorkspace';
+    navigate("/" + itemName.toLowerCase());
   };
 
   const renderNavItem = (itemName, icon) => (
@@ -83,8 +87,8 @@ const BottomNavbar = ({isPopupVisible = false}) => {
       <div className={isPopupVisible ? style.blurred : ''}>
         <nav style={styles.navbar}>
           {renderNavItem('Workspace', <Icon.Grid size="28" style={styles.icon} />)}
-          {renderNavItem('Rechercher', <Icon.Search size="28" style={styles.icon} />)}
-          {renderNavItem('Créer', <Icon.PlusCircle size="28" style={styles.icon} />)}
+          {renderNavItem('Search', <Icon.Search size="28" style={styles.icon} />)}
+          {renderNavItem('Create', <Icon.PlusCircle size="28" style={styles.icon} />)}
           {renderNavItem('Forum', <Icon.MessageSquare size="28" style={styles.icon} />)}
           {renderNavItem('Profil', <Icon.User size="28" style={styles.icon} />)}
         </nav>
@@ -94,7 +98,8 @@ const BottomNavbar = ({isPopupVisible = false}) => {
 };
 
 BottomNavbar.propTypes = {
-  isPopupVisible: PropTypes.bool
+  isPopupVisible: PropTypes.bool,
+  itemPosition: PropTypes.string
 };
 
 export default BottomNavbar;

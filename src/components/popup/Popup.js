@@ -27,7 +27,7 @@ const Popup = ({ Title = "Title", Content = "Content", TextButton = "TextButton"
     <div className={styles.popupBody}>
       <div className={styles.popupOverlay}/>
       <div className={styles.popupContent} ref={popupRef}>
-        <H1Text text={Title} size={"28px"} color={colors.lightBlack} />
+        <H1Text text={Title} size={"28px"} color={"#2A2B2D"} />
         <div className={styles.popupText}>
           <PText text={Content} size={"14px"} color={colors.black} />
         </div>

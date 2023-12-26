@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import PropTypes from 'prop-types';
 import styles from "./CreateWorkspace.module.css";
 import Header from "../../components/Header";
@@ -13,6 +13,9 @@ import { colors } from "../../style/color";
 import { formatNumber } from "../../utils/formatNumber";
 import BottomNavbar from "../../components/navbar/BottomNavbar";
 import IconButton from "../../components/buttons/IconButton";
+import { getWorkspaceView, postWorkspace } from "../../models/workspaces";
+import { useNavigate } from "react-router";
+import Popup from "../../components/popup/Popup";
 
 const NumberPeople = ({numberPeople}) => {
 
@@ -36,44 +39,31 @@ const NumberPeople = ({numberPeople}) => {
 
 const CreateWorkspace = () => {
 
+	const navigate = useNavigate();
 	const [nameValue, setNameValue] = useState("");
+	const [popupSuccess, setPopupSuccess] = useState(false);
+	const [popupError, setPopupError] = useState(false);
+	const [publicWorkspaces, setPublicWorkspaces] = useState([]);
 	const [workspaceSearchValue, setWorkspaceSearchValue] = useState("");
-	const workspaceList = [{
-		name: 'SpotifyBangar',
-		creator: 'Adilou le fifou',
-		people: 3500000,
-		color: colors.lightPurple,
-	},
-	{
-		name: 'Baboss',
-		creator: 'Adilou le fifou',
-		people: 3500000,
-		color: colors.darkGrey
-	},
-	{
-		name: 'Mamen',
-		creator: 'Adilou le fifou',
-		people: 3500000,
-		color: colors.lightPurple,
-	},
-	{
-		name: '3ataï',
-		creator: 'Adilou le fifou',
-		people: 3500000,
-		color: colors.lightlightGrey,
-	},
-	{
-		name: 'THOAAAAMS',
-		creator: 'Adilou le fifou',
-		people: 3500000,
-		color: colors.purple,
-	},
-	{
-		name: 'PIZZA BIEN GARNIE',
-		creator: 'Adilou le fifou',
-		people: 3500000,
-		color: colors.purple,
-	}];
+
+	useEffect(() => {
+		const fetchData = async () => {
+		  try {
+			const response = await getWorkspaceView();
+			console.log(response);
+			if (response.status === 200) {
+				// console.log(response.content.result);
+				setPublicWorkspaces(response.content.result);
+			} else {
+			  setPopupError(true);
+			}
+		  } catch (error) {
+			  console.error("Error fetching workspaces:", error);
+		  }
+		};
+  
+		fetchData();
+	}, []);
 
   const [selectedWorkspaces, setSelectedWorkspaces] = useState([]);
 
@@ -87,10 +77,50 @@ const CreateWorkspace = () => {
     }
   };
 
+  const handleClickButttonPopup = () => {
+	if (popupSuccess) {
+		setPopupError(false);
+		setPopupSuccess(false);
+		navigate('/homeWorkspace');
+		return;
+	}
+	setPopupError(false);
+	setPopupSuccess(false);
+  };
+
+  const handleClosePopup = () => {
+	if (popupSuccess) {
+		setPopupError(false);
+		setPopupSuccess(false);
+		navigate('/homeWorkspace');
+		return;
+	}
+	setPopupError(false);
+	setPopupSuccess(false);
+  };
+
+	const handleAddWorkspace = async () => {
+		try {
+			const response = await postWorkspace(nameValue, "description par défaut", true);
+			console.log(response);
+			if (response.status === 201) {
+				setPopupSuccess(true);
+			} else {
+				setPopupError(true);
+			}
+		} catch (error) {
+			console.error("Error fetching workspaces:", error);
+		}
+	};
+
+	const handleLeftIconClick = () => {
+		navigate('/homeWorkspace');
+	};
+
 	return (
 		<div className={styles.createWorkspaceBody}>
 			<div>
-				<Header rightIconName=''/>
+				<Header rightIconName='' onClickIconLeft={handleLeftIconClick}/>
 			</div>
 			<div className={styles.createWorkspaceContainer}>
 				<div className={styles.createWorkspaceTitle}>
@@ -103,23 +133,23 @@ const CreateWorkspace = () => {
 				<div className={styles.createWorkspaceInputWorkspace}>
 					<PrimaryInput leftIconName='Search' placeholder='Workspace search...' inputValue={workspaceSearchValue} setInputValue={setWorkspaceSearchValue} width="85%"/>
 				</div>
-					{workspaceList.length !== 0 ? (
+					{publicWorkspaces.length !== 0 ? (
 						<div className={styles.createWorkspaceList}>
-							{workspaceList
-								.filter(workspace => workspace.name.toLowerCase().includes(workspaceSearchValue.toLowerCase()))
+							{publicWorkspaces
+								.filter(workspace => workspace.title.toLowerCase().includes(workspaceSearchValue.toLowerCase()))
 								.map((workspace, index) => (
-									<div key={index} style={{ paddingBottom: index === workspaceList.length - 1 ? ((selectedWorkspaces.length !== 0 || nameValue !== "") ? '170px' : '90px') : '15px' }}>
+									<div key={index} style={{ paddingBottom: index === publicWorkspaces.length - 1 ? ((selectedWorkspaces.length !== 0 || nameValue !== "") ? '170px' : '90px') : '15px' }}>
 										<TitleTextChildButton
-											title={workspace.name}
-											text={`Par **${workspace.creator}**`}
+											title={workspace.title}
+											text={`Par **${'undefined'}**`} // a changer
 											isSelectable={true}
 											componentId={index}
 											isClickable={false}
-											backgroundColor={workspace.color}
-											borderColor={workspace.color}
+											backgroundColor={colors.lightPurple} // a changer
+											borderColor={colors.lightPurple} // a changer
 											handleSelect={handleSelect}
 											width="90%"
-											ComponentChildren={() => <NumberPeople numberPeople={workspace.people} />}
+											ComponentChildren={() => <NumberPeople numberPeople={5000} />} // a changer
 										/>
 									</div>
 								))}
@@ -128,13 +158,19 @@ const CreateWorkspace = () => {
 					}
 					{ (selectedWorkspaces.length !== 0 || nameValue !== "") && (
 						<div style={{position: 'fixed', bottom: 80, width: '100%'}}>
-							<IconButton height="70px" buttonText='Add' width="90%" iconSrc='Plus' iconColor={colors.white} iconSize="30px" isIcon={true} isImage={false} backgroundColor={colors.darkPurple} textColor={colors.white} hoverBackgroundColor={colors.darkPurple} />
+							<IconButton height="70px" onPressButton={handleAddWorkspace} buttonText='Add' width="90%" iconSrc='Plus' iconColor={colors.white} iconSize="30px" isIcon={true} isImage={false} backgroundColor={colors.darkPurple} textColor={colors.white} hoverBackgroundColor={colors.darkPurple} />
 						</div>
 					)}
 				<div>
-					<BottomNavbar/>
+					<BottomNavbar itemPosition={"Create"}/>
 				</div>
 			</div>
+			{ popupError && (
+				<Popup onPress={handleClickButttonPopup} leavePopup={handleClosePopup} Title={'Error'} Content={'An error at creation.'} TextButton="Continue" />
+			)}
+			{ popupSuccess && (
+				<Popup onPress={handleClickButttonPopup} leavePopup={handleClosePopup} Title={'Success'} Content={'Your workspace has been created.'} TextButton="Continue" />
+			)}
 		</div>
 	);
 };

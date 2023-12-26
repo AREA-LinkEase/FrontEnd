@@ -24,7 +24,7 @@ const IconButton = ({
     textSize = '20px',
     textColor = 'black',
     buttonText = 'Google',
-    paddingLeftIcon = '10px',
+    paddingLeftIcon = '12px',
     alignLeft = false,
     paddingLeftText = '50px',
     rightIconName = '',
@@ -32,6 +32,7 @@ const IconButton = ({
     isButtonClickable = true,
     isRightIconClickable = false,
     rightIconColor = colors.black,
+    marginBottomLeftIcon = '0px',
     transition = 'background-color 0.3s',
     onPressButton = () => console.log('Left icon Button clicked'),
     onMouseOverButton = (e) => {
@@ -51,6 +52,7 @@ const IconButton = ({
             onMouseOver={onMouseOverButton}
             onMouseOut={onMouseOutButton}
             style={{
+                margin: 'auto',
                 alignItems: 'center',
                 border: `0px solid ${borderColor}`,
                 backgroundColor,
@@ -70,7 +72,7 @@ const IconButton = ({
             }}
         >
             {IconLogo && (
-                <div style={{ paddingLeft: paddingLeftIcon, position: 'absolute' }}>
+                <div style={{ paddingLeft: paddingLeftIcon,  marginBottom: marginBottomLeftIcon, position: 'absolute' }}>
                     {React.createElement(IconLogo, {
                         size: iconSize,
                         color: iconColor,
@@ -78,7 +80,7 @@ const IconButton = ({
                 </div>
             )}
             {isImage && iconSrc && (
-                <div style={{ paddingLeft: paddingLeftIcon, position: 'absolute' }}>
+                <div style={{ paddingLeft: paddingLeftIcon, marginBottom: marginBottomLeftIcon, position: 'absolute' }}>
                     <SvgIcon svgName={iconSrc} />
                 </div>
             )}
@@ -129,6 +131,7 @@ IconButton.propTypes = {
     onPressRightIcon: PropTypes.func,
     isButtonClickable: PropTypes.bool,
     isRightIconClickable: PropTypes.bool,
+    marginBottomLeftIcon: PropTypes.string,
 };
 
 export default IconButton;

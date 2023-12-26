@@ -10,7 +10,8 @@ import SwitchButton from "../../components/switches/SwitchButton";
 import PrimaryButton from "../../components/buttons/PrimaryButton";
 import adjustColorBrightness from "../../utils/adjustColorBrightness";
 import TitleTextChildButton from "../../components/buttons/TitleTextChildButton";
-
+import {useLocation, useNavigate} from "react-router-dom/dist";
+import { getHeader } from "../../models/authUtils";
 
 const Service = ({
     color = "gray",
@@ -19,56 +20,57 @@ const Service = ({
     description = "Description du service je suis la description du service et je raconte que fait ce service et aussi comment il peut ettre utilise dans linkease"
                  }) => {
 
-    const [showIcon, setShowIcon] = useState(false);
+    const location = useLocation();
+    const { service } = location.state || {};
+    const [showIcon, setShowIcon] = useState(true);
     const Settings = Icon['Settings'];
     const handleClick = () => {
         setShowIcon(!showIcon);
+        try {
+            console.log('ID', service.id)
+            const token = getHeader().Authorization.split(' ')[1]
+            window.open(`http://135.181.165.228:8080/services/connect/${service.id}/${token}`, "_blank")
+        } catch (error) {
+            console.error("Error fetching service:", error);
+        }
     };
 
     const [BoxAccessValue, setBoxAccessValue] = useState("All");
     const [boxList] = useState([{
-        name: 'SpotifyBangar',
-        creator: 'Adilou le fifou',
-        people: 3500000,
+        name: 'Workspace for musique',
+        creator: 'Non',
+        people: 35,
         color: colors.lightPurple,
+        access: "Workspace"
+    },
+    {
+        name: 'Automate TaylorSwift',
+        creator: 'Simon',
+        people: 2,
+        color: colors.darkGrey,
         access: "Automate"
     },
-        {
-            name: 'Baboss',
-            creator: 'Adilou le fifou',
-            people: 3500000,
-            color: colors.darkGrey,
-            access: "Private"
-        },
-        {
-            name: 'Mamen',
-            creator: 'Adilou le fifou',
-            people: 3500000,
-            color: colors.lightPurple,
-            access: "Automate"
-        },
-        {
-            name: '3ataï',
-            creator: 'Adilou le fifou',
-            people: 3500000,
-            color: colors.lightlightGrey,
-            access: "Automate"
-        },
-        {
-            name: 'THOAAAAMS',
-            creator: 'Adilou le fifou',
-            people: 3500000,
-            color: colors.purple,
-            access: "Workspace"
-        },
-        {
-            name: 'PIZZA BIEN GARNIE',
-            creator: 'Adilou le fifou',
-            people: 3500000,
-            color: colors.purple,
-            access: "Workspace"
-        }]);
+    {
+        name: 'Automate Pause musique',
+        creator: 'User1',
+        people: 1,
+        color: colors.lightPurple,
+        access: "Automate"
+    }]);
 
+    const navigate = useNavigate();
+
+    const handleClickBack = () => {
+        navigate("/search");
+    }
+
+    const handleClickServiceSetting = (item) => {
+        navigate("/serviceSetting", {
+            state: {
+              service: item
+            }
+          })
+    }
   return (
     <div>
         <div style={{
@@ -78,29 +80,18 @@ const Service = ({
             zIndex: 2000, top: '0',
             width: '100%'
         }}>
+
             <div className={styles.serviceBackground}>
-                <img src={logo} alt="logo" />
-                {showIcon &&
-                    <div
-                    style={{cursor: 'pointer',
-                        marginLeft: 'auto',
-                        marginRight: '-12px',
-                        zIndex: "3000",
-                        position: "fixed",
-                        top: "57px",
-                        left: "87%"
-                    }}>
-                    {React.createElement(Settings, {
-                        size: '24px',
-                        color: colors.white,
-                    })}
-                </div>}
-                <H1Text text={title} size={"24px"}/>
-                <p className={styles.serviceDescription}>{description}</p>
+                <div style={{height: '100px', position: "fixed", top: '20px', width: "100%", zIndex:"100"}}>
+                    <Header rightIconName={(showIcon)? "Settings" : ""}  rightIconColor={colors.white} rightIconSize={"24px"} onClickIconRight={() => {handleClickServiceSetting(service)}} backgroundColor={color} leftIconColor={colors.white} onClickIconLeft={handleClickBack}/>
+                </div>
+                <img src={service.imgLink} alt="logo" style={{zIndex: "101", width: '100px', height: '100px'}}/>
+                <H1Text text={service.title} size={"24px"}/>
+                <p className={styles.serviceDescription}>{service.description}</p>
                 <PrimaryButton
                     buttonText={"Connect"}
                     textSize={"15px"}
-                    backgroundColor={"white"}
+                    backgroundColor={service.color}
                     hoverBackgroundColor={"#CFCFCF"}
                     width={"35%"} height={"42px"}
                     borderColor={"gray"}
