@@ -29,8 +29,7 @@ jobs:
 
       - name: move to correct directory
         run: |
-          mkdir FrontEnd
-          cd ./FrontEnd
+          mkdir FrontEnd && cd ./FrontEnd
 
       - name: clone the current repository
         uses: actions/checkout@v2
