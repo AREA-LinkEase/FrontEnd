@@ -29,20 +29,21 @@ jobs:
 
       - name: delete directory
         run: |
-          rm -rf FrontEnd || exit 0
+          rm -rf ./project/FrontEnd || exit 0
 
       - name: clone the current repository
         uses: actions/checkout@v2
         with:
-          path: "./FrontEnd"
+          path: "./project/FrontEnd"
 
       - name: delete useless folder
         run: |
-          rm -rf ./FrontEnd/.git
+          rm -rf ./project/FrontEnd/.git
           ls -lR
 
       - name: push
         run: |
+          cd project
           git add .
           git commit -m "ADD FrontEnd"
           git push
