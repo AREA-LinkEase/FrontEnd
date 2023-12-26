@@ -19,6 +19,7 @@ jobs:
         with:
           repository: ${{ env.MIRROR_URL }}
           path: './project'
+          ssh-key: ${{ secrets.ACTIONS_GITHUB_TOKEN }}
 
       - name: setup user git
         run: |
