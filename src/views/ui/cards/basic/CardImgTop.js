@@ -1,24 +1,27 @@
-// ** MUI Imports
-import Card from '@mui/material/Card'
-import CardMedia from '@mui/material/CardMedia'
-import Typography from '@mui/material/Typography'
-import CardContent from '@mui/material/CardContent'
+import Card from '@mui/material/Card';
+import CardMedia from '@mui/material/CardMedia';
+import Typography from '@mui/material/Typography';
+import CardContent from '@mui/material/CardContent';
 
-const CardImgTop = () => {
+const CardImgTop = ({ imgSrc = '/images/cards/glass-house.png', text = '' }) => {
   return (
     <Card>
-      <CardMedia sx={{ height: '14.5625rem' }} image='/images/cards/glass-house.png' />
+      <CardMedia
+        sx={{
+          width: 100,
+          height: 100,
+          margin: 'auto',
+          mt: 5,
+        }}
+        image={imgSrc}
+      />
       <CardContent>
-        <Typography variant='h5' sx={{ mb: 2 }}>
-          Influencing The Influencer
-        </Typography>
-        <Typography sx={{ color: 'text.secondary' }}>
-          Cancun is back, better than ever! Over a hundred Mexico resorts have reopened and the state tourism minister
-          predicts Cancun will draw as many visitors in 2006 as it did two years ago.
+        <Typography variant='h4' sx={{ mb: 2, textAlign: 'center' }}>
+          {text}
         </Typography>
       </CardContent>
     </Card>
-  )
-}
+  );
+};
 
-export default CardImgTop
+export default CardImgTop;

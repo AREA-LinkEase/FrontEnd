@@ -40,7 +40,7 @@ const AuthProvider = ({ children }) => {
             }
           })
           .then(async response => {
-            const userData = filterDatas(response.data.result);
+            const userData = filterDatas(response.data);
             setLoading(false)
             setUser(userData)
           })
@@ -63,8 +63,8 @@ const AuthProvider = ({ children }) => {
   }, [])
 
   const filterDatas = userData => {
-    if (userData.hasOwnProperty('password') || userData.hasOwnProperty('services')) {
-      const { password, services, ...filteredData } = userData;
+    if (userData.hasOwnProperty('password')) {
+      const { password, ...filteredData } = userData;
       return { ...filteredData, role: 'admin' };
     }
     return userData;
@@ -88,7 +88,8 @@ const AuthProvider = ({ children }) => {
           }
         })
         .then(userResponse => {
-          const userData = filterDatas(userResponse.data.result);
+          console.log(userResponse);
+          const userData = filterDatas(userResponse.data);
           setUser(userData);
           window.localStorage.setItem('userData', JSON.stringify(userData));
           
