@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setCustomizerVisibility } from 'src/store/apps/customizer';
 
@@ -26,10 +26,12 @@ import axios from 'axios';
 import MuiDrawer from '@mui/material/Drawer'
 import { styled } from '@mui/material/styles'
 import PerfectScrollbar from 'react-perfect-scrollbar'
+import CardActionArea from '@mui/material/CardActionArea'
+import { useRouter } from 'next/router';
 
 const fetchServices = () => {
   return async (dispatch) => {
-    const storedToken = window.localStorage.getItem(authConfig.storageTokenKeyName)
+    const storedToken = window.localStorage.getItem(authConfig.storageTokenKeyName);
     if (storedToken) {
       try {
         const response = await axios.get('http://135.181.165.228:8080/services/@me', {
@@ -44,6 +46,25 @@ const fetchServices = () => {
       }
     }
   };
+};
+
+const fetchAndSelectService = (id) => {
+  return async (dispatch) => {
+    const storedToken = window.localStorage.getItem(authConfig.storageTokenKeyName);
+    if (storedToken) {
+      try {
+        const response = await axios.get(`http://135.181.165.228:8080/services/${id}`, {
+          headers: {
+            Authorization: storedToken,
+          },
+        });
+        console.log(response);
+        dispatch(selectServiceSuccess(response.data));
+      } catch (error) {
+        console.error('Error fetching and selecting service:', error);
+      }
+    }
+  }
 };
 
 const Drawer = styled(MuiDrawer)(({ theme }) => ({
@@ -82,9 +103,26 @@ const inputStyle = {
   lineHeight: '24px',
 };
 
+const data = [
+  {
+    "id": 1,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/19/Spotify_logo_without_text.svg/2048px-Spotify_logo_without_text.svg.png",
+    "name": "Spotify",
+    "is_private": false
+  },
+  {
+    "id": 2,
+    "img": "https://logodownload.org/wp-content/uploads/2017/11/discord-logo-4-1.png",
+    "name": "Discord",
+    "is_private": true
+  }
+]
+
 const Services = () => {
   const dispatch = useDispatch();
   const services = useSelector((state) => state.services.services);
+  const router = useRouter();
+  const [anchorEl, setAnchorEl] = useState(null);
   const [isCreateMenuOpen, setIsCreateMenuOpen] = useState(false);
   const [name, setName] = useState(''); // État pour le nom
   const [clientId, setClientId] = useState(''); // État pour le Client ID
@@ -113,6 +151,18 @@ const Services = () => {
     dispatch(setCustomizerVisibility(false));
   }
 
+  const handleNavigateService = useCallback(
+    async (url, id) => {
+      await dispatch(fetchAndSelectService(id));
+    
+      if (url) {
+        router.push(url);
+      }
+      setAnchorEl(null);
+    },
+    [dispatch, router]
+  );
+
   return (
     <Grid container spacing={6}>
       <PageHeader
@@ -138,12 +188,22 @@ const Services = () => {
       />
       <Grid item xs={12}>
         <Grid container spacing={2}>
-          {services.map((service) => (
+          {/* {services.map((service) => (
             <Grid item key={service.id}>
               <CardImgTop
                 imgSrc="https://logodownload.org/wp-content/uploads/2017/11/discord-logo-4-1.png"
                 text={service.name}
               />
+            </Grid>
+          ))} */}
+          {data.map((service) => (
+            <Grid item key={service.id} sx={{width: 200}}>
+              <CardActionArea onClick={() => handleNavigateService('/services/info/', service.id)}>
+                <CardImgTop
+                  imgSrc={service.img}
+                  text={service.name}
+                />
+              </CardActionArea>
             </Grid>
           ))}
         </Grid>
