@@ -30,7 +30,6 @@ import themeConfig from 'src/configs/themeConfig'
 import HorizontalNavItems from './HorizontalNavItems'
 import UserIcon from 'src/layouts/components/UserIcon'
 import Translations from 'src/layouts/components/Translations'
-import CanViewNavGroup from 'src/layouts/components/acl/CanViewNavGroup'
 
 // ** Utils
 import { hexToRGBA } from 'src/@core/utils/hex-to-rgba'
@@ -161,8 +160,6 @@ const HorizontalNavGroup = props => {
   }
 
   return (
-    <CanViewNavGroup navGroup={item}>
-      {/* @ts-ignore */}
       <MainWrapper {...(WrapperCondition ? { onClickAway: handleGroupClose } : { onMouseLeave: handleGroupClose })}>
         <ChildWrapper>
           <List component='div' sx={{ py: skin === 'bordered' ? 2.625 : 2.75 }}>
@@ -271,7 +268,6 @@ const HorizontalNavGroup = props => {
           </List>
         </ChildWrapper>
       </MainWrapper>
-    </CanViewNavGroup>
   )
 }
 

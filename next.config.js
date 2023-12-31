@@ -15,5 +15,6 @@ module.exports = {
     }
 
     return config
-  }
+  },
+  transpilePackages: ['@ionic/react', '@ionic/core', '@stencil/core', 'ionicons']
 }

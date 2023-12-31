@@ -3,11 +3,10 @@ const navigation = () => {
     {
       title: 'Home',
       icon: 'tabler:smart-home',
-      badgeColor: 'error',
-      path: '/home'
+      path: '/'
     },
     {
-      sectionTitle: 'Applications'
+      sectionTitle: 'Application'
     },
     {
       title: 'Workspaces',
@@ -16,21 +15,49 @@ const navigation = () => {
     },
     {
       title: 'Services',
-      icon: 'tabler:copy',
+      icon: 'tabler:link',
       path: '/services'
     },
     {
-      sectionTitle: 'Communication'
+      sectionTitle: 'Community'
+    },
+    {
+      title: 'Workspaces',
+      icon: 'tabler:command',
+      path: '/community/workspaces'
+    },
+    {
+      title: 'Automates',
+      icon: 'tabler:toggle-left',
+      path: '/community/automates'
+    },
+    {
+      title: 'Services',
+      icon: 'tabler:link',
+      path: '/community/services'
     },
     {
       title: 'Forum',
-      icon: 'tabler:message-circle',
-      path: '/forum'
+      icon: 'tabler:layout-navbar',
+      path: '/'
     },
     {
-      title: 'FAQs',
-      icon: 'tabler:search',
-      path: '/faqs'
+      sectionTitle: 'Help & Documentation'
+    },
+    {
+      title: 'FAQ',
+      icon: 'tabler:zoom-question',
+      path: '/faq'
+    },
+    {
+      title: 'Help Center',
+      icon: 'tabler:help',
+      path: '/'
+    },
+    {
+      title: 'Documentation',
+      icon: 'tabler:file-search',
+      path: '/'
     }
   ]
 }

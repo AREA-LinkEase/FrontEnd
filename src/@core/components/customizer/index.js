@@ -21,7 +21,6 @@ import Icon from 'src/@core/components/icon'
 
 // ** Hook Import
 import { useSettings } from 'src/@core/hooks/useSettings'
-import { useDispatch, useSelector } from 'react-redux'
 
 const Toggler = styled(Box)(({ theme }) => ({
   right: 0,
@@ -71,7 +70,6 @@ const ColorBox = styled(Box)(({ theme }) => ({
 const Customizer = () => {
   // ** State
   const [open, setOpen] = useState(false)
-  const togglerVisible = useSelector((state) => state.customizer.togglerVisible);
 
   // ** Hook
   const { settings, saveSettings } = useSettings()
@@ -98,11 +96,9 @@ const Customizer = () => {
 
   return (
     <div className='customizer'>
-      {togglerVisible && (
       <Toggler className='customizer-toggler' onClick={() => setOpen(true)}>
         <Icon icon='tabler:settings' />
       </Toggler>
-      )}
       <Drawer open={open} hideBackdrop anchor='right' variant='persistent'>
         <Box
           className='customizer-header'

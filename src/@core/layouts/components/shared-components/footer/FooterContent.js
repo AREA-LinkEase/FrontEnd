@@ -7,9 +7,10 @@ import { styled } from '@mui/material/styles'
 import Typography from '@mui/material/Typography'
 import useMediaQuery from '@mui/material/useMediaQuery'
 
-const StyledCompanyName = styled('span')(({ theme }) => ({
+const StyledCompanyName = styled(Link)(({ theme }) => ({
   fontWeight: 500,
-  color: theme.palette.primary.main,
+  textDecoration: 'none',
+  color: `${theme.palette.primary.main} !important`
 }))
 
 const LinkStyled = styled(Link)(({ theme }) => ({
@@ -31,25 +32,11 @@ const FooterContent = () => {
         <Box component='span' sx={{ mx: 1, color: 'error.main' }}>
           ❤️
         </Box>
-        {`by `}
-        <Typography sx={{ ml: 1 }} component={StyledCompanyName}>
+        {`by`}
+        <Typography sx={{ ml: 1 }} target='_blank' href='/teams' component={StyledCompanyName}>
           MonkeyTeam
         </Typography>
       </Typography>
-      {hidden ? null : (
-        <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', '& :not(:last-child)': { mr: 4 } }}>
-          <Typography component={Link} href="/license">
-            License
-          </Typography>
-          <Typography
-            target='_blank'
-            component={LinkStyled}
-            href='https://github.com/AREA-LinkEase/project/blob/main/README.md'
-          >
-            Documentation
-          </Typography>
-        </Box>
-      )}
     </Box>
   )
 }

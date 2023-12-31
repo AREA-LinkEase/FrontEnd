@@ -23,7 +23,6 @@ import themeConfig from 'src/configs/themeConfig'
 // ** Custom Components Imports
 import UserIcon from 'src/layouts/components/UserIcon'
 import Translations from 'src/layouts/components/Translations'
-import CanViewNavLink from 'src/layouts/components/acl/CanViewNavLink'
 
 // ** Util Imports
 import { hexToRGBA } from 'src/@core/utils/hex-to-rgba'
@@ -69,7 +68,6 @@ const HorizontalNavLink = props => {
   }
 
   return (
-    <CanViewNavLink navLink={item}>
       <Wrapper {...(!hasParent ? { component: 'div', sx: { py: settings.skin === 'bordered' ? 2.625 : 2.75 } } : {})}>
         <ListItem
           component={Link}
@@ -144,7 +142,6 @@ const HorizontalNavLink = props => {
           </Box>
         </ListItem>
       </Wrapper>
-    </CanViewNavLink>
   )
 }
 

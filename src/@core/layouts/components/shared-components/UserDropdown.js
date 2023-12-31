@@ -17,9 +17,6 @@ import MenuItem from '@mui/material/MenuItem'
 // ** Icon Imports
 import Icon from 'src/@core/components/icon'
 
-// ** Context
-import { useAuth } from 'src/hooks/useAuth'
-
 // ** Styled Components
 const BadgeContentSpan = styled('span')(({ theme }) => ({
   width: 8,
@@ -44,7 +41,6 @@ const UserDropdown = props => {
 
   // ** Hooks
   const router = useRouter()
-  const { logout } = useAuth()
 
   // ** Vars
   const { direction } = settings
@@ -76,7 +72,6 @@ const UserDropdown = props => {
   }
 
   const handleLogout = () => {
-    logout()
     handleDropdownClose()
   }
 
@@ -121,15 +116,39 @@ const UserDropdown = props => {
             </Badge>
             <Box sx={{ display: 'flex', ml: 2.5, alignItems: 'flex-start', flexDirection: 'column' }}>
               <Typography sx={{ fontWeight: 500 }}>John Doe</Typography>
-              <Typography variant='body2'>Admin</Typography>
             </Box>
           </Box>
         </Box>
         <Divider sx={{ my: theme => `${theme.spacing(2)} !important` }} />
-        <MenuItemStyled sx={{ p: 0 }} onClick={() => handleDropdownClose('/profile')}>
+        <MenuItemStyled sx={{ p: 0 }} onClick={() => handleDropdownClose('/users/1')}>
           <Box sx={styles}>
-            <Icon icon='tabler:user-check' />
+            <Icon icon='tabler:user' />
             My Profile
+          </Box>
+        </MenuItemStyled>
+        <MenuItemStyled sx={{ p: 0 }} onClick={() => handleDropdownClose('/users/settings')}>
+          <Box sx={styles}>
+            <Icon icon='tabler:settings' />
+            Settings
+          </Box>
+        </MenuItemStyled>
+        <Divider sx={{ my: theme => `${theme.spacing(2)} !important` }} />
+        <MenuItemStyled sx={{ p: 0 }} onClick={() => handleDropdownClose('/')}>
+          <Box sx={styles}>
+            <Icon icon='tabler:lifebuoy' />
+            Help
+          </Box>
+        </MenuItemStyled>
+        <MenuItemStyled sx={{ p: 0 }} onClick={() => handleDropdownClose('/faq')}>
+          <Box sx={styles}>
+            <Icon icon='tabler:info-circle' />
+            FAQ
+          </Box>
+        </MenuItemStyled>
+        <MenuItemStyled sx={{ p: 0 }} onClick={() => handleDropdownClose('/documentation')}>
+          <Box sx={styles}>
+            <Icon icon='tabler:file-search' />
+            Documentation
           </Box>
         </MenuItemStyled>
         <Divider sx={{ my: theme => `${theme.spacing(2)} !important` }} />

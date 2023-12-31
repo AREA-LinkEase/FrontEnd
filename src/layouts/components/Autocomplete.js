@@ -19,9 +19,6 @@ import { styled, useTheme } from '@mui/material/styles'
 import ListItemButton from '@mui/material/ListItemButton'
 import InputAdornment from '@mui/material/InputAdornment'
 
-// ** Third Party Imports
-import axios from 'axios'
-
 // ** Icon Imports
 import Icon from 'src/@core/components/icon'
 
@@ -33,114 +30,26 @@ import themeConfig from 'src/configs/themeConfig'
 
 const defaultSuggestionsData = [
   {
-    category: 'Popular Searches',
+    category: 'Pages',
     suggestions: [
       {
-        icon: 'tabler:chart-pie-2',
-        suggestion: 'Analytics',
-        link: '/dashboards/analytics'
+        icon: 'tabler:command',
+        suggestion: 'Workspaces',
+        link: '/workspaces'
       },
       {
-        icon: 'tabler:device-analytics',
-        suggestion: 'CRM',
+        icon: 'tabler:link',
+        suggestion: 'Services',
         link: '/dashboards/crm'
       },
       {
-        icon: 'tabler:shopping-cart',
-        suggestion: 'eCommerce',
-        link: '/dashboards/ecommerce'
-      },
-      {
-        icon: 'tabler:users',
-        suggestion: 'User List',
-        link: '/apps/user/list'
-      }
-    ]
-  },
-  {
-    category: 'Apps & Pages',
-    suggestions: [
-      {
-        icon: 'tabler:calendar',
-        suggestion: 'Calendar',
-        link: '/apps/calendar'
-      },
-      {
-        icon: 'tabler:list-numbers',
-        suggestion: 'Invoice List',
-        link: '/apps/invoice/list'
-      },
-      {
-        icon: 'tabler:currency-dollar',
-        suggestion: 'Pricing',
-        link: '/pages/pricing'
-      },
-      {
-        icon: 'tabler:settings',
-        suggestion: 'Account Settings',
-        link: '/pages/account-settings/account'
-      }
-    ]
-  },
-  {
-    category: 'User Interface',
-    suggestions: [
-      {
-        icon: 'tabler:typography',
-        suggestion: 'Typography',
-        link: '/ui/typography'
-      },
-      {
-        icon: 'tabler:browser',
-        suggestion: 'Tabs',
-        link: '/components/tabs'
-      },
-      {
-        icon: 'tabler:hand-click',
-        suggestion: 'Buttons',
-        link: '/components/buttons'
-      },
-      {
-        icon: 'tabler:id',
-        suggestion: 'Advanced Cards',
-        link: '/ui/cards/advanced'
-      }
-    ]
-  },
-  {
-    category: 'Forms & Tables',
-    suggestions: [
-      {
-        icon: 'tabler:list-check',
-        suggestion: 'Select',
-        link: '/forms/form-elements/select'
-      },
-      {
-        icon: 'tabler:space',
-        suggestion: 'Autocomplete',
-        link: '/forms/form-elements/autocomplete'
-      },
-      {
-        icon: 'tabler:layout-grid',
-        suggestion: 'Table',
-        link: '/tables/mui'
-      },
-      {
-        icon: 'tabler:calendar-event',
-        suggestion: 'Date Pickers',
-        link: '/forms/form-elements/pickers'
+        icon: 'tabler:zoom-question',
+        suggestion: 'FAQ',
+        link: '/faq'
       }
     ]
   }
 ]
-
-const categoryTitle = {
-  dashboards: 'Dashboards',
-  appsPages: 'Apps & Pages',
-  userInterface: 'User Interface',
-  formsTables: 'Forms & Tables',
-  chartsMisc: 'Charts & Misc'
-}
 
 // ** Styled Autocomplete component
 const Autocomplete = styled(CustomAutocomplete)(({ theme }) => ({
@@ -228,63 +137,6 @@ const NoResult = ({ value, setOpenDialog }) => {
           {`"${value}"`}
         </Typography>
       </Typography>
-
-      <Typography variant='body2' sx={{ mb: 2.5, color: 'text.disabled' }}>
-        Try searching for
-      </Typography>
-      <List sx={{ py: 0 }}>
-        <ListItem sx={{ py: 2 }} disablePadding onClick={() => setOpenDialog(false)}>
-          <Box
-            component={Link}
-            href='/dashboards/ecommerce'
-            sx={{
-              display: 'flex',
-              alignItems: 'center',
-              textDecoration: 'none',
-              '&:hover > *': { color: 'primary.main' }
-            }}
-          >
-            <Box sx={{ mr: 2.5, display: 'flex', color: 'text.primary' }}>
-              <Icon icon='tabler:shopping-cart' />
-            </Box>
-            <Typography>eCommerce Dashboard</Typography>
-          </Box>
-        </ListItem>
-        <ListItem sx={{ py: 2 }} disablePadding onClick={() => setOpenDialog(false)}>
-          <Box
-            component={Link}
-            href='/pages/user-profile/profile'
-            sx={{
-              display: 'flex',
-              alignItems: 'center',
-              textDecoration: 'none',
-              '&:hover > *': { color: 'primary.main' }
-            }}
-          >
-            <Box sx={{ mr: 2.5, display: 'flex', color: 'text.primary' }}>
-              <Icon icon='tabler:user' />
-            </Box>
-            <Typography>User Profile</Typography>
-          </Box>
-        </ListItem>
-        <ListItem sx={{ py: 2 }} disablePadding onClick={() => setOpenDialog(false)}>
-          <Box
-            component={Link}
-            href='/pages/account-settings/account'
-            sx={{
-              display: 'flex',
-              alignItems: 'center',
-              textDecoration: 'none',
-              '&:hover > *': { color: 'primary.main' }
-            }}
-          >
-            <Box sx={{ mr: 2.5, display: 'flex', color: 'text.primary' }}>
-              <Icon icon='tabler:settings' />
-            </Box>
-            <Typography>Account Settings</Typography>
-          </Box>
-        </ListItem>
-      </List>
     </Box>
   )
 }
@@ -325,12 +177,44 @@ const DefaultSuggestions = ({ setOpenDialog }) => {
   )
 }
 
+const categoryTitle = {
+  automates: 'Automates',
+  services: 'Services',
+  workspaces: 'Workspaces'
+}
+
 const AutocompleteComponent = ({ hidden, settings }) => {
   // ** States
   const [isMounted, setIsMounted] = useState(false)
   const [searchValue, setSearchValue] = useState('')
   const [openDialog, setOpenDialog] = useState(false)
-  const [options, setOptions] = useState([])
+  const [options, setOptions] = useState([
+    {
+      "title": "automate 1",
+      "icon": "tabler:toggle-left",
+      "category": "automates"
+    },
+    {
+      "title": "automate 2",
+      "icon": "tabler:toggle-left",
+      "category": "automates"
+    },
+    {
+      "title": "spotify service",
+      "icon": "tabler:link",
+      "category": "services"
+    },
+    {
+      "title": "workspace 1",
+      "icon": "tabler:command",
+      "category": "workspaces"
+    },
+    {
+      "title": "workspace 2",
+      "icon": "tabler:command",
+      "category": "workspaces"
+    }
+  ])
 
   // ** Hooks & Vars
   const theme = useTheme()
@@ -339,20 +223,6 @@ const AutocompleteComponent = ({ hidden, settings }) => {
   const wrapper = useRef(null)
   const fullScreenDialog = useMediaQuery(theme.breakpoints.down('sm'))
 
-  // Get all data using API
-  useEffect(() => {
-    axios
-      .get('/app-bar/search', {
-        params: { q: searchValue }
-      })
-      .then(response => {
-        if (response.data && response.data.length) {
-          setOptions(response.data)
-        } else {
-          setOptions([])
-        }
-      })
-  }, [searchValue])
   useEffect(() => {
     if (!openDialog) {
       setSearchValue('')
@@ -431,7 +301,7 @@ const AutocompleteComponent = ({ hidden, settings }) => {
                 onChange={(event, obj) => handleOptionClick(obj)}
                 noOptionsText={<NoResult value={searchValue} setOpenDialog={setOpenDialog} />}
                 getOptionLabel={option => option.title || ''}
-                groupBy={option => (searchValue.length ? categoryTitle[option.category] : '')}
+                groupBy={(option) => searchValue.length ? categoryTitle[option.category] : ''}
                 sx={{
                   '& + .MuiAutocomplete-popper': {
                     ...(searchValue.length

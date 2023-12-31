@@ -3,7 +3,7 @@ import { CapacitorConfig } from '@capacitor/cli';
 const config: CapacitorConfig = {
   appId: 'fr.linkease.app',
   appName: 'LinkEase',
-  webDir: 'build',
+  webDir: 'out',
   server: {
     androidScheme: 'https'
   }
