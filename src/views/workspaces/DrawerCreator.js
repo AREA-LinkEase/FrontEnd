@@ -14,6 +14,7 @@ import {forwardRef, useContext, useState} from "react";
 import toast from "react-hot-toast";
 import {UserContext} from "../../hook/UserContext";
 import {Workspace} from "../../models/Workspaces";
+import {useRouter} from "next/router";
 
 const defaultValues = {
   title: '',
@@ -32,6 +33,7 @@ export default function DrawerCreator({isOpen, handleDrawer}) {
     formState: { errors }
   } = useForm({ defaultValues })
   const { token } = useContext(UserContext);
+  const router = useRouter();
 
   const onSubmit = async (data) => {
     let result = await Workspace.createNewWorkspace(token, {
@@ -42,6 +44,7 @@ export default function DrawerCreator({isOpen, handleDrawer}) {
     })
 
     if (result === true) {
+      router.reload()
       toast.success("A Workspace has created successfully")
     } else {
       toast.error("An error has occurred")

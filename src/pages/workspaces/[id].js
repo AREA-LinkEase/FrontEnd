@@ -14,12 +14,17 @@ import DialogContent from "@mui/material/DialogContent";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import DialogActions from "@mui/material/DialogActions";
 import Dialog from "@mui/material/Dialog";
-import {forwardRef, useState} from "react";
+import {forwardRef, useContext, useEffect, useState} from "react";
 import {styled} from "@mui/material/styles";
 import IconButton from "@mui/material/IconButton";
 import Fade from "@mui/material/Fade";
 import CustomTextField from "../../@core/components/mui/text-field";
 import Checkbox from "@mui/material/Checkbox";
+import {UserContext} from "../../hook/UserContext";
+import Spinner from "../../@core/components/spinner";
+import {Workspace} from "../../models/Workspaces";
+import {Users} from "../../models/Users";
+import toast from "react-hot-toast";
 
 const CustomCloseButton = styled(IconButton)(({ theme }) => ({
   top: 0,
@@ -42,20 +47,65 @@ const Transition = forwardRef(function Transition(props, ref) {
 
 const workspace = () => {
   const router = useRouter();
-  const { id } = router.query;
-  const [showEdit, setShowEdit] = useState(false)
+  const [showEdit, setShowEdit] = useState(false);
+  const [info, setInfo] = useState(null);
+  const [workspace, setWorkspace] = useState(null);
+  const { token } = useContext(UserContext);
+  const [isLoading, setLoading] = useState(true);
+
+  const [title, setTitle] = useState("")
+  const [description, setDescription] = useState("");
+  const [isCheck, setCheck] = useState(false);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        let newId = parseInt(router.query.id);
+
+        if (Number.isNaN(newId)) return router.replace("/404");
+
+        let newWorkspace = new Workspace(token, newId);
+
+        let result = await newWorkspace.get();
+
+        console.log(result)
+        if (typeof result === "number")
+          return
+
+        let users = [];
+        for (const user of result.users_id) {
+          let userInfo = await Users.getUserById(token, user.id);
+
+          if (typeof user === "number") continue;
+          users.push({...userInfo, permission: user.permission})
+        }
+        console.log(result)
+        setWorkspace(newWorkspace)
+        setInfo({...result, users})
+        setTitle(result.title)
+        setDescription(result.description)
+        setCheck(result.is_private)
+        setLoading(false)
+      } catch (e) {
+        console.log(e)
+      }
+    })()
+  }, []);
+
+  if (isLoading)
+    return <Spinner />
 
   return <>
     <Grid container spacing={6}>
       <PageHeader
         title={
           <Typography variant='h4'>
-            Nom du workspace #1
+            {info.title}
           </Typography>
         }
         subtitle={
           <Typography sx={{ color: 'text.secondary' }}>
-            Description du workspace
+            {info.description}
           </Typography>
         }
       />
@@ -69,7 +119,7 @@ const workspace = () => {
               <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
                 <Typography sx={{ mb: 1, color: 'text.secondary' }}>Automates</Typography>
                 <Box sx={{ mb: 1, columnGap: 1.5, display: 'flex', flexWrap: 'wrap', alignItems: 'center' }}>
-                  <Typography variant='h4'>15</Typography>
+                  <Typography variant='h4'>{info.automates.length}</Typography>
                 </Box>
                 <Typography variant='h6' sx={{ color: 'text.secondary' }}>
                   Total
@@ -87,7 +137,7 @@ const workspace = () => {
               <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
                 <Typography sx={{ mb: 1, color: 'text.secondary' }}>Users</Typography>
                 <Box sx={{ mb: 1, columnGap: 1.5, display: 'flex', flexWrap: 'wrap', alignItems: 'center' }}>
-                  <Typography variant='h4'>15</Typography>
+                  <Typography variant='h4'>{info.users.length}</Typography>
                 </Box>
                 <Typography variant='h6' sx={{ color: 'text.secondary' }}>
                   Total
@@ -101,10 +151,10 @@ const workspace = () => {
         </Grid>
       </Grid>
       <Grid item xs={12}>
-        <AutomateTable />
+        <AutomateTable data={info.automates} workspace={workspace} />
       </Grid>
       <Grid item xs={12}>
-        <UserTable />
+        <UserTable data={info.users} workspace={workspace} />
       </Grid>
     </Grid>
     <Dialog
@@ -131,11 +181,18 @@ const workspace = () => {
           <Typography variant='h3' sx={{ mb: 3 }}>
             Edit Workspace
           </Typography>
-          <Typography sx={{ color: 'text.secondary' }}>Name's edition</Typography>
+          <Typography sx={{ color: 'text.secondary' }}>{info.title}'s edition</Typography>
         </Box>
         <Grid container spacing={6}>
           <Grid item xs={12}>
-            <CustomTextField sx={{ mb: 6 }} fullWidth label='Name' placeholder='' />
+            <CustomTextField
+              sx={{ mb: 6 }}
+              fullWidth
+              label='Name'
+              placeholder=''
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+            />
           </Grid>
           <Grid item xs={12}>
             <CustomTextField
@@ -144,10 +201,17 @@ const workspace = () => {
               fullWidth
               label='Description'
               id='textarea-outlined-static'
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
             />
           </Grid>
           <Grid item xs={12}>
-            <FormControlLabel label='Need to be private ?' control={<Checkbox defaultChecked name='basic-checked' />} />
+            <FormControlLabel label='Need to be private ?' control={<Checkbox
+              defaultChecked
+              name='basic-checked'
+              checked={isCheck}
+              onChange={(e) => setCheck(e.target.checked)}
+            />} />
           </Grid>
         </Grid>
       </DialogContent>
@@ -158,7 +222,21 @@ const workspace = () => {
           pb: theme => [`${theme.spacing(8)} !important`, `${theme.spacing(12.5)} !important`]
         }}
       >
-        <Button variant='contained' sx={{ mr: 1 }} onClick={() => setShowEdit(false)}>
+        <Button variant='contained' sx={{ mr: 1 }} onClick={async () => {
+          setShowEdit(false)
+          let result = await workspace.edit({
+            title,
+            description,
+            is_private: isCheck
+          })
+
+          if (typeof result === "number")
+            toast.error("An error has occurred")
+          else {
+            router.reload();
+            toast.success("The workspace has edited successfully")
+          }
+        }}>
           Update
         </Button>
         <Button variant='tonal' color='secondary' onClick={() => setShowEdit(false)}>

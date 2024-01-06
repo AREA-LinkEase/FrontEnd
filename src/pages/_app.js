@@ -65,7 +65,7 @@ const AuthGuard = ({children}) => {
   const [isLoading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!router.isReady || !isLoaded) return;
+    if (!isLoaded) return;
 
     if (token === null)
       router.replace("/auth/login")
