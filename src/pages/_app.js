@@ -40,9 +40,9 @@ import 'src/iconify-bundle/icons-bundle-react'
 
 // ** Global css styles
 import '../../styles/globals.css'
-import {useEffect, useState} from "react";
-import {User} from "../models/Users";
+import {useContext, useEffect, useState} from "react";
 import Spinner from "../@core/components/spinner";
+import {UserContext, UserProvider} from "../hook/UserContext";
 
 const clientSideEmotionCache = createEmotionCache()
 
@@ -61,27 +61,17 @@ if (themeConfig.routingLoader) {
 
 const AuthGuard = ({children}) => {
   const router = useRouter()
-  const [isLoading, setLoading] = useState(true)
+  const { token, isLoaded } = useContext(UserContext);
+  const [isLoading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!router.isReady) return;
-    (async () => {
-      const jwt = localStorage.getItem("token")
+    if (!router.isReady || !isLoaded) return;
 
-      if (!jwt)
-        await router.replace("/auth/login")
-      else {
-        let user = new User(jwt)
-
-        let result = await user.get();
-
-        if (typeof result === "number")
-          await router.replace("/auth/login")
-        else
-          setLoading(false)
-      }
-    })()
-  }, [router.route]);
+    if (token === null)
+      router.replace("/auth/login")
+    else
+      setLoading(false)
+  }, [router.route, token, isLoaded]);
 
   if (isLoading)
     return <Spinner />
@@ -113,29 +103,30 @@ const App = props => {
   return (
       <CacheProvider value={emotionCache}>
         <Head>
-          <title>{`${themeConfig.templateName} - Material Design React Admin Template`}</title>
+          <title>{`${themeConfig.templateName}`}</title>
           <meta
             name='description'
-            content={`${themeConfig.templateName} – Material Design React Admin Dashboard Template – is the most developer friendly & highly customizable Admin Dashboard Template based on MUI v5.`}
+            content={`${themeConfig.templateName}`}
           />
-          <meta name='keywords' content='Material Design, MUI, Admin Template, React Admin Template' />
           <meta name='viewport' content='initial-scale=1, width=device-width' />
         </Head>
           <SettingsProvider {...(setConfig ? { pageSettings: setConfig() } : {})}>
-            <SettingsConsumer>
-              {({ settings }) => {
-                return (
-                  <ThemeComponent settings={settings}>
-                    <Guard needAuth={needAuth}>
-                      {getLayout(<Component {...pageProps} />)}
-                    </Guard>
-                    <ReactHotToast>
-                      <Toaster position={settings.toastPosition} toastOptions={{ className: 'react-hot-toast' }} />
-                    </ReactHotToast>
-                  </ThemeComponent>
-                )
-              }}
-            </SettingsConsumer>
+            <UserProvider>
+              <SettingsConsumer>
+                {({ settings }) => {
+                  return (
+                    <ThemeComponent settings={settings}>
+                      <Guard needAuth={needAuth}>
+                        {getLayout(<Component {...pageProps} />)}
+                      </Guard>
+                      <ReactHotToast>
+                        <Toaster position={settings.toastPosition} toastOptions={{ className: 'react-hot-toast' }} />
+                      </ReactHotToast>
+                    </ThemeComponent>
+                  )
+                }}
+              </SettingsConsumer>
+            </UserProvider>
           </SettingsProvider>
       </CacheProvider>
   )

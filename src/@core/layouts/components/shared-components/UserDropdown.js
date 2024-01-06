@@ -1,5 +1,5 @@
 // ** React Imports
-import { useState, Fragment } from 'react'
+import {useState, Fragment, useContext, useEffect} from 'react'
 
 // ** Next Import
 import { useRouter } from 'next/router'
@@ -16,6 +16,8 @@ import MenuItem from '@mui/material/MenuItem'
 
 // ** Icon Imports
 import Icon from 'src/@core/components/icon'
+import {UserContext} from "../../../../hook/UserContext";
+import NetworkConfig from "../../../../configs/networkConfig";
 
 // ** Styled Components
 const BadgeContentSpan = styled('span')(({ theme }) => ({
@@ -41,6 +43,22 @@ const UserDropdown = props => {
 
   // ** Hooks
   const router = useRouter()
+  const { user, logout } = useContext(UserContext);
+  const [urlAvatar, setUrlAvatar] = useState("");
+  const [info, setInfo] = useState(null)
+
+  useEffect(() => {
+    (async () => {
+      try {
+        let info = await user.get();
+
+        setUrlAvatar(NetworkConfig.url + "/assets/avatars/" + info.id + ".png")
+        setInfo(info)
+      } catch (e) {
+       console.log(e)
+      }
+    })()
+  }, [])
 
   // ** Vars
   const { direction } = settings
@@ -73,6 +91,7 @@ const UserDropdown = props => {
 
   const handleLogout = () => {
     handleDropdownClose()
+    logout()
   }
 
   return (
@@ -88,8 +107,8 @@ const UserDropdown = props => {
         }}
       >
         <Avatar
-          alt='John Doe'
-          src='/images/avatars/1.png'
+          alt={info?.username}
+          src={urlAvatar}
           onClick={handleDropdownOpen}
           sx={{ width: 38, height: 38 }}
         />
@@ -112,15 +131,15 @@ const UserDropdown = props => {
                 horizontal: 'right'
               }}
             >
-              <Avatar alt='John Doe' src='/images/avatars/1.png' sx={{ width: '2.5rem', height: '2.5rem' }} />
+              <Avatar alt={info?.username} src={urlAvatar} sx={{ width: '2.5rem', height: '2.5rem' }} />
             </Badge>
             <Box sx={{ display: 'flex', ml: 2.5, alignItems: 'flex-start', flexDirection: 'column' }}>
-              <Typography sx={{ fontWeight: 500 }}>John Doe</Typography>
+              <Typography sx={{ fontWeight: 500 }}>{info?.username}</Typography>
             </Box>
           </Box>
         </Box>
         <Divider sx={{ my: theme => `${theme.spacing(2)} !important` }} />
-        <MenuItemStyled sx={{ p: 0 }} onClick={() => handleDropdownClose('/users/1')}>
+        <MenuItemStyled sx={{ p: 0 }} onClick={() => handleDropdownClose('/users/' + info?.id)}>
           <Box sx={styles}>
             <Icon icon='tabler:user' />
             My Profile
