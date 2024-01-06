@@ -185,7 +185,7 @@ const UserTable = ({data, workspace}) => {
               <RadioGroup aria-label='quiz' name='Permission' value={selectedValue} onChange={handleChange}>
               {roles.map((role, i) => {
                 return (
-                  <FormControlLabel value={i} control={<Radio />} label={role.label} />
+                  <FormControlLabel key={i} value={i} control={<Radio />} label={role.label} />
                 )
               })}
               </RadioGroup>

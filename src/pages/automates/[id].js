@@ -7,30 +7,63 @@ import Box from "@mui/material/Box";
 import Icon from "../../@core/components/icon";
 import TabPanel from "@mui/lab/TabPanel";
 import TabContext from "@mui/lab/TabContext";
-import {useState} from "react";
+import {useContext, useEffect, useState} from "react";
 import Logs from "../../views/automates/tabs/Logs";
 import Variables from "../../views/automates/tabs/Variables";
 import Workflow from "../../views/automates/tabs/Workflow";
 import Settings from "../../views/automates/tabs/Settings";
 import TabList from "@mui/lab/TabList";
 import useMediaQuery from "@mui/material/useMediaQuery";
+import {Workspace} from "../../models/Workspaces";
+import {Users} from "../../models/Users";
+import Spinner from "../../@core/components/spinner";
+import {UserContext} from "../../hook/UserContext";
+import {Automate} from "../../models/Automates";
 
 const automate = () => {
   const router = useRouter();
-  const { id } = router.query;
   const [activeTab, setActiveTab] = useState("workflow")
+  const [info, setInfo] = useState(null);
+  const [automate, setAutomate] = useState(null);
+  const { token } = useContext(UserContext);
+  const [isLoading, setLoading] = useState(true);
 
   const hideText = useMediaQuery(theme => theme.breakpoints.down('md'))
+
+  useEffect(() => {
+    (async () => {
+      try {
+        let newId = parseInt(router.query.id);
+
+        if (Number.isNaN(newId)) return router.replace("/404");
+
+        let newAutomate = new Automate(token, newId);
+
+        let result = await newAutomate.get();
+
+        if (typeof result === "number")
+          return
+        setAutomate(newAutomate)
+        setInfo(result)
+        setLoading(false)
+      } catch (e) {
+        console.log(e)
+      }
+    })()
+  }, []);
+
+  if (isLoading)
+    return <Spinner />
 
   const handleChange = (event, value) => {
     setActiveTab(value)
   }
 
     const tabContentList = {
-        logs: <Logs />,
-        settings: <Settings />,
-        variables: <Variables />,
-        workflow: <Workflow />
+        logs: <Logs info={info} automate={automate} />,
+        settings: <Settings info={info} automate={automate} />,
+        variables: <Variables info={info} automate={automate} />,
+        workflow: <Workflow info={info} automate={automate} />
     }
 
   return <>
@@ -38,7 +71,12 @@ const automate = () => {
       <PageHeader
         title={
           <Typography variant='h4'>
-            Nom de l'automate #1
+            {info.title}
+          </Typography>
+        }
+        subtitle={
+          <Typography sx={{ color: 'text.secondary' }}>
+            {info.description}
           </Typography>
         }
       />

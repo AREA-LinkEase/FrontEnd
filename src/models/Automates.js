@@ -115,6 +115,42 @@ export class Automate {
   }
 
   /**
+   * Add variable for a specific automate.
+   * @param {String} name - The name of the variable.
+   * @param {String} content - The content of the variable.
+   * @returns {Promise<boolean|number>} - A promise that resolves to true if the variable is added successfully or returns a status code on failure.
+   */
+  async addVariable(name, content) {
+    let response = await fetch(networkConfig.url + "/automates/" + this.id + "/variables/" + name, {
+      headers: {
+        "Authorization": this.token,
+        "Content-Type": "application/json"
+      },
+      method: "POST",
+      body: JSON.stringify({
+        content
+      })
+    })
+    return (response.ok) ? true : response.status;
+  }
+
+  /**
+   * Remove variable for a specific automate.
+   * @param {String} name - The name of the variable
+   * @returns {Promise<boolean|number>} - A promise that resolves to true if the variable is removed successfully or returns a status code on failure.
+   */
+  async removeVariable(name) {
+    let response = await fetch(networkConfig.url + "/automates/" + this.id + "/variables/"+ name, {
+      headers: {
+        "Authorization": this.token,
+        "Content-Type": "application/json"
+      },
+      method: "DELETE"
+    })
+    return (response.ok) ? true : response.status;
+  }
+
+  /**
    * Delete a specific automate.
    * @returns {Promise<boolean|number>} - A promise that resolves to true if the automate is deleted successfully or returns a status code on failure.
    */
