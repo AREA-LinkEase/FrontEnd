@@ -6,19 +6,14 @@ import Drawer from "@mui/material/Drawer";
 import Grid from "@mui/material/Grid";
 import {Controller, useForm} from "react-hook-form";
 import CustomTextField from "../../@core/components/mui/text-field";
-import InputAdornment from "@mui/material/InputAdornment";
-import DatePicker from "react-datepicker";
-import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
-import FormLabel from "@mui/material/FormLabel";
-import RadioGroup from "@mui/material/RadioGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
-import Radio from "@mui/material/Radio";
-import FormHelperText from "@mui/material/FormHelperText";
 import Checkbox from "@mui/material/Checkbox";
 import Button from "@mui/material/Button";
-import {forwardRef, useState} from "react";
+import {forwardRef, useContext, useState} from "react";
 import toast from "react-hot-toast";
+import {UserContext} from "../../hook/UserContext";
+import {Workspace} from "../../models/Workspaces";
 
 const defaultValues = {
   title: '',
@@ -36,9 +31,22 @@ export default function DrawerCreator({isOpen, handleDrawer}) {
     handleSubmit,
     formState: { errors }
   } = useForm({ defaultValues })
+  const { token } = useContext(UserContext);
 
-  const onSubmit = () => {
-    toast.success('Form Submitted')
+  const onSubmit = async (data) => {
+    let result = await Workspace.createNewWorkspace(token, {
+      title: data.title,
+      description: data.description,
+      is_private: data.isPrivate,
+      users_id: []
+    })
+
+    if (result === true) {
+      toast.success("A Workspace has created successfully")
+    } else {
+      toast.error("An error has occurred")
+      console.log(result)
+    }
     handleDrawer()
   }
 

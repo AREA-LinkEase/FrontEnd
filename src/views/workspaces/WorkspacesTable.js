@@ -15,6 +15,7 @@ import {DataGrid} from "@mui/x-data-grid";
 import AvatarGroup from "@mui/material/AvatarGroup";
 import Avatar from "@mui/material/Avatar";
 import CustomChip from 'src/@core/components/mui/chip'
+import NetworkConfig from "../../configs/networkConfig";
 
 const defaultColumns = [
   {
@@ -26,7 +27,7 @@ const defaultColumns = [
       <CustomAvatar skin='light' color='info' sx={{ mr: 4, width: 30, height: 30 }}>
         <Icon icon='tabler:command' fontSize={20} color={row.color}/>
       </CustomAvatar>
-      <Typography sx={{ color: 'text.secondary' }}>{row.name}</Typography>
+      <Typography sx={{ color: 'text.secondary' }}>{row.title}</Typography>
     </Box>
   },
   {
@@ -35,7 +36,7 @@ const defaultColumns = [
     field: 'Owner',
     headerName: 'Owner',
     renderCell: ({ row }) => <>
-      <Typography sx={{ color: 'text.secondary' }}>{row.owner}</Typography>
+      <Typography sx={{ color: 'text.secondary' }}>{row.owner?.username}</Typography>
     </>
   },
   {
@@ -44,8 +45,8 @@ const defaultColumns = [
     field: 'Users',
     headerName: 'Users',
     renderCell: ({ row }) => <AvatarGroup className='pull-up' max={4}>
-      {row.users.map((user) => {
-        return <Avatar src={user.avatar} alt={user.username} />
+      {row.users.map((user, i) => {
+        return <Avatar key={i} src={NetworkConfig.url + "/assets/avatars/" + user.id + ".png"} alt={user.username} />
       })}
     </AvatarGroup>
   },
@@ -54,11 +55,11 @@ const defaultColumns = [
     minWidth: 90,
     field: 'Status',
     headerName: 'Status',
-    renderCell: ({ row }) => <CustomChip rounded label={row.status} skin='light' color={(row.status === "enable" ? "success" : "error")} />
+    renderCell: ({ row }) => <CustomChip rounded label={(row.is_enabled) ? "enable" : "disable"} skin='light' color={(row.is_enabled ? "success" : "error")} />
   }
 ]
 
-const WorkspacesTable = ({handleDrawer}) => {
+const WorkspacesTable = ({data, handleDrawer}) => {
   const [value, setValue] = useState('')
   const [paginationModel, setPaginationModel] = useState({ page: 0, pageSize: 6 })
 
@@ -78,7 +79,7 @@ const WorkspacesTable = ({handleDrawer}) => {
             </IconButton>
           </Tooltip>
           <Tooltip title='View'>
-            <IconButton size='small' component={Link} href={"#"}>
+            <IconButton size='small' component={Link} href={"/workspaces/" + row.id}>
               <Icon icon='tabler:eye' />
             </IconButton>
           </Tooltip>
@@ -92,7 +93,7 @@ const WorkspacesTable = ({handleDrawer}) => {
               },
               {
                 text: 'Edit',
-                href: `#`,
+                href: "/workspaces/" + row.id,
                 icon: <Icon icon='tabler:pencil' fontSize='1.25rem' />
               },
               {
@@ -121,21 +122,7 @@ const WorkspacesTable = ({handleDrawer}) => {
       <DataGrid
         autoHeight
         rowHeight={54}
-        rows={[
-          {
-            "id": 0,
-            "name": "test",
-            "color": "red",
-            "owner": "moustafa",
-            "users": [
-              {
-                "username": "moustafa",
-                "avatar": "/images/avatars/1.png"
-              }
-            ],
-            "status": "enable"
-          }
-        ]}
+        rows={data}
         columns={columns}
         disableRowSelectionOnClick
         paginationModel={paginationModel}

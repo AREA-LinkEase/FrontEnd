@@ -64,10 +64,11 @@ export class Workspace {
   static async createNewWorkspace(jwt, body) {
     let response = await fetch(networkConfig.url + "/workspaces/@me", {
       headers: {
-        "Authorization": jwt
+        "Authorization": jwt,
+        "Content-Type": "application/json"
       },
       method: "POST",
-      body: body
+      body: JSON.stringify(body)
     })
     return (response.ok) ? true : response.status;
   }
@@ -124,10 +125,11 @@ export class Workspace {
   async edit(body) {
     let response = await fetch(networkConfig.url + "/workspaces/" + this.id, {
       headers: {
-        "Authorization": this.token
+        "Authorization": this.token,
+        "Content-Type": "application/json"
       },
       method: "PUT",
-      body: body
+      body: JSON.stringify(body)
     })
     return (response.ok) ? true : response.status;
   }
@@ -156,13 +158,14 @@ export class Workspace {
   async addUser(userId, permission) {
     let response = await fetch(networkConfig.url + "/workspaces/" + this.id + "/users", {
       headers: {
-        "Authorization": this.token
+        "Authorization": this.token,
+        "Content-Type": "application/json"
       },
       method: "POST",
-      body: {
+      body: JSON.stringify({
         id: userId,
         permission
-      }
+      })
     })
     return (response.ok) ? true : response.status;
   }
@@ -175,10 +178,11 @@ export class Workspace {
   async createAutomate(body) {
     let response = await fetch(networkConfig.url + "/workspaces/" + this.id + "/automate", {
       headers: {
-        "Authorization": this.token
+        "Authorization": this.token,
+        "Content-Type": "application/json"
       },
       method: "POST",
-      body: body
+      body: JSON.stringify(body)
     })
     return (response.ok) ? true : response.status;
   }

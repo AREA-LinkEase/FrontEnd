@@ -87,10 +87,11 @@ export class Service {
   static async createService(jwt, body) {
     let response = await fetch(networkConfig.url + "/services/@me", {
       headers: {
-        "Authorization": jwt
+        "Authorization": jwt,
+        "Content-Type": "application/json"
       },
       method: "POST",
-      body: body
+      body: JSON.stringify(body)
     })
     return (response.ok) ? true : response.status;
   }
@@ -185,12 +186,13 @@ export class Service {
   async addUser(userId) {
     let response = await fetch(networkConfig.url + "/services/" + this.id + "/users", {
       headers: {
-        "Authorization": this.token
+        "Authorization": this.token,
+        "Content-Type": "application/json"
       },
       method: "POST",
-      body: {
+      body: JSON.stringify({
         id: userId
-      }
+      })
     })
     return (response.ok) ? true : response.status;
   }
@@ -238,10 +240,11 @@ export class Service {
   async createEvent(body) {
     let response = await fetch(networkConfig.url + "/services/" + this.id + "/events", {
       headers: {
-        "Authorization": this.token
+        "Authorization": this.token,
+        "Content-Type": "application/json"
       },
       method: "POST",
-      body: body
+      body: JSON.stringify(body)
     })
     return (response.ok) ? true : response.status;
   }
@@ -256,10 +259,11 @@ export class Service {
   async editEvent(id, body) {
     let response = await fetch(networkConfig.url + "/services/" + this.id + "/automate/" + id, {
       headers: {
-        "Authorization": this.token
+        "Authorization": this.token,
+        "Content-Type": "application/json"
       },
       method: "PUT",
-      body: body
+      body: JSON.stringify(body)
     })
     return (response.ok) ? true : response.status;
   }
@@ -306,10 +310,11 @@ export class Service {
   async edit(body) {
     let response = await fetch(networkConfig.url + "/services/" + this.id, {
       headers: {
-        "Authorization": this.token
+        "Authorization": this.token,
+        "Content-Type": "application/json"
       },
       method: "PUT",
-      body: body
+      body: JSON.stringify(body)
     })
     return (response.ok) ? true : response.status;
   }

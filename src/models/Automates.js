@@ -86,10 +86,11 @@ export class Automate {
   async edit(body) {
     let response = await fetch(networkConfig.url + "/automates/" + this.id, {
       headers: {
-        "Authorization": this.token
+        "Authorization": this.token,
+        "Content-Type": "application/json"
       },
       method: "PUT",
-      body: body
+      body: JSON.stringify(body)
     })
     return (response.ok) ? true : response.status;
   }
@@ -102,12 +103,13 @@ export class Automate {
   async editWorkflow(workflow) {
     let response = await fetch(networkConfig.url + "/automates/" + this.id + "/workflow", {
       headers: {
-        "Authorization": this.token
+        "Authorization": this.token,
+        "Content-Type": "application/json"
       },
       method: "PUT",
-      body: {
+      body: JSON.stringify({
         workflow
-      }
+      })
     })
     return (response.ok) ? true : response.status;
   }
@@ -119,7 +121,8 @@ export class Automate {
   async destroy() {
     let response = await fetch(networkConfig.url + "/automates/" + this.id, {
       headers: {
-        "Authorization": this.token
+        "Authorization": this.token,
+        "Content-Type": "application/json"
       },
       method: "DELETE"
     })
