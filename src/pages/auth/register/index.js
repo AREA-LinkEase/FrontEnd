@@ -31,6 +31,9 @@ import BlankLayout from 'src/@core/layouts/BlankLayout'
 
 // ** Demo Imports
 import AuthIllustrationV1Wrapper from 'src/views/pages/auth/AuthIllustrationV1Wrapper'
+import {Auth} from "../../../models/Auth";
+import {Alert} from "@mui/lab";
+import {useRouter} from "next/router";
 
 // ** Styled Components
 const Card = styled(MuiCard)(({ theme }) => ({
@@ -56,9 +59,14 @@ const RegisterV1 = () => {
     password: '',
     showPassword: false
   })
+  const [username, setUsername] = useState("")
+  const [email, setEmail] = useState("")
+  const [isChecked, setCheck] = useState(false)
+  const [error, setError] = useState("")
 
   // ** Hook
   const theme = useTheme()
+  const router = useRouter()
 
   const handleChange = prop => event => {
     setValues({ ...values, [prop]: event.target.value })
@@ -66,6 +74,22 @@ const RegisterV1 = () => {
 
   const handleClickShowPassword = () => {
     setValues({ ...values, showPassword: !values.showPassword })
+  }
+
+  const onSubmit = async () => {
+    if (!isChecked) return setError("You need to valid the privacy policy and terms !")
+    try {
+      let result = await Auth.register(username, email, values.password)
+
+      if (result === true) {
+        await router.replace("/auth/login")
+      } else {
+        setError("Something wrong happen...")
+      }
+    } catch (e) {
+      console.log(e)
+      setError("Something wrong happen...")
+    }
   }
 
   return (
@@ -106,13 +130,20 @@ const RegisterV1 = () => {
                 {themeConfig.templateName}
               </Typography>
             </Box>
-            <Box sx={{ mb: 6 }}>
+            <Box sx={{ mb: 3 }}>
               <Typography variant='h4' sx={{ mb: 1.5 }}>
                 Adventure starts here 🚀
               </Typography>
               <Typography sx={{ color: 'text.secondary' }}>Make your app management easy and fun!</Typography>
             </Box>
-            <form noValidate autoComplete='off' onSubmit={e => e.preventDefault()}>
+            {(error.length !== 0) ?
+              <Alert variant='filled' severity='error' sx={{ mb: 3 }}>
+                {error}
+              </Alert> : null}
+            <form noValidate autoComplete='off' onSubmit={e => {
+              e.preventDefault()
+              onSubmit()
+            }}>
               <CustomTextField
                 autoFocus
                 fullWidth
@@ -120,8 +151,21 @@ const RegisterV1 = () => {
                 sx={{ mb: 4 }}
                 label='Username'
                 placeholder='John.doe'
+                value={username}
+                onChange={(e) => {
+                  setUsername(e.target.value)
+                }}
               />
-              <CustomTextField fullWidth type='email' label='Email' sx={{ mb: 4 }} placeholder='john.doe@gmail.com' />
+              <CustomTextField
+                fullWidth type='email'
+                label='Email'
+                sx={{ mb: 4 }}
+                placeholder='john.doe@gmail.com'
+                value={email}
+                onChange={(e) => {
+                  setEmail(e.target.value)
+                }}
+              />
               <CustomTextField
                 fullWidth
                 label='Password'
@@ -146,7 +190,7 @@ const RegisterV1 = () => {
                 }}
               />
               <FormControlLabel
-                control={<Checkbox />}
+                control={<Checkbox value={isChecked} onChange={(e) => setCheck(e.target.checked)} />}
                 label={
                   <Box sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'center' }}>
                     <Typography sx={{ color: 'text.secondary' }}>I agree to </Typography>
@@ -206,5 +250,6 @@ const RegisterV1 = () => {
   )
 }
 RegisterV1.getLayout = page => <BlankLayout>{page}</BlankLayout>
+RegisterV1.needAuth = false
 
 export default RegisterV1

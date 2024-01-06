@@ -31,6 +31,9 @@ import BlankLayout from 'src/@core/layouts/BlankLayout'
 
 // ** Demo Imports
 import AuthIllustrationV1Wrapper from 'src/views/pages/auth/AuthIllustrationV1Wrapper'
+import {useRouter} from "next/router";
+import {Alert} from "@mui/lab";
+import {Auth} from "../../../models/Auth";
 
 // ** Styled Components
 const Card = styled(MuiCard)(({ theme }) => ({
@@ -54,12 +57,31 @@ const LoginV1 = () => {
     password: '',
     showPassword: false
   })
+  const [email, setEmail] = useState("")
+  const [error, setError] = useState("")
 
   // ** Hook
   const theme = useTheme()
+  const router = useRouter()
 
   const handleChange = prop => event => {
     setValues({ ...values, [prop]: event.target.value })
+  }
+
+  const onSubmit = async () => {
+    try {
+      let result = await Auth.login(email, values.password)
+
+      if (typeof result === "object") {
+        localStorage.setItem("token", result.jwt);
+        router.replace("/")
+      } else {
+        setError("Something wrong happen...")
+      }
+    } catch (e) {
+      console.log(e)
+      setError("Something wrong happen...")
+    }
   }
 
   const handleClickShowPassword = () => {
@@ -104,7 +126,7 @@ const LoginV1 = () => {
                 {themeConfig.templateName}
               </Typography>
             </Box>
-            <Box sx={{ mb: 6 }}>
+            <Box sx={{ mb: 3 }}>
               <Typography variant='h4' sx={{ mb: 1.5 }}>
                 {`Welcome to ${themeConfig.templateName}! 👋🏻`}
               </Typography>
@@ -112,7 +134,14 @@ const LoginV1 = () => {
                 Please sign-in to your account and start the adventure
               </Typography>
             </Box>
-            <form noValidate autoComplete='off' onSubmit={e => e.preventDefault()}>
+            {(error.length !== 0) ?
+              <Alert variant='filled' severity='error' sx={{ mb: 3 }}>
+                {error}
+              </Alert> : null}
+            <form noValidate autoComplete='off' onSubmit={e => {
+              e.preventDefault()
+              onSubmit()
+            }}>
               <CustomTextField
                 autoFocus
                 fullWidth
@@ -120,6 +149,8 @@ const LoginV1 = () => {
                 label='Email'
                 sx={{ mb: 4 }}
                 placeholder='john.doe@gmail.com'
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
               />
               <CustomTextField
                 fullWidth
@@ -202,5 +233,6 @@ const LoginV1 = () => {
   )
 }
 LoginV1.getLayout = page => <BlankLayout>{page}</BlankLayout>
+LoginV1.needAuth = false
 
 export default LoginV1

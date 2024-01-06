@@ -1,6 +1,6 @@
 // ** Next Imports
 import Head from 'next/head'
-import { Router } from 'next/router'
+import {Router, useRouter} from 'next/router'
 
 // ** Loader Import
 import NProgress from 'nprogress'
@@ -40,6 +40,9 @@ import 'src/iconify-bundle/icons-bundle-react'
 
 // ** Global css styles
 import '../../styles/globals.css'
+import {useEffect, useState} from "react";
+import {User} from "../models/Users";
+import Spinner from "../@core/components/spinner";
 
 const clientSideEmotionCache = createEmotionCache()
 
@@ -56,6 +59,44 @@ if (themeConfig.routingLoader) {
   })
 }
 
+const AuthGuard = ({children}) => {
+  const router = useRouter()
+  const [isLoading, setLoading] = useState(true)
+
+  useEffect(() => {
+    if (!router.isReady) return;
+    (async () => {
+      const jwt = localStorage.getItem("token")
+
+      if (!jwt)
+        await router.replace("/auth/login")
+      else {
+        let user = new User(jwt)
+
+        let result = await user.get();
+
+        if (typeof result === "number")
+          await router.replace("/auth/login")
+        else
+          setLoading(false)
+      }
+    })()
+  }, [router.route]);
+
+  if (isLoading)
+    return <Spinner />
+  else
+    return <>{children}</>
+}
+
+const Guard = ({ children, needAuth }) => {
+  if (needAuth) {
+    return <AuthGuard>{children}</AuthGuard>
+  } else {
+    return <>{children}</>
+  }
+}
+
 // ** Configure JSS & ClassName
 const App = props => {
   const { Component, emotionCache = clientSideEmotionCache, pageProps } = props
@@ -66,6 +107,8 @@ const App = props => {
   const getLayout =
     Component.getLayout ?? (page => <UserLayout contentHeightFixed={contentHeightFixed}>{page}</UserLayout>)
   const setConfig = Component.setConfig ?? undefined
+
+  const needAuth = Component.needAuth ?? true
 
   return (
       <CacheProvider value={emotionCache}>
@@ -83,7 +126,9 @@ const App = props => {
               {({ settings }) => {
                 return (
                   <ThemeComponent settings={settings}>
-                    {getLayout(<Component {...pageProps} />)}
+                    <Guard needAuth={needAuth}>
+                      {getLayout(<Component {...pageProps} />)}
+                    </Guard>
                     <ReactHotToast>
                       <Toaster position={settings.toastPosition} toastOptions={{ className: 'react-hot-toast' }} />
                     </ReactHotToast>
