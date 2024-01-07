@@ -87,19 +87,16 @@ export class User {
 
   /**
    * Update the user's avatar.
-   * @param {string} image - The new avatar image.
+   * @param {Object} image - The new avatar image.
    * @returns {Promise<boolean|number>} - A promise that resolves to `true` if successful, or the HTTP status code on failure.
    */
   async updateAvatar(image) {
     let response = await fetch(networkConfig.url + "/users/@me/avatar", {
       headers: {
         "Authorization": this.token,
-        "Content-Type": "application/json"
       },
       method: "PUT",
-      body: JSON.stringify({
-        "avatar": image
-      })
+      body: image
     })
     return (response.ok) ? true : response.status;
   }
