@@ -65,13 +65,14 @@ const AuthGuard = ({children}) => {
   const [isLoading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!isLoaded) return;
+    console.log(router.isReady)
+    if (!router.isReady || !isLoaded) return;
 
     if (token === null)
       router.replace("/auth/login")
     else
       setLoading(false)
-  }, [router.route, token, isLoaded]);
+  }, [router.isReady, router.route, token, isLoaded]);
 
   if (isLoading)
     return <Spinner />
