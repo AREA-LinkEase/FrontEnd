@@ -35,7 +35,7 @@ const Workspaces = () => {
             for (const user of workspace.users_id) {
               let userInfo = await Users.getUserById(token, user.id);
 
-              if (typeof user === "number") continue;
+              if (typeof userInfo === "number") continue;
               users.push(userInfo)
             }
             data.push({

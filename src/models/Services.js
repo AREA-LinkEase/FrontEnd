@@ -87,11 +87,10 @@ export class Service {
   static async createService(jwt, body) {
     let response = await fetch(networkConfig.url + "/services/@me", {
       headers: {
-        "Authorization": jwt,
-        "Content-Type": "application/json"
+        "Authorization": jwt
       },
       method: "POST",
-      body: JSON.stringify(body)
+      body: body
     })
     return (response.ok) ? true : response.status;
   }
