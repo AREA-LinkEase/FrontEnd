@@ -265,6 +265,17 @@ const WorkspacesTable = ({data}) => {
                             />
                         </Grid>
                         <Grid item xs={12}>
+                          <CustomTextField
+                            rows={4}
+                            multiline
+                            fullWidth
+                            label='Description'
+                            id='textarea-outlined-static'
+                            value={form["description"]}
+                            onChange={(e) => fillInput("description", e.target.value)}
+                          />
+                        </Grid>
+                        <Grid item xs={12}>
                             <CustomTextField
                               fullWidth
                               label='client_id'

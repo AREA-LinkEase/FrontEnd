@@ -76,7 +76,7 @@ const workspace = () => {
         for (const user of result.users_id) {
           let userInfo = await Users.getUserById(token, user.id);
 
-          if (typeof user === "number") continue;
+          if (typeof userInfo === "number") continue;
           users.push({...userInfo, permission: user.permission})
         }
         console.log(result)

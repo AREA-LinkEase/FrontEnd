@@ -1,12 +1,10 @@
 import Box from "@mui/material/Box";
 import Avatar from "@mui/material/Avatar";
 import Typography from "@mui/material/Typography";
-import CustomChip from "../../@core/components/mui/chip";
 import {styled, useTheme} from "@mui/material/styles";
 import IconButton from "@mui/material/IconButton";
-import {forwardRef, useState} from "react";
+import {forwardRef, useContext, useState} from "react";
 import Fade from "@mui/material/Fade";
-import OptionsMenu from "../../@core/components/option-menu";
 import Icon from "../../@core/components/icon";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
@@ -16,10 +14,6 @@ import {DataGrid} from "@mui/x-data-grid";
 import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
 import Grid from "@mui/material/Grid";
-import RadioGroup from "@mui/material/RadioGroup";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Radio from "@mui/material/Radio";
-import DialogActions from "@mui/material/DialogActions";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemAvatar from "@mui/material/ListItemAvatar";
@@ -27,57 +21,10 @@ import ListItemText from "@mui/material/ListItemText";
 import ListItemSecondaryAction from "@mui/material/ListItemSecondaryAction";
 import toast from "react-hot-toast";
 import Tooltip from "@mui/material/Tooltip";
-
-const data = [
-    {
-        avatar: '1.png',
-        value: 'Can Edit',
-        name: 'Lester Palmer',
-        email: 'pe@vogeiz.net'
-    },
-    {
-        avatar: '2.png',
-        value: 'owner',
-        name: 'Mittie Blair',
-        email: 'peromak@zukedohik.gov'
-    },
-    {
-        avatar: '3.png',
-        value: 'Can Comment',
-        name: 'Marvin Wheeler',
-        email: 'rumet@jujpejah.net'
-    },
-    {
-        avatar: '4.png',
-        value: 'Can View',
-        name: 'Nannie Ford',
-        email: 'negza@nuv.io'
-    },
-    {
-        avatar: '5.png',
-        value: 'Can Edit',
-        name: 'Julian Murphy',
-        email: 'lunebame@umdomgu.net'
-    },
-    {
-        avatar: '6.png',
-        value: 'Can View',
-        name: 'Sophie Gilbert',
-        email: 'ha@sugit.gov'
-    },
-    {
-        avatar: '7.png',
-        value: 'Can Comment',
-        name: 'Chris Watkins',
-        email: 'zokap@mak.org'
-    },
-    {
-        avatar: '8.png',
-        value: 'Can Edit',
-        name: 'Adelaide Nichols',
-        email: 'ujinomu@jigo.com'
-    }
-]
+import NetworkConfig from "../../configs/networkConfig";
+import {useRouter} from "next/router";
+import {Users} from "../../models/Users";
+import {UserContext} from "../../hook/UserContext";
 
 const defaultColumns = [
     {
@@ -86,7 +33,7 @@ const defaultColumns = [
         minWidth: 135,
         headerName: 'User',
         renderCell: ({ row }) => <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <Avatar src={row.avatar} alt={row.username} sx={{ mr: 4, width: 30, height: 30 }} />
+            <Avatar src={NetworkConfig.url + "/assets/avatars/" + row.id + ".png"} alt={row.username} sx={{ mr: 4, width: 30, height: 30 }} />
             <Typography sx={{ color: 'text.secondary' }}>{row.username}</Typography>
         </Box>
     }
@@ -111,17 +58,14 @@ const Transition = forwardRef(function Transition(props, ref) {
     return <Fade ref={ref} {...props} />
 })
 
-const UserTable = () => {
+const UserTable = ({data, service}) => {
     const [value, setValue] = useState('')
     const [paginationModel, setPaginationModel] = useState({ page: 0, pageSize: 6 })
-    const [showEdit, setShowEdit] = useState(false)
     const [showAdd, setShowAdd] = useState(false)
-    const [selectedValue, setSelectedValue] = useState('read')
     const theme = useTheme()
-
-    const handleChange = event => {
-        setSelectedValue(event.target.value)
-    }
+    const router = useRouter()
+    const [searchResult, setSearchResult] = useState([]);
+    const { token } = useContext(UserContext);
 
     const columns = [
         ...defaultColumns,
@@ -134,7 +78,17 @@ const UserTable = () => {
             renderCell: ({ row }) => (
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
                     <Tooltip title='Delete'>
-                        <IconButton size='small' onClick={() => {}}>
+                        <IconButton size='small' onClick={async () => {
+                          let result = await service.removeUser(row.id)
+
+                          if (result === true) {
+                            toast.success("The user has deleted successfully")
+                            router.reload()
+                          } else {
+                            console.log(result)
+                            toast.error("An error has occurred")
+                          }
+                        }}>
                             <Icon icon='tabler:trash' />
                         </IconButton>
                     </Tooltip>
@@ -158,12 +112,7 @@ const UserTable = () => {
             <DataGrid
                 autoHeight
                 rowHeight={54}
-                rows={[
-                    {
-                        "id": 0,
-                        "username": "moustafa"
-                    }
-                ]}
+                rows={data}
                 columns={columns}
                 disableRowSelectionOnClick
                 paginationModel={paginationModel}
@@ -196,45 +145,68 @@ const UserTable = () => {
                         </Typography>
                         <Typography sx={{ color: 'text.secondary' }}>Add new user to the service</Typography>
                     </Box>
-                    <Grid container spacing={6}>
-                        <Grid item xs={12}>
-                            <CustomTextField sx={{ mb: 6 }} fullWidth label='Search User' placeholder='' />
-                            <Typography variant='h4'>{`${data.length} Members`}</Typography>
-                            <List
-                                dense
-                                sx={{
-                                    mb: 3,
-                                    '& .MuiListItemText-primary': {
-                                        ...theme.typography.body1,
-                                        fontWeight: 500,
-                                        color: 'text.secondary'
-                                    },
-                                    '& .MuiListItemText-secondary': {
-                                        ...theme.typography.body1,
-                                        fontWeight: 500,
-                                        color: 'text.disabled'
-                                    }
-                                }}
-                            >
-                                {data.map(member => {
-                                    return (
-                                        <ListItem key={member.name} sx={{ px: 0, py: 2, display: 'flex', flexWrap: 'wrap' }}>
-                                            <ListItemAvatar>
-                                                <Avatar src={`/images/avatars/${member.avatar}`} alt={member.name} sx={{ height: 38, width: 38 }} />
-                                            </ListItemAvatar>
-                                            <ListItemText sx={{ m: 0 }} primary={member.name} secondary={member.email} />
-                                            <ListItemSecondaryAction sx={{ right: 0 }}>
-                                                <Button variant='contained' onClick={() => {
-                                                    setShowAdd(false)
-                                                    toast.success('User Added !')
-                                                }}>Add</Button>
-                                            </ListItemSecondaryAction>
-                                        </ListItem>
-                                    )
-                                })}
-                            </List>
-                        </Grid>
+                  <Grid container spacing={6}>
+                    <Grid item xs={12}>
+                      <CustomTextField
+                        sx={{ mb: 6 }}
+                        fullWidth
+                        label='Search User'
+                        placeholder=''
+                        onChange={async (e) => {
+                          let result = await Users.searchUser(token, e.target.value);
+
+                          if (typeof result === "number") {
+                            toast.error("An error has occurred")
+                            console.log(result)
+                          } else {
+                            setSearchResult(result)
+                          }
+                        }}
+                      />
+                      <Typography variant='h4'>{`${searchResult.length} Members`}</Typography>
+                      <List
+                        dense
+                        sx={{
+                          mb: 3,
+                          '& .MuiListItemText-primary': {
+                            ...theme.typography.body1,
+                            fontWeight: 500,
+                            color: 'text.secondary'
+                          },
+                          '& .MuiListItemText-secondary': {
+                            ...theme.typography.body1,
+                            fontWeight: 500,
+                            color: 'text.disabled'
+                          }
+                        }}
+                      >
+                        {searchResult.map(member => {
+                          return (
+                            <ListItem key={member.username} sx={{ px: 0, py: 2, display: 'flex', flexWrap: 'wrap' }}>
+                              <ListItemAvatar>
+                                <Avatar src={`${NetworkConfig.url}/assets/avatars/${member.id}.png`} alt={member.username} sx={{ height: 38, width: 38 }} />
+                              </ListItemAvatar>
+                              <ListItemText sx={{ m: 0 }} primary={member.username} secondary={member.email} />
+                              <ListItemSecondaryAction sx={{ right: 0 }}>
+                                <Button variant='contained' onClick={async () => {
+                                  setShowAdd(false)
+                                  let result = await service.addUser(member.id);
+
+                                  if (typeof result === "number") {
+                                    toast.error('An error has occurred')
+                                    console.log(result)
+                                  } else {
+                                    toast.success('User Added !')
+                                    router.reload();
+                                  }
+                                }}>Add</Button>
+                              </ListItemSecondaryAction>
+                            </ListItem>
+                          )
+                        })}
+                      </List>
                     </Grid>
+                  </Grid>
                 </DialogContent>
             </Dialog>
         </Card>

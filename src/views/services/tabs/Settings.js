@@ -16,8 +16,10 @@ import DialogContent from "@mui/material/DialogContent";
 import Icon from "../../../@core/components/icon";
 import Typography from "@mui/material/Typography";
 import DialogActions from "@mui/material/DialogActions";
+import {useRouter} from "next/router";
+import toast from "react-hot-toast";
 
-export default function Settings() {
+export default function Settings({info, service}) {
     const [open, setOpen] = useState(false)
     const [secondDialogOpen, setSecondDialogOpen] = useState(false)
     const [userInput, setUserInput] = useState('yes')
@@ -26,14 +28,33 @@ export default function Settings() {
         handleSubmit,
         formState: { errors }
     } = useForm({ defaultValues: { checkbox: false } })
+    const router = useRouter()
+    const [form, setForm] = useState({
+      'name': info.name,
+      "description": info.description,
+      "client_id": info.client_id,
+      "client_secret": info.client_secret,
+      "scope": info.scope,
+      "auth_url": info.auth_url,
+      "token_url": info.token_url,
+      "is_private": info.is_private
+    })
+
+    const fillInput = (key, value) => {
+      form[key] = value;
+      setForm({...form})
+    }
 
     const handleClose = () => setOpen(false)
     const onSubmit = () => setOpen(true)
     const handleSecondDialogClose = () => setSecondDialogOpen(false)
 
-    const handleConfirmation = value => {
+    const handleConfirmation = async value => {
         handleClose()
         setUserInput(value)
+        if (value === "yes") {
+          await service.destroy()
+        }
         setSecondDialogOpen(true)
     }
 
@@ -45,28 +66,94 @@ export default function Settings() {
                     <CardContent>
                         <Grid container spacing={6}>
                             <Grid item xs={12}>
-                                <CustomTextField fullWidth label='Name' placeholder='' />
+                                <CustomTextField
+                                  fullWidth
+                                  label='Name'
+                                  placeholder=''
+                                  value={form["name"]}
+                                  onChange={(e) => fillInput("name", e.target.value)}
+                                />
                             </Grid>
                             <Grid item xs={12}>
-                                <CustomTextField fullWidth label='Client_id' placeholder='' />
+                              <CustomTextField
+                                rows={4}
+                                multiline
+                                fullWidth
+                                label='Description'
+                                id='textarea-outlined-static'
+                                value={form["description"]}
+                                onChange={(e) => fillInput("description", e.target.value)}
+                              />
                             </Grid>
                             <Grid item xs={12}>
-                                <CustomTextField fullWidth label='Client_secret' placeholder='' />
+                                <CustomTextField
+                                  fullWidth
+                                  label='Client_id'
+                                  placeholder=''
+                                  value={form["client_id"]}
+                                  onChange={(e) => fillInput("client_id", e.target.value)}
+                                />
                             </Grid>
                             <Grid item xs={12}>
-                                <CustomTextField fullWidth label='scope' placeholder='' />
+                                <CustomTextField
+                                  fullWidth
+                                  label='Client_secret'
+                                  placeholder=''
+                                  value={form["client_secret"]}
+                                  onChange={(e) => fillInput("client_secret", e.target.value)}
+                                />
                             </Grid>
                             <Grid item xs={12}>
-                                <CustomTextField fullWidth label='Auth url' placeholder='' />
+                                <CustomTextField
+                                  fullWidth
+                                  label='scope'
+                                  placeholder=''
+                                  value={form["scope"]}
+                                  onChange={(e) => fillInput("scope", e.target.value)}
+                                />
                             </Grid>
                             <Grid item xs={12}>
-                                <CustomTextField fullWidth label='Token url' placeholder='' />
+                                <CustomTextField
+                                  fullWidth
+                                  label='Auth url'
+                                  placeholder=''
+                                  value={form["auth_url"]}
+                                  onChange={(e) => fillInput("auth_url", e.target.value)}
+                                />
                             </Grid>
                             <Grid item xs={12}>
-                                <FormControlLabel label='Need to be private ?' control={<Checkbox defaultChecked name='basic-checked' />} />
+                                <CustomTextField
+                                  fullWidth
+                                  label='Token url'
+                                  placeholder=''
+                                  value={form["token_url"]}
+                                  onChange={(e) => fillInput("token_url", e.target.value)}
+                                />
                             </Grid>
                             <Grid item xs={12}>
-                                <Button variant='contained' onClick={() => {}}>
+                                <FormControlLabel label='Need to be private ?' control={<Checkbox
+                                  name='basic-checked'
+                                  checked={form["is_private"]}
+                                  onChange={(e) => fillInput("is_private", e.target.checked)}
+                                />} />
+                            </Grid>
+                            <Grid item xs={12}>
+                                <Button variant='contained' onClick={async () => {
+                                  try {
+                                    let result = await service.edit(form)
+
+                                    if (typeof result === "number") {
+                                      toast.error("An error has occurred")
+                                      console.log(result)
+                                    } else {
+                                      toast.success("The services has been edited successfully")
+                                      router.reload()
+                                    }
+                                  } catch (e) {
+                                    console.log(e)
+                                    toast.error("An error has occurred")
+                                  }
+                                }}>
                                     Update
                                 </Button>
                             </Grid>
@@ -186,7 +273,10 @@ export default function Settings() {
                         pb: theme => [`${theme.spacing(8)} !important`, `${theme.spacing(12.5)} !important`]
                     }}
                 >
-                    <Button variant='contained' color='success' onClick={handleSecondDialogClose}>
+                    <Button variant='contained' color='success' onClick={() => {
+                      handleSecondDialogClose()
+                      router.replace("/services")
+                    }}>
                         OK
                     </Button>
                 </DialogActions>
