@@ -256,7 +256,7 @@ export class Service {
    * @returns {Promise<boolean|number>} - Returns true if the event has been updated successfully or a status code if unsuccessful.
    */
   async editEvent(id, body) {
-    let response = await fetch(networkConfig.url + "/services/" + this.id + "/automate/" + id, {
+    let response = await fetch(networkConfig.url + "/services/" + this.id + "/events/" + id, {
       headers: {
         "Authorization": this.token,
         "Content-Type": "application/json"
@@ -274,13 +274,30 @@ export class Service {
    * @returns {Promise<boolean|number>} - Returns true if the event has been deleted successfully or a status code if unsuccessful.
    */
   async deleteEvent(id) {
-    let response = await fetch(networkConfig.url + "/services/" + this.id + "/automate/" + id, {
+    let response = await fetch(networkConfig.url + "/services/" + this.id + "/events/" + id, {
       headers: {
         "Authorization": this.token
       },
       method: "DELETE"
     })
     return (response.ok) ? true : response.status;
+  }
+
+  /**
+   * Get details of an event.
+   *
+   * @returns {Promise<object|number>} - Returns details of the event or a status code if unsuccessful.
+   */
+  async getEvent(id) {
+    let response = await fetch(networkConfig.url + "/services/" + this.id + "/events/" + id, {
+      headers: {
+        "Authorization": this.token
+      }
+    })
+    if (response.ok)
+      return response.json()
+    else
+      return response.status
   }
 
   /**

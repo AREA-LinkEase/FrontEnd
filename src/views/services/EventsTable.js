@@ -60,7 +60,7 @@ const Transition = forwardRef(function Transition(props, ref) {
     return <Fade ref={ref} {...props} />
 })
 
-const EventsTable = ({defaultSelect, data, service}) => {
+const EventsTable = ({defaultSelect, id, data, service}) => {
     const [value, setValue] = useState('')
     const [show, setShow] = useState(false)
     const [paginationModel, setPaginationModel] = useState({ page: 0, pageSize: 6 })
@@ -86,7 +86,7 @@ const EventsTable = ({defaultSelect, data, service}) => {
             renderCell: ({ row }) => (
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
                     <Tooltip title='View'>
-                        <IconButton size='small' component={Link} href={"/events/" + row.id}>
+                        <IconButton size='small' component={Link} href={"/events/" + id + "/" + row.id}>
                             <Icon icon='tabler:eye' />
                         </IconButton>
                     </Tooltip>

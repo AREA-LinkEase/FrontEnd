@@ -26,7 +26,7 @@ export default function Events({type, info, service}) {
     return (
         <Grid container spacing={6}>
             <Grid item xs={12}>
-                <EventsTable defaultSelect={type} service={service} data={data} />
+                <EventsTable defaultSelect={type} id={info.id} service={service} data={data} />
             </Grid>
         </Grid>
     )
