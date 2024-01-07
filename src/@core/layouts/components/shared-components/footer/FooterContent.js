@@ -33,7 +33,7 @@ const FooterContent = () => {
           ❤️
         </Box>
         {`by`}
-        <Typography sx={{ ml: 1 }} target='_blank' href='/teams' component={StyledCompanyName}>
+        <Typography sx={{ ml: 1 }} target='_blank' href='/monkeyteam' component={StyledCompanyName}>
           MonkeyTeam
         </Typography>
       </Typography>

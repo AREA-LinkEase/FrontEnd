@@ -1,5 +1,5 @@
 // ** React Imports
-import { useEffect, useCallback, useRef, useState } from 'react'
+import {useEffect, useCallback, useRef, useState, useContext} from 'react'
 
 // ** Next Imports
 import Link from 'next/link'
@@ -27,6 +27,9 @@ import CustomAutocomplete from 'src/@core/components/mui/autocomplete'
 
 // ** Configs Imports
 import themeConfig from 'src/configs/themeConfig'
+import {UserContext} from "../../hook/UserContext";
+import {Workspace} from "../../models/Workspaces";
+import {Service} from "../../models/Services";
 
 const defaultSuggestionsData = [
   {
@@ -188,33 +191,36 @@ const AutocompleteComponent = ({ hidden, settings }) => {
   const [isMounted, setIsMounted] = useState(false)
   const [searchValue, setSearchValue] = useState('')
   const [openDialog, setOpenDialog] = useState(false)
-  const [options, setOptions] = useState([
-    {
-      "title": "automate 1",
-      "icon": "tabler:toggle-left",
-      "category": "automates"
-    },
-    {
-      "title": "automate 2",
-      "icon": "tabler:toggle-left",
-      "category": "automates"
-    },
-    {
-      "title": "spotify service",
-      "icon": "tabler:link",
-      "category": "services"
-    },
-    {
-      "title": "workspace 1",
-      "icon": "tabler:command",
-      "category": "workspaces"
-    },
-    {
-      "title": "workspace 2",
-      "icon": "tabler:command",
-      "category": "workspaces"
-    }
-  ])
+  const [options, setOptions] = useState()
+  const { token } = useContext(UserContext);
+
+  useEffect(() => {
+    (async () => {
+      let results = [];
+      let workspaces = await Workspace.getAllWorkspaces(token)
+      let services = await Service.getServices(token)
+
+      if (typeof workspaces !== "number") {
+        for (const workspace of workspaces) {
+          results.push({
+            title: workspace.title,
+            "icon": "tabler:command",
+            "category": "workspaces"
+          })
+        }
+      }
+      if (typeof services !== "number") {
+        for (const service of services) {
+          results.push({
+            title: service.name,
+            "icon": "tabler:link",
+            "category": "services"
+          })
+        }
+      }
+      setOptions(results)
+    })()
+  }, [])
 
   // ** Hooks & Vars
   const theme = useTheme()
