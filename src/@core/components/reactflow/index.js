@@ -99,11 +99,12 @@ const CustomizerSpacing = styled('div')(({ theme }) => ({
     padding: theme.spacing(5, 6)
 }))
 
-const ReactFlowPage = ({value, onChange}) => {
+const Workflow = ({value, onChange}) => {
     const dispatch = useDispatch();
     const reduxNodes = useSelector((state) => state.nodes.nodes);
     const reduxEdges = useSelector((state) => state.edges);
     const [test, setTest] = useState(false);
+    const [index, setIndex] = useState(0);
 
     const DefaultSmoothStepEdge = ({ id, sourceX, sourceY, targetX, targetY }) => {
         const [edgePath] = getSmoothStepPath({
@@ -258,7 +259,7 @@ const ReactFlowPage = ({value, onChange}) => {
 
     const onConnect = useCallback((params) => {
         let verif = 0;
-
+    
         const updatedNodes = reduxNodes.map((node) => {
             if (node.id === params.target) {
                 const connectedNode = reduxNodes.find((n) => n.id === (node.id === params.source ? params.target : params.source));
@@ -299,37 +300,55 @@ const ReactFlowPage = ({value, onChange}) => {
                     els
                 )
             );
+    
             const edgeId = `${params.sourceHandle}#${params.targetHandle}`;
-            dispatch(addReduxEdge({
+            const newEdge = {
                 id: edgeId,
                 source: params.source,
                 target: params.target,
-            }));
+                type: 'smoothstep',
+                style: { strokeWidth: 3 },
+            };
+    
+            dispatch(addReduxEdge(newEdge));
             dispatch(setReduxNodes(updatedNodes));
+    
+            const updatedObject = {
+                nodes: updatedNodes,
+                edges: [...reduxEdges, newEdge],
+            };
+    
+            if (onChange) {
+                onChange(updatedObject);
+            }
         }
-    }, [setEdges, reduxNodes, dispatch]);
+    }, [setEdges, reduxNodes, reduxEdges, dispatch, onChange]);
 
   useEffect(() => {
-    const reactFlowData = JSONToReactFlow(value);
-
-    if (JSON.stringify(reduxNodes) !== JSON.stringify(reactFlowData.nodes)) {
-      dispatch(setReduxNodes(reactFlowData.nodes));
+    if (value !== undefined && Object.keys(value).length > 0) {
+        const reactFlowData = JSONToReactFlow(value);
+        
+        if (JSON.stringify(reduxNodes) !== JSON.stringify(reactFlowData.nodes)) {
+            dispatch(setReduxNodes(reactFlowData.nodes));
+        }
+        setTest(true);
     }
-    setTest(true);
   }, []);
 
   useEffect(() => {
-    const reactFlowData = JSONToReactFlow(value);
-
-    if (test && reduxNodes) {
-        const edgesWithType = reactFlowData.edges.map((edge) => ({
-          ...edge,
-          type: 'custom-edge',
-        }));
-      
-        dispatch(setReduxEdges(edgesWithType));
-        setEdges(edgesWithType);
-      }
+    if (value !== undefined && Object.keys(value).length > 0) {     
+        const reactFlowData = JSONToReactFlow(value);
+    
+        if (test && reduxNodes) {
+            const edgesWithType = reactFlowData.edges.map((edge) => ({
+              ...edge,
+              type: 'custom-edge',
+            }));
+          
+            dispatch(setReduxEdges(edgesWithType));
+            setEdges(edgesWithType);
+          }
+    }
   }, [test]);
     
     const nodeTypes = useMemo(() => ({
@@ -377,9 +396,9 @@ const ReactFlowPage = ({value, onChange}) => {
         const reactFlowBounds = reactFlowWrapper.current.getBoundingClientRect();
         const type = event.dataTransfer.getData('application/reactflow');
         const data = JSON.parse(event.dataTransfer.getData('application/reactflow-data'));
-
+    
         const newNode = {
-            id: getId(reduxNodes),
+            id: getId(index),
             type,
             position: reactFlowInstance.project({
                 x: event.clientX - reactFlowBounds.left,
@@ -387,16 +406,23 @@ const ReactFlowPage = ({value, onChange}) => {
             }),
             data: {
                 ...data,
-                label: getId(reduxNodes),
+                label: getId(index),
             },
         };
     
-        dispatch(setReduxNodes([...reduxNodes, newNode]));
-
+        const updatedNodes = [...reduxNodes, newNode];
+        const updatedObject = {
+            nodes: updatedNodes,
+            edges: reduxEdges
+        };
+    
+        dispatch(setReduxNodes(updatedNodes));
+    
         if (onChange) {
-            onChange([...reduxNodes, newNode]);
+            onChange(updatedObject);
         }
     };
+    
 
     const handleCloseMenu = () => {
         setIsCreateMenuOpen(false);
@@ -409,7 +435,7 @@ const ReactFlowPage = ({value, onChange}) => {
     const handleSave = () => {
         const json = reactFlowToJSON(reduxNodes, reduxEdges);
         const jsonString = JSON.stringify(json, null, 2);
-        
+        console.log(jsonString);
         const blob = new Blob([jsonString], { type: 'application/json' });
     
         const a = document.createElement('a');
@@ -422,7 +448,10 @@ const ReactFlowPage = ({value, onChange}) => {
         document.body.removeChild(a);
     };
 
-    const getId = (reduxNodes) => `${reduxNodes.length + 1}`;
+    const getId = (nbr) => {
+        setIndex(index + 1);
+        return `${nbr + 1}`;
+    };
 
     const onEdgeClick = (event, edge, edges, setEdges) => {
         if (event.detail === 3) {
@@ -430,57 +459,83 @@ const ReactFlowPage = ({value, onChange}) => {
             setEdges(updatedEdges);
     
             const targetNode = reduxNodes.find((node) => node.id === edge.target);
-
-            if (targetNode && isComparaisonNode(targetNode.type)) {
-                const connectedEdges = edges.filter(
-                    (e) => e.source === edge.source || e.target === edge.target
-                );
-                console.log(connectedEdges);
-                if (connectedEdges.length === 1) {
-                const updatedNodes = reduxNodes.map((node) => {
-                    if (node.id === targetNode.id) {
+    
+            // Si vous souhaitez exécuter onChange même si ce n'est pas un nœud de comparaison
+            const updatedNodes = reduxNodes.map((node) => {
+                if (targetNode && node.id === targetNode.id) {
                     return {
                         ...node,
                         data: {
-                        ...node.data,
-                        type: '',
+                            ...node.data,
+                            type: isComparaisonNode(targetNode.type) ? '' : node.data.type, // Laissez inchangé si ce n'est pas un nœud de comparaison
                         },
                     };
-                    }
-                    return node;
-                });
-                dispatch(setReduxNodes(updatedNodes));
                 }
+                return node;
+            });
+    
+            const updatedObject = {
+                nodes: updatedNodes,
+                edges: updatedEdges,
+            };
+    
+            dispatch(setReduxNodes(updatedNodes));
+            if (onChange) {
+                onChange(updatedObject);
             }
-        
+    
             dispatch(removeReduxEdge(edge.id));
-          };
+        }
     };
 
-    const onNodeClick = (event, node, nodes) => {
+    const onNodeClick = (event, node, nodes, edges) => {
         if (event.detail === 3) {
             const updatedNodes = nodes.filter((n) => n.id !== node.id);
+
+            const updatedEdges = edges.filter((edge) => edge.source !== node.id && edge.target !== node.id);
+    
+            const updatedObject = {
+                nodes: updatedNodes,
+                edges: updatedEdges,
+            };
+    
             dispatch(setReduxNodes(updatedNodes));
+            dispatch(setReduxEdges(updatedEdges));
+    
+            if (onChange) {
+                onChange(updatedObject);
+            }
         }
     };
 
     const onNodeDragStop = (event, draggedNode) => {
         const { id, position } = draggedNode;
         const newPosition = { x: position.x, y: position.y };
-      
+    
         const updatedNodes = [...reduxNodes];
         const nodeIndex = updatedNodes.findIndex((node) => node.id === id);
-      
+    
         if (nodeIndex !== -1) {
-          updatedNodes[nodeIndex] = {
-            ...updatedNodes[nodeIndex],
-            position: newPosition,
-          };
-          dispatch(setReduxNodes(updatedNodes));
+            updatedNodes[nodeIndex] = {
+                ...updatedNodes[nodeIndex],
+                position: newPosition,
+            };
+    
+            const updatedObject = {
+                nodes: updatedNodes,
+                edges: reduxEdges
+            };
+    
+            dispatch(setReduxNodes(updatedNodes));
+    
+            if (onChange) {
+                onChange(updatedObject);
+            }
         } else {
-          console.error(`Node with ID ${id} not found in the nodes array.`);
+            console.error(`Node with ID ${id} not found in the nodes array.`);
         }
-      };
+    };
+    
 
     return (
         <Grid container spacing={2}>
@@ -489,7 +544,7 @@ const ReactFlowPage = ({value, onChange}) => {
                     <Grid container spacing={2} justifyContent="space-between">
                     <Grid item>
                         <Typography variant='h4' sx={{ mb: 6 }}>
-                            ReactFlow
+                            WorkSpace
                         </Typography>
                     </Grid>
                     <Grid item>
@@ -530,7 +585,7 @@ const ReactFlowPage = ({value, onChange}) => {
                         onDrop={onDrop}
                         onDragOver={onDragOver}
                         onEdgeClick={(event, edge) => onEdgeClick(event, edge, edges, setEdges)}
-                        onNodeClick={(event, node) => onNodeClick(event, node, reduxNodes)}
+                        onNodeClick={(event, node) => onNodeClick(event, node, reduxNodes, reduxEdges)}
                         onNodeDragStop={onNodeDragStop}
                         fitView
                     >
@@ -788,5 +843,5 @@ const ReactFlowPage = ({value, onChange}) => {
     )
   }
   
-  export default ReactFlowPage
+  export default Workflow
   

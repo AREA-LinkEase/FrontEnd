@@ -1,5 +1,5 @@
 // ** React Imports
-import {useContext, useState} from 'react'
+import {useContext, useEffect, useState} from 'react'
 
 // ** Next Import
 import Link from 'next/link'
@@ -32,9 +32,10 @@ import BlankLayout from 'src/@core/layouts/BlankLayout'
 // ** Demo Imports
 import AuthIllustrationV1Wrapper from 'src/views/pages/auth/AuthIllustrationV1Wrapper'
 import {useRouter} from "next/router";
-import {Alert} from "@mui/material";
+import {Alert, Grid} from "@mui/material";
 import {Auth} from "../../../models/Auth";
 import {UserContext} from "../../../hook/UserContext";
+import Workflow from 'src/@core/components/reactflow'
 
 // ** Styled Components
 const Card = styled(MuiCard)(({ theme }) => ({
@@ -90,128 +91,93 @@ const LoginV1 = () => {
     setValues({ ...values, showPassword: !values.showPassword })
   }
 
+  const [value, setValue] = useState({
+    "nodes": [
+      {
+        "id": "1",
+        "type": "startBlock",
+        "position": {
+          "x": 998.7970559999999,
+          "y": -0.1986559999999713
+        },
+        "data": {
+          "label": "1"
+        }
+      },
+      {
+        "id": "2",
+        "type": "endBlock",
+        "position": {
+          "x": 860.5,
+          "y": 202.25
+        },
+        "data": {
+          "label": "2"
+        }
+      },
+      {
+        "id": "3",
+        "type": "booleanBlock",
+        "position": {
+          "x": 269.2331200000004,
+          "y": -186.90095999999988
+        },
+        "data": {
+          "value": false,
+          "type": "bool",
+          "label": "3"
+        }
+      },
+      {
+        "id": "4",
+        "type": "equalBlock",
+        "position": {
+          "x": 343.88272000000035,
+          "y": 22.117920000000044
+        },
+        "data": {
+          "type": "bool",
+          "typeOutput": "bool",
+          "value": "false",
+          "label": "4"
+        }
+      },
+      {
+        "id": "5",
+        "type": "stringBlock",
+        "position": {
+          "x": 769.3854400000002,
+          "y": -216.7607999999999
+        },
+        "data": {
+          "value": "k",
+          "type": "str",
+          "label": "5"
+        }
+      }
+    ],
+    "edges": [
+      {
+        "id": "exit#entry",
+        "source": "1",
+        "target": "2"
+      },
+      {
+        "id": "exit#second",
+        "source": "3",
+        "target": "4"
+      }
+    ]
+  });
+
+  useEffect(() => {
+    console.log(value);
+  }, [value]);
+
   return (
-    <Box className='content-center'>
-      <AuthIllustrationV1Wrapper>
-        <Card>
-          <CardContent sx={{ p: theme => `${theme.spacing(10.5, 8, 8)} !important` }}>
-            <Box sx={{ mb: 8, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <svg width={34} viewBox='0 0 32 32' fill='none' xmlns='http://www.w3.org/2000/svg'>
-                <path
-                  d="M29.9996 6.31812L23.2727 13.045L29.9514 19.7362L25.6202 24.0675L7.91895 6.36562L12.2496 2.03375L18.9414 8.71375L25.6664 2L29.9996 6.31812Z"
-                  fill="#685DD7"/>
-                <path
-                  d="M2.03437 12.2498L6.36562 7.91797L24.0669 25.6205L19.7356 29.9517L13.0481 23.2723L6.3175 29.9998L2 25.6667L8.71375 18.9411L2.03437 12.2498Z"
-                  fill="#685DD7"/>
-              </svg>
-              <Typography variant='h3' sx={{ml: 2.5, fontWeight: 700}}>
-                {themeConfig.templateName}
-              </Typography>
-            </Box>
-            <Box sx={{mb: 3}}>
-              <Typography variant='h4' sx={{mb: 1.5}}>
-                {`Welcome to ${themeConfig.templateName}! 👋🏻`}
-              </Typography>
-              <Typography sx={{ color: 'text.secondary' }}>
-                Please sign-in to your account and start the adventure
-              </Typography>
-            </Box>
-            {(error.length !== 0) ?
-              <Alert variant='filled' severity='error' sx={{ mb: 3 }}>
-                {error}
-              </Alert> : null}
-            <form noValidate autoComplete='off' onSubmit={e => {
-              e.preventDefault()
-              onSubmit()
-            }}>
-              <CustomTextField
-                autoFocus
-                fullWidth
-                id='email'
-                label='Email'
-                sx={{ mb: 4 }}
-                placeholder='john.doe@gmail.com'
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-              <CustomTextField
-                fullWidth
-                sx={{ mb: 1.5 }}
-                label='Password'
-                value={values.password}
-                id='auth-login-password'
-                placeholder='············'
-                onChange={handleChange('password')}
-                type={values.showPassword ? 'text' : 'password'}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position='end'>
-                      <IconButton
-                        edge='end'
-                        onClick={handleClickShowPassword}
-                        onMouseDown={e => e.preventDefault()}
-                        aria-label='toggle password visibility'
-                      >
-                        <Icon fontSize='1.25rem' icon={values.showPassword ? 'tabler:eye' : 'tabler:eye-off'} />
-                      </IconButton>
-                    </InputAdornment>
-                  )
-                }}
-              />
-              <Box
-                sx={{
-                  mb: 1.75,
-                  display: 'flex',
-                  flexWrap: 'wrap',
-                  alignItems: 'center',
-                  justifyContent: 'space-between'
-                }}
-              >
-                <FormControlLabel control={<Checkbox />} label='Remember Me' />
-              </Box>
-              <Button fullWidth type='submit' variant='contained' sx={{ mb: 4 }}>
-                Login
-              </Button>
-              <Box sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'center' }}>
-                <Typography sx={{ color: 'text.secondary', mr: 2 }}>New on our platform?</Typography>
-                <Typography component={LinkStyled} href='/auth/register'>
-                  Create an account
-                </Typography>
-              </Box>
-              <Divider
-                sx={{
-                  color: 'text.disabled',
-                  '& .MuiDivider-wrapper': { px: 6 },
-                  fontSize: theme.typography.body2.fontSize,
-                  my: theme => `${theme.spacing(6)} !important`
-                }}
-              >
-                or
-              </Divider>
-              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <IconButton
-                  href='/'
-                  component={Link}
-                  onClick={e => e.preventDefault()}
-                  sx={{ color: theme => (theme.palette.mode === 'light' ? '#272727' : 'grey.300') }}
-                >
-                  <Icon icon='mdi:github' />
-                </IconButton>
-                <IconButton href='/' component={Link} sx={{ color: '#db4437' }} onClick={e => e.preventDefault()}>
-                  <Icon icon='mdi:google' />
-                </IconButton>
-                <IconButton href='/' component={Link} sx={{ color: '#7289da' }} onClick={e => e.preventDefault()}>
-                  <Icon icon='mdi:discord' />
-                </IconButton>
-                <IconButton href='/' component={Link} sx={{ color: '#00A4EF' }} onClick={e => e.preventDefault()}>
-                  <Icon icon='mdi:microsoft' />
-                </IconButton>
-              </Box>
-            </form>
-          </CardContent>
-        </Card>
-      </AuthIllustrationV1Wrapper>
-    </Box>
+    <Grid>
+      <Workflow value={value} onChange={setValue}/>
+    </Grid>
   )
 }
 LoginV1.getLayout = page => <BlankLayout>{page}</BlankLayout>
