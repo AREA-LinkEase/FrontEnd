@@ -41,7 +41,7 @@ import 'react-perfect-scrollbar/dist/css/styles.css'
 import 'src/iconify-bundle/icons-bundle-react'
 
 // ** React Flow Style
-import 'src/pages/reactflow/reactflow.css'
+import 'src/@core/components/reactflow/reactflow.css'
 
 // ** Global css styles
 import '../../styles/globals.css'
