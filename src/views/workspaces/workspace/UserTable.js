@@ -3,7 +3,7 @@ import Icon from "../../../@core/components/icon";
 import Typography from "@mui/material/Typography";
 import Avatar from "@mui/material/Avatar";
 import CustomChip from "../../../@core/components/mui/chip";
-import {forwardRef, Fragment, useState} from "react";
+import {forwardRef, Fragment, useContext, useState} from "react";
 import OptionsMenu from "../../../@core/components/option-menu";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
@@ -26,63 +26,16 @@ import ListItemAvatar from "@mui/material/ListItemAvatar";
 import ListItemText from "@mui/material/ListItemText";
 import ListItemSecondaryAction from "@mui/material/ListItemSecondaryAction";
 import toast from "react-hot-toast";
+import NetworkConfig from "../../../configs/networkConfig";
+import {useRouter} from "next/router";
+import {Users} from "../../../models/Users";
+import {UserContext} from "../../../hook/UserContext";
 
 const roles = [
   {label: "read", color: "secondary"},
   {label: "write", color: "info"},
   {label: "maintainer", color: "warning"},
   {label: "admin", color: "error"}
-]
-
-const data = [
-  {
-    avatar: '1.png',
-    value: 'Can Edit',
-    name: 'Lester Palmer',
-    email: 'pe@vogeiz.net'
-  },
-  {
-    avatar: '2.png',
-    value: 'owner',
-    name: 'Mittie Blair',
-    email: 'peromak@zukedohik.gov'
-  },
-  {
-    avatar: '3.png',
-    value: 'Can Comment',
-    name: 'Marvin Wheeler',
-    email: 'rumet@jujpejah.net'
-  },
-  {
-    avatar: '4.png',
-    value: 'Can View',
-    name: 'Nannie Ford',
-    email: 'negza@nuv.io'
-  },
-  {
-    avatar: '5.png',
-    value: 'Can Edit',
-    name: 'Julian Murphy',
-    email: 'lunebame@umdomgu.net'
-  },
-  {
-    avatar: '6.png',
-    value: 'Can View',
-    name: 'Sophie Gilbert',
-    email: 'ha@sugit.gov'
-  },
-  {
-    avatar: '7.png',
-    value: 'Can Comment',
-    name: 'Chris Watkins',
-    email: 'zokap@mak.org'
-  },
-  {
-    avatar: '8.png',
-    value: 'Can Edit',
-    name: 'Adelaide Nichols',
-    email: 'ujinomu@jigo.com'
-  }
 ]
 
 const defaultColumns = [
@@ -92,7 +45,7 @@ const defaultColumns = [
     minWidth: 135,
     headerName: 'User',
     renderCell: ({ row }) => <Box sx={{ display: 'flex', alignItems: 'center' }}>
-      <Avatar src={row.avatar} alt={row.username} sx={{ mr: 4, width: 30, height: 30 }} />
+      <Avatar src={NetworkConfig.url + "/assets/avatars/" + row.id + ".png"} alt={row.username} sx={{ mr: 4, width: 30, height: 30 }} />
       <Typography sx={{ color: 'text.secondary' }}>{row.username}</Typography>
     </Box>
   },
@@ -126,13 +79,18 @@ const Transition = forwardRef(function Transition(props, ref) {
   return <Fade ref={ref} {...props} />
 })
 
-const UserTable = () => {
+const UserTable = ({data, workspace}) => {
   const [value, setValue] = useState('')
   const [paginationModel, setPaginationModel] = useState({ page: 0, pageSize: 6 })
   const [showEdit, setShowEdit] = useState(false)
   const [showAdd, setShowAdd] = useState(false)
-  const [selectedValue, setSelectedValue] = useState('read')
+  const [selectedValue, setSelectedValue] = useState(0)
   const theme = useTheme()
+  const [editUser, setEditUser] = useState(null);
+  const [searchResult, setSearchResult] = useState([]);
+
+  const router = useRouter();
+  const { token } = useContext(UserContext);
 
   const handleChange = event => {
     setSelectedValue(event.target.value)
@@ -155,7 +113,11 @@ const UserTable = () => {
               {
                 text: 'Edit',
                 menuItemProps: {
-                  onClick: () => setShowEdit(true),
+                  onClick: () => {
+                    setShowEdit(true)
+                    setEditUser(row)
+                    setSelectedValue(row.permission)
+                  },
                 },
                 icon: <Icon icon='tabler:pencil' fontSize='1.25rem' />
               },
@@ -185,13 +147,7 @@ const UserTable = () => {
       <DataGrid
         autoHeight
         rowHeight={54}
-        rows={[
-          {
-            "id": 0,
-            "username": "moustafa",
-            "permission": 1
-          }
-        ]}
+        rows={data}
         columns={columns}
         disableRowSelectionOnClick
         paginationModel={paginationModel}
@@ -222,14 +178,14 @@ const UserTable = () => {
             <Typography variant='h3' sx={{ mb: 3 }}>
               Edit permission
             </Typography>
-            <Typography sx={{ color: 'text.secondary' }}>Username's permission</Typography>
+            <Typography sx={{ color: 'text.secondary' }}>{editUser?.username}'s permission</Typography>
           </Box>
           <Grid container spacing={6}>
             <Grid item xs={12}>
               <RadioGroup aria-label='quiz' name='Permission' value={selectedValue} onChange={handleChange}>
-              {roles.map((role) => {
+              {roles.map((role, i) => {
                 return (
-                  <FormControlLabel value={role.label} control={<Radio />} label={role.label} />
+                  <FormControlLabel key={i} value={i} control={<Radio />} label={role.label} />
                 )
               })}
               </RadioGroup>
@@ -243,7 +199,18 @@ const UserTable = () => {
             pb: theme => [`${theme.spacing(8)} !important`, `${theme.spacing(12.5)} !important`]
           }}
         >
-          <Button variant='contained' sx={{ mr: 1 }} onClick={() => setShowEdit(false)}>
+          <Button variant='contained' sx={{ mr: 1 }} onClick={async () => {
+            setShowEdit(false)
+            let result = await workspace.addUser(editUser.id, parseInt(selectedValue))
+
+            if (typeof result === "number") {
+              toast.error('An error has occurred')
+              console.log(result)
+            } else {
+              toast.success('User Edited !')
+              router.reload();
+            }
+          }}>
             Update
           </Button>
           <Button variant='tonal' color='secondary' onClick={() => setShowEdit(false)}>
@@ -279,8 +246,23 @@ const UserTable = () => {
           </Box>
           <Grid container spacing={6}>
             <Grid item xs={12}>
-              <CustomTextField sx={{ mb: 6 }} fullWidth label='Search User' placeholder='' />
-              <Typography variant='h4'>{`${data.length} Members`}</Typography>
+              <CustomTextField
+                sx={{ mb: 6 }}
+                fullWidth
+                label='Search User'
+                placeholder=''
+                onChange={async (e) => {
+                  let result = await Users.searchUser(token, e.target.value);
+
+                  if (typeof result === "number") {
+                    toast.error("An error has occurred")
+                    console.log(result)
+                  } else {
+                    setSearchResult(result)
+                  }
+                }}
+              />
+              <Typography variant='h4'>{`${searchResult.length} Members`}</Typography>
               <List
                 dense
                 sx={{
@@ -297,17 +279,25 @@ const UserTable = () => {
                   }
                 }}
               >
-                {data.map(member => {
+                {searchResult.map(member => {
                   return (
-                    <ListItem key={member.name} sx={{ px: 0, py: 2, display: 'flex', flexWrap: 'wrap' }}>
+                    <ListItem key={member.username} sx={{ px: 0, py: 2, display: 'flex', flexWrap: 'wrap' }}>
                       <ListItemAvatar>
-                        <Avatar src={`/images/avatars/${member.avatar}`} alt={member.name} sx={{ height: 38, width: 38 }} />
+                        <Avatar src={`${NetworkConfig.url}/assets/avatars/${member.id}.png`} alt={member.username} sx={{ height: 38, width: 38 }} />
                       </ListItemAvatar>
-                      <ListItemText sx={{ m: 0 }} primary={member.name} secondary={member.email} />
+                      <ListItemText sx={{ m: 0 }} primary={member.username} secondary={member.email} />
                       <ListItemSecondaryAction sx={{ right: 0 }}>
-                        <Button variant='contained' onClick={() => {
+                        <Button variant='contained' onClick={async () => {
                           setShowAdd(false)
-                          toast.success('User Added !')
+                          let result = await workspace.addUser(member.id, 0);
+
+                          if (typeof result === "number") {
+                            toast.error('An error has occurred')
+                            console.log(result)
+                          } else {
+                            toast.success('User Added !')
+                            router.reload();
+                          }
                         }}>Add</Button>
                       </ListItemSecondaryAction>
                     </ListItem>

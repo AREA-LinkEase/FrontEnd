@@ -16,8 +16,10 @@ import Icon from "../../../@core/components/icon";
 import Typography from "@mui/material/Typography";
 import DialogActions from "@mui/material/DialogActions";
 import CustomTextField from "../../../@core/components/mui/text-field";
+import toast from "react-hot-toast";
+import {useRouter} from "next/router";
 
-export default function Settings() {
+export default function Settings({info, automate}) {
     const [open, setOpen] = useState(false)
     const [secondDialogOpen, setSecondDialogOpen] = useState(false)
     const [userInput, setUserInput] = useState('yes')
@@ -31,11 +33,20 @@ export default function Settings() {
     const onSubmit = () => setOpen(true)
     const handleSecondDialogClose = () => setSecondDialogOpen(false)
 
-    const handleConfirmation = value => {
+    const router = useRouter()
+
+    const handleConfirmation = async value => {
         handleClose()
         setUserInput(value)
+        if (value === "yes") {
+          await automate.destroy()
+        }
         setSecondDialogOpen(true)
     }
+
+    const [title, setTitle] = useState(info.title)
+    const [description, setDescription] = useState(info.description);
+    const [isCheck, setCheck] = useState(info.is_private);
 
     return (
         <Grid container spacing={6}>
@@ -45,13 +56,49 @@ export default function Settings() {
                     <CardContent>
                         <Grid container spacing={6}>
                             <Grid item xs={12}>
-                                <CustomTextField fullWidth label='Name' placeholder='' />
+                                <CustomTextField
+                                  fullWidth
+                                  label='Name'
+                                  placeholder=''
+                                  value={title}
+                                  onChange={(e) => setTitle(e.target.value)}
+                                />
                             </Grid>
                             <Grid item xs={12}>
-                                <FormControlLabel label='Need to be private ?' control={<Checkbox defaultChecked name='basic-checked' />} />
+                              <CustomTextField
+                                rows={4}
+                                multiline
+                                fullWidth
+                                label='Description'
+                                id='textarea-outlined-static'
+                                value={description}
+                                onChange={(e) => setDescription(e.target.value)}
+                              />
                             </Grid>
                             <Grid item xs={12}>
-                                <Button variant='contained' onClick={() => {}}>
+                                <FormControlLabel
+                                  label='Need to be private ?'
+                                  control={<Checkbox
+                                    name='basic-checked'
+                                    checked={isCheck}
+                                    onChange={(e) => setCheck(e.target.checked)}
+                                  />} />
+                            </Grid>
+                            <Grid item xs={12}>
+                                <Button variant='contained' onClick={async () => {
+                                  let result = await automate.edit({
+                                    title,
+                                    description,
+                                    is_private: isCheck
+                                  })
+
+                                  if (typeof result === "number")
+                                    toast.error("An error has occurred")
+                                  else {
+                                    router.reload();
+                                    toast.success("The automate has edited successfully")
+                                  }
+                                }}>
                                     Update
                                 </Button>
                             </Grid>
@@ -171,7 +218,10 @@ export default function Settings() {
                         pb: theme => [`${theme.spacing(8)} !important`, `${theme.spacing(12.5)} !important`]
                     }}
                 >
-                    <Button variant='contained' color='success' onClick={handleSecondDialogClose}>
+                    <Button variant='contained' color='success' onClick={() => {
+                      handleSecondDialogClose()
+                      router.replace("/workspaces/" + info.workspace_id)
+                    }}>
                         OK
                     </Button>
                 </DialogActions>

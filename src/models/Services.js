@@ -24,6 +24,24 @@ export class Service {
   }
 
   /**
+   * Get public services.
+   *
+   * @param {string} jwt - The Bearer token for authentication.
+   * @returns {Promise<object[]|number>} - Returns a list of public services for the user or a status code if unsuccessful.
+   */
+  static async getAll(jwt) {
+    let response = await fetch(networkConfig.url + "/services/@all", {
+      headers: {
+        "Authorization": jwt
+      }
+    })
+    if (response.ok)
+      return response.json()
+    else
+      return response.status
+  }
+
+  /**
    * Get public services for the authenticated user.
    *
    * @param {string} jwt - The Bearer token for authentication.
@@ -185,12 +203,13 @@ export class Service {
   async addUser(userId) {
     let response = await fetch(networkConfig.url + "/services/" + this.id + "/users", {
       headers: {
-        "Authorization": this.token
+        "Authorization": this.token,
+        "Content-Type": "application/json"
       },
       method: "POST",
-      body: {
+      body: JSON.stringify({
         id: userId
-      }
+      })
     })
     return (response.ok) ? true : response.status;
   }
@@ -238,10 +257,11 @@ export class Service {
   async createEvent(body) {
     let response = await fetch(networkConfig.url + "/services/" + this.id + "/events", {
       headers: {
-        "Authorization": this.token
+        "Authorization": this.token,
+        "Content-Type": "application/json"
       },
       method: "POST",
-      body: body
+      body: JSON.stringify(body)
     })
     return (response.ok) ? true : response.status;
   }
@@ -254,12 +274,13 @@ export class Service {
    * @returns {Promise<boolean|number>} - Returns true if the event has been updated successfully or a status code if unsuccessful.
    */
   async editEvent(id, body) {
-    let response = await fetch(networkConfig.url + "/services/" + this.id + "/automate/" + id, {
+    let response = await fetch(networkConfig.url + "/services/" + this.id + "/events/" + id, {
       headers: {
-        "Authorization": this.token
+        "Authorization": this.token,
+        "Content-Type": "application/json"
       },
       method: "PUT",
-      body: body
+      body: JSON.stringify(body)
     })
     return (response.ok) ? true : response.status;
   }
@@ -271,13 +292,30 @@ export class Service {
    * @returns {Promise<boolean|number>} - Returns true if the event has been deleted successfully or a status code if unsuccessful.
    */
   async deleteEvent(id) {
-    let response = await fetch(networkConfig.url + "/services/" + this.id + "/automate/" + id, {
+    let response = await fetch(networkConfig.url + "/services/" + this.id + "/events/" + id, {
       headers: {
         "Authorization": this.token
       },
       method: "DELETE"
     })
     return (response.ok) ? true : response.status;
+  }
+
+  /**
+   * Get details of an event.
+   *
+   * @returns {Promise<object|number>} - Returns details of the event or a status code if unsuccessful.
+   */
+  async getEvent(id) {
+    let response = await fetch(networkConfig.url + "/services/" + this.id + "/events/" + id, {
+      headers: {
+        "Authorization": this.token
+      }
+    })
+    if (response.ok)
+      return response.json()
+    else
+      return response.status
   }
 
   /**
@@ -306,10 +344,11 @@ export class Service {
   async edit(body) {
     let response = await fetch(networkConfig.url + "/services/" + this.id, {
       headers: {
-        "Authorization": this.token
+        "Authorization": this.token,
+        "Content-Type": "application/json"
       },
       method: "PUT",
-      body: body
+      body: JSON.stringify(body)
     })
     return (response.ok) ? true : response.status;
   }

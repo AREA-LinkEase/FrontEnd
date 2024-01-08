@@ -1,4 +1,4 @@
-import {useState} from "react";
+import {useContext, useEffect, useState} from "react";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import Grid from "@mui/material/Grid";
 import TabContext from "@mui/lab/TabContext";
@@ -24,6 +24,12 @@ import IconButton from "@mui/material/IconButton";
 import * as yup from "yup";
 import FriendsTable from "../../../views/users/FriendsTable";
 import Link from "next/link";
+import {UserContext} from "../../../hook/UserContext";
+import {Users} from "../../../models/Users";
+import Spinner from "../../../@core/components/spinner";
+import {useRouter} from "next/router";
+import NetworkConfig from "../../../configs/networkConfig";
+import {Service} from "../../../models/Services";
 
 const ImgStyled = styled('img')(({ theme }) => ({
     width: 100,
@@ -39,7 +45,45 @@ const ButtonStyled = styled(Button)(({ theme }) => ({
     }
 }))
 
-function Account() {
+const ResetButtonStyled = styled(Button)(({ theme }) => ({
+  marginLeft: theme.spacing(4),
+  [theme.breakpoints.down('sm')]: {
+    width: '100%',
+    marginLeft: 0,
+    textAlign: 'center',
+    marginTop: theme.spacing(2)
+  }
+}))
+
+function Account({info, user}) {
+    const [inputValue, setInputValue] = useState('')
+    const [imgSrc, setImgSrc] = useState(NetworkConfig.url + "/assets/avatars/" + info.id + ".png")
+
+    const [username, setUsername] = useState(info.username)
+    const [email, setEmail] = useState(info.email)
+    const [avatar, setAvatar] = useState(null)
+
+    const router = useRouter()
+
+    const handleInputImageChange = (file) => {
+      const reader = new FileReader()
+      const { files } = file.target
+      setAvatar(file.target.files[0])
+      if (files && files.length !== 0) {
+        reader.onload = () => setImgSrc(reader.result)
+        reader.readAsDataURL(files[0])
+
+        if (reader.result !== null) {
+          setInputValue(reader.result)
+        }
+      }
+    }
+    const handleInputImageReset = () => {
+      setInputValue('')
+      setAvatar(null)
+      setImgSrc(NetworkConfig.url + "/assets/avatars/" + info.id + ".png")
+    }
+
     return (
         <Grid container spacing={6}>
             <Grid item xs={12}>
@@ -49,17 +93,22 @@ function Account() {
                         <form>
                             <CardContent sx={{ pt: 0 }}>
                                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                                    <ImgStyled src='/images/avatars/15.png' alt='Profile Pic' />
+                                    <ImgStyled src={imgSrc} alt='Avatar' />
                                     <div>
                                         <ButtonStyled component='label' variant='contained' htmlFor='account-settings-upload-image'>
                                             Upload New Photo
                                             <input
                                                 hidden
                                                 type='file'
+                                                value={inputValue}
                                                 accept='image/png, image/jpeg'
+                                                onChange={handleInputImageChange}
                                                 id='account-settings-upload-image'
                                             />
                                         </ButtonStyled>
+                                        <ResetButtonStyled color='secondary' variant='tonal' onClick={handleInputImageReset}>
+                                          Reset
+                                        </ResetButtonStyled>
                                         <Typography sx={{ mt: 4, color: 'text.disabled' }}>Allowed PNG or JPEG. Max size of 800K.</Typography>
                                     </div>
                                 </Box>
@@ -71,6 +120,8 @@ function Account() {
                                         <CustomTextField
                                             fullWidth
                                             label='Username'
+                                            value={username}
+                                            onChange={(e) => setUsername(e.target.value)}
                                         />
                                     </Grid>
                                     <Grid item xs={12}>
@@ -78,10 +129,37 @@ function Account() {
                                             fullWidth
                                             label='email'
                                             type='email'
+                                            value={email}
+                                            onChange={(e) => setEmail(e.target.value)}
                                         />
                                     </Grid>
                                     <Grid item xs={12} sx={{ pt: theme => `${theme.spacing(6.5)} !important` }}>
-                                        <Button variant='contained' sx={{ mr: 4 }}>
+                                        <Button variant='contained' sx={{ mr: 4 }} onClick={async () => {
+                                          try {
+                                            if (avatar !== null) {
+                                              const formData = new FormData();
+
+                                              console.log(avatar)
+                                              formData.append("avatar", avatar)
+
+                                              await user.updateAvatar(formData)
+                                            }
+                                            let result = await user.update({
+                                              username,
+                                              email
+                                            })
+
+                                            if (typeof result === "number") {
+                                              toast.error("An error has occurred")
+                                              console.log(result)
+                                            } else {
+                                              toast.success("Your profile has been updated successfully")
+                                              router.reload()
+                                            }
+                                          } catch (e) {
+                                            console.log(e)
+                                          }
+                                        }}>
                                             Save Changes
                                         </Button>
                                         <Button type='reset' variant='tonal' color='secondary'>
@@ -100,12 +178,10 @@ function Account() {
 
 const defaultValues = {
     newPassword: '',
-    currentPassword: '',
     confirmNewPassword: ''
 }
 
 const schema = yup.object().shape({
-    currentPassword: yup.string().min(8).required(),
     newPassword: yup
         .string()
         .min(8)
@@ -120,10 +196,9 @@ const schema = yup.object().shape({
         .oneOf([yup.ref('newPassword')], 'Passwords must match')
 })
 
-function Security() {
+function Security({user, info}) {
     const [values, setValues] = useState({
         showNewPassword: false,
-        showCurrentPassword: false,
         showConfirmNewPassword: false
     })
 
@@ -135,10 +210,6 @@ function Security() {
         formState: { errors }
     } = useForm({ defaultValues, resolver: yupResolver(schema) })
 
-    const handleClickShowCurrentPassword = () => {
-        setValues({ ...values, showCurrentPassword: !values.showCurrentPassword })
-    }
-
     const handleClickShowNewPassword = () => {
         setValues({ ...values, showNewPassword: !values.showNewPassword })
     }
@@ -147,7 +218,10 @@ function Security() {
         setValues({ ...values, showConfirmNewPassword: !values.showConfirmNewPassword })
     }
 
-    const onPasswordFormSubmit = () => {
+    const onPasswordFormSubmit = async (value) => {
+        await user.update({
+          password: value.newPassword
+        })
         toast.success('Password Changed Successfully')
         reset(defaultValues)
     }
@@ -158,44 +232,6 @@ function Security() {
                     <CardHeader title='Change Password' />
                     <CardContent>
                         <form onSubmit={handleSubmit(onPasswordFormSubmit)}>
-                            <Grid container spacing={5}>
-                                <Grid item xs={12} sm={6}>
-                                    <Controller
-                                        name='currentPassword'
-                                        control={control}
-                                        rules={{ required: true }}
-                                        render={({ field: { value, onChange } }) => (
-                                            <CustomTextField
-                                                fullWidth
-                                                value={value}
-                                                onChange={onChange}
-                                                label='Current Password'
-                                                placeholder='············'
-                                                id='input-current-password'
-                                                error={Boolean(errors.currentPassword)}
-                                                type={values.showCurrentPassword ? 'text' : 'password'}
-                                                {...(errors.currentPassword && { helperText: errors.currentPassword.message })}
-                                                InputProps={{
-                                                    endAdornment: (
-                                                        <InputAdornment position='end'>
-                                                            <IconButton
-                                                                edge='end'
-                                                                onMouseDown={e => e.preventDefault()}
-                                                                onClick={handleClickShowCurrentPassword}
-                                                            >
-                                                                <Icon
-                                                                    fontSize='1.25rem'
-                                                                    icon={values.showCurrentPassword ? 'tabler:eye' : 'tabler:eye-off'}
-                                                                />
-                                                            </IconButton>
-                                                        </InputAdornment>
-                                                    )
-                                                }}
-                                            />
-                                        )}
-                                    />
-                                </Grid>
-                            </Grid>
                             <Grid container spacing={5} sx={{ mt: 0 }}>
                                 <Grid item xs={12} sm={6}>
                                     <Controller
@@ -291,110 +327,54 @@ function Security() {
     )
 }
 
-function Friends() {
+function Friends({user, token}) {
+    const [data, setData] = useState([])
+
+    useEffect(() => {
+      (async () => {
+        try {
+          let result = await user.getFriends();
+
+          if (typeof result === "number")
+            return
+          setData(result)
+        } catch (e) {
+          console.log(e)
+        }
+      })()
+    }, []);
+
     return (
         <Grid container spacing={6}>
             <Grid item xs={12}>
-                <FriendsTable />
+                <FriendsTable data={data} user={user} token={token} />
             </Grid>
         </Grid>
     )
 }
 
-const socialAccountsArr = [
-    {
-        title: 'Facebook',
-        isConnected: false,
-        logo: '/images/logos/facebook.png'
-    },
-    {
-        title: 'Twitter',
-        isConnected: true,
-        username: '@Pixinvent',
-        logo: '/images/logos/twitter.png'
-    },
-    {
-        title: 'Instagram',
-        isConnected: true,
-        username: '@Pixinvent',
-        logo: '/images/logos/instagram.png'
-    },
-    {
-        title: 'Dribbble',
-        isConnected: false,
-        logo: '/images/logos/dribbble.png'
-    },
-    {
-        title: 'Behance',
-        isConnected: false,
-        logo: '/images/logos/behance.png'
-    }
-]
+function Connections({info, token}) {
+    const [data, setData] = useState([])
 
-function Connections() {
+    useEffect(() => {
+      (async () => {
+        let result = [];
+
+        for (const name of Object.keys(info.services)) {
+          let services = await Service.search(token, name);
+
+          if (typeof services === "number" || services.length === 0) continue;
+
+          let service = services[0];
+
+          result.push(service)
+        }
+        setData(result)
+      })()
+    }, []);
+
     return (
         <Grid container spacing={6}>
-            <Grid item xs={12}>
-                <Grid item xs={12}>
-                    <Card>
-                        <CardHeader
-                            title='Accounts Connections'
-                            titleTypographyProps={{ sx: { mb: 1 } }}
-                            subheader={
-                                <Typography sx={{ color: 'text.secondary' }}>
-                                    Linked account for sign-in in LinkEase
-                                </Typography>
-                            }
-                        />
-                        <CardContent>
-                            {socialAccountsArr.map(account => {
-                                return (
-                                    <Box
-                                        key={account.title}
-                                        sx={{
-                                            gap: 2,
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            justifyContent: 'space-between',
-                                            '&:not(:last-of-type)': { mb: 4 }
-                                        }}
-                                    >
-                                        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                                            <Box sx={{ mr: 4, minWidth: 45, display: 'flex', justifyContent: 'center' }}>
-                                                <img src={account.logo} alt={account.title} height='38' />
-                                            </Box>
-                                            <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-                                                <Typography variant='h6'>{account.title}</Typography>
-                                                {account.isConnected ? (
-                                                    <Typography
-                                                        href='/'
-                                                        component={Link}
-                                                        onClick={e => e.preventDefault()}
-                                                        sx={{ color: 'primary.main', textDecoration: 'none' }}
-                                                    >
-                                                        {account.username}
-                                                    </Typography>
-                                                ) : (
-                                                    <Typography variant='body2' sx={{ color: 'text.disabled' }}>
-                                                        Not Connected
-                                                    </Typography>
-                                                )}
-                                            </Box>
-                                        </Box>
-                                        <Button
-                                            variant='tonal'
-                                            sx={{ p: 1.5, minWidth: 38 }}
-                                            color={account.isConnected ? 'error' : 'secondary'}
-                                        >
-                                            <Icon icon={account.isConnected ? 'tabler:trash' : 'tabler:link'} />
-                                        </Button>
-                                    </Box>
-                                )
-                            })}
-                        </CardContent>
-                    </Card>
-                </Grid>
-            </Grid>
             <Grid item xs={12}>
                 <Grid item xs={12}>
                     <Card>
@@ -407,16 +387,16 @@ function Connections() {
                                 </Typography>
                             }
                             action={
-                                <Button variant='contained' startIcon={<Icon icon='tabler:plus' />}>
+                                <Button variant='contained' startIcon={<Icon icon='tabler:plus' />} href={"/community/services"}>
                                     Add More Services
                                 </Button>
                             }
                         />
                         <CardContent>
-                            {socialAccountsArr.map(account => {
+                            {data.map(account => {
                                 return (
                                     <Box
-                                        key={account.title}
+                                        key={account.name}
                                         sx={{
                                             gap: 2,
                                             display: 'flex',
@@ -427,32 +407,24 @@ function Connections() {
                                     >
                                         <Box sx={{ display: 'flex', alignItems: 'center' }}>
                                             <Box sx={{ mr: 4, minWidth: 45, display: 'flex', justifyContent: 'center' }}>
-                                                <img src={account.logo} alt={account.title} height='38' />
+                                                <img src={NetworkConfig.url + "/assets/services/" + account.id + ".png"} alt={account.name} height='38' />
                                             </Box>
                                             <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-                                                <Typography variant='h6'>{account.title}</Typography>
-                                                {account.isConnected ? (
-                                                    <Typography
-                                                        href='/'
-                                                        component={Link}
-                                                        onClick={e => e.preventDefault()}
-                                                        sx={{ color: 'primary.main', textDecoration: 'none' }}
-                                                    >
-                                                        {account.username}
-                                                    </Typography>
-                                                ) : (
-                                                    <Typography variant='body2' sx={{ color: 'text.disabled' }}>
-                                                        Not Connected
-                                                    </Typography>
-                                                )}
+                                                <Typography variant='h6'>{account.name}</Typography>
+                                                <Typography
+                                                  sx={{ color: 'primary.main', textDecoration: 'none' }}
+                                                >
+                                                  Connected
+                                                </Typography>
                                             </Box>
                                         </Box>
                                         <Button
                                             variant='tonal'
                                             sx={{ p: 1.5, minWidth: 38 }}
-                                            color={account.isConnected ? 'error' : 'secondary'}
+                                            color='secondary'
+                                            href={"/services/" + account.id}
                                         >
-                                            <Icon icon={account.isConnected ? 'tabler:trash' : 'tabler:link'} />
+                                            <Icon icon='tabler:link' />
                                         </Button>
                                     </Box>
                                 )
@@ -470,15 +442,37 @@ export default function index() {
 
     const hideText = useMediaQuery(theme => theme.breakpoints.down('md'))
 
+    const [info, setInfo] = useState(null);
+    const { token, user } = useContext(UserContext);
+    const [isLoading, setLoading] = useState(true);
+
+    useEffect(() => {
+      (async () => {
+        try {
+          let result = await user.get();
+
+          if (typeof result === "number")
+            return
+          setInfo(result)
+          setLoading(false)
+        } catch (e) {
+          console.log(e)
+        }
+      })()
+    }, []);
+
+    if (isLoading)
+      return <Spinner />
+
     const handleChange = (event, value) => {
         setActiveTab(value)
     }
 
     const tabContentList = {
-        account: <Account />,
-        security: <Security />,
-        friends: <Friends />,
-        connections: <Connections />
+        account: <Account info={info} user={user} token={token} />,
+        security: <Security info={info} user={user} token={token} />,
+        friends: <Friends info={info} user={user} token={token} />,
+        connections: <Connections info={info} user={user} token={token} />
     }
 
     return <>

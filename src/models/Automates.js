@@ -23,6 +23,23 @@ export class Automate {
   }
 
   /**
+   * get All public automates.
+   * @param {string} jwt - The JSON Web Token for authorization.
+   * @returns {Promise<Array|number>} - A promise that resolves to an array of automates or returns a status code on failure.
+   */
+  static async getAll(jwt) {
+    let response = await fetch(networkConfig.url + "/automates/@all", {
+      headers: {
+        "Authorization": jwt
+      }
+    })
+    if (response.ok)
+      return response.json()
+    else
+      return response.status
+  }
+
+  /**
    * Create an instance of Automate.
    * @param {string} jwt - The JSON Web Token for authorization.
    * @param {number} id - The ID of the automate.
@@ -86,10 +103,11 @@ export class Automate {
   async edit(body) {
     let response = await fetch(networkConfig.url + "/automates/" + this.id, {
       headers: {
-        "Authorization": this.token
+        "Authorization": this.token,
+        "Content-Type": "application/json"
       },
       method: "PUT",
-      body: body
+      body: JSON.stringify(body)
     })
     return (response.ok) ? true : response.status;
   }
@@ -102,12 +120,49 @@ export class Automate {
   async editWorkflow(workflow) {
     let response = await fetch(networkConfig.url + "/automates/" + this.id + "/workflow", {
       headers: {
-        "Authorization": this.token
+        "Authorization": this.token,
+        "Content-Type": "application/json"
       },
       method: "PUT",
-      body: {
+      body: JSON.stringify({
         workflow
-      }
+      })
+    })
+    return (response.ok) ? true : response.status;
+  }
+
+  /**
+   * Add variable for a specific automate.
+   * @param {String} name - The name of the variable.
+   * @param {String} content - The content of the variable.
+   * @returns {Promise<boolean|number>} - A promise that resolves to true if the variable is added successfully or returns a status code on failure.
+   */
+  async addVariable(name, content) {
+    let response = await fetch(networkConfig.url + "/automates/" + this.id + "/variables/" + name, {
+      headers: {
+        "Authorization": this.token,
+        "Content-Type": "application/json"
+      },
+      method: "POST",
+      body: JSON.stringify({
+        content
+      })
+    })
+    return (response.ok) ? true : response.status;
+  }
+
+  /**
+   * Remove variable for a specific automate.
+   * @param {String} name - The name of the variable
+   * @returns {Promise<boolean|number>} - A promise that resolves to true if the variable is removed successfully or returns a status code on failure.
+   */
+  async removeVariable(name) {
+    let response = await fetch(networkConfig.url + "/automates/" + this.id + "/variables/"+ name, {
+      headers: {
+        "Authorization": this.token,
+        "Content-Type": "application/json"
+      },
+      method: "DELETE"
     })
     return (response.ok) ? true : response.status;
   }
@@ -119,7 +174,8 @@ export class Automate {
   async destroy() {
     let response = await fetch(networkConfig.url + "/automates/" + this.id, {
       headers: {
-        "Authorization": this.token
+        "Authorization": this.token,
+        "Content-Type": "application/json"
       },
       method: "DELETE"
     })

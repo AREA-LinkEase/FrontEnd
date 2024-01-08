@@ -8,9 +8,14 @@ import InputAdornment from "@mui/material/InputAdornment";
 import {Icon} from "@iconify/react";
 import CardHeader from "@mui/material/CardHeader";
 import Box from "@mui/material/Box";
-import Fab from "@mui/material/Fab";
 import AvatarGroup from "@mui/material/AvatarGroup";
 import Avatar from "@mui/material/Avatar";
+import {useContext, useEffect, useState} from "react";
+import {UserContext} from "../../hook/UserContext";
+import toast from "react-hot-toast";
+import {Service} from "../../models/Services";
+import NetworkConfig from "../../configs/networkConfig";
+import Link from "next/link";
 
 const CustomTextFieldStyled = styled(CustomTextField)(({ theme }) => ({
     '& .MuiInputBase-root.MuiFilledInput-root': {
@@ -22,7 +27,26 @@ const CustomTextFieldStyled = styled(CustomTextField)(({ theme }) => ({
     }
 }))
 
+const LinkStyled = styled(Link)(({ theme }) => ({
+  textDecoration: 'none',
+  color: theme.palette.primary.main,
+  fontSize: 20
+}))
+
 export default function automates() {
+    const { token } = useContext(UserContext);
+    const [services, setServices] = useState([])
+
+    useEffect(() => {
+      (async () => {
+        let result = await Service.getAll(token);
+
+        if (typeof result !== "number") {
+          setServices(result)
+        }
+      })()
+    }, [])
+
     return (
         <Grid container spacing={6}>
             <Grid item xs={12}>
@@ -42,46 +66,71 @@ export default function automates() {
                                     </InputAdornment>
                                 )
                             }}
+                            onChange={async (e) => {
+                              let input = e.target.value;
+
+                              try {
+                                if (input === "") {
+                                  let result = await Service.getAll(token);
+
+                                  if (typeof result !== "number") {
+                                    setServices(result)
+                                  }
+                                } else {
+                                  let result = await Service.search(token, input);
+
+                                  if (typeof result !== "number") {
+                                    setServices(result)
+                                  }
+                                }
+                              } catch (e) {
+                                console.log(e)
+                                toast.error("An error has occurred")
+                              }
+                            }}
                         />
                     </CardContent>
                 </Card>
             </Grid>
             <Grid item xs={12} md={6} lg={4}>
-                <Card>
+              {services.map((service, i) => {
+                return (
+                  <Card key={i}>
                     <CardHeader
-                        title={
-                            <Box sx={{ display: 'flex', alignItems: 'center', '& svg': { mr: 2 } }}>
-                                <Icon fontSize={20} icon='tabler:link' />
-                                <Typography fontSize={20}>Service's name</Typography>
-                            </Box>
-                        }
-                        action={
-                            <Avatar
-                                variant='rounded'
-                                src="https://play-lh.googleusercontent.com/cShys-AmJ93dB0SV8kE6Fl5eSaf4-qMMZdwEDKI5VEmKAXfzOqbiaeAsqqrEBCTdIEs=w240-h480-rw"
-                                sx={{
-                                    width: 55,
-                                    height: 55,
-                                }}
-                            />
-                        }
+                      title={
+                        <Box sx={{ display: 'flex', alignItems: 'center', '& svg': { mr: 2 } }}>
+                          <Icon fontSize={20} icon='tabler:link' />
+                          <LinkStyled fontSize={20} href={"/services/" + service.id}>{service.name}</LinkStyled>
+                        </Box>
+                      }
+                      action={
+                        <Avatar
+                          variant='rounded'
+                          src={NetworkConfig.url + "/assets/services/" + service.id + ".png"}
+                          sx={{
+                            width: 55,
+                            height: 55,
+                          }}
+                        />
+                      }
                     />
                     <CardContent>
-                        <Grid item xs={12} sx={{ mt: 4, display: 'flex', flexWrap: 'wrap', alignItems: 'flex-end', justifyContent: 'space-between' }}>
-                            <AvatarGroup className='pull-up' max={4}>
-                                <Avatar />
-                                <Avatar />
-                                <Avatar />
-                                <Avatar />
-                                <Avatar />
-                            </AvatarGroup>
-                            <Box sx={{ display: 'flex', alignItems: 'center', '& svg': { mr: 1.25 } }}>
-                                <Icon icon='tabler:eye' />
-                                <Typography>80</Typography>
-                            </Box>
-                        </Grid>
+                      <Grid item xs={12} sx={{ mt: 4, display: 'flex', flexWrap: 'wrap', alignItems: 'flex-end', justifyContent: 'space-between' }}>
+                        <AvatarGroup className='pull-up' max={4}>
+                          <Avatar src={NetworkConfig.url + "/assets/avatars/" + service.owner_id + ".png"} />
+                          {service.users_id.map((user_id, i) => {
+                            <Avatar key={i} src={NetworkConfig.url + "/assets/avatars/" + user_id + ".png"} />
+                          })}
+                        </AvatarGroup>
+                        <Box sx={{ display: 'flex', alignItems: 'center', '& svg': { mr: 1.25 } }}>
+                          <Icon icon='tabler:eye' />
+                          <Typography>{services.views}</Typography>
+                        </Box>
+                      </Grid>
                     </CardContent>
-                </Card>
+                  </Card>
+                )
+              })}
             </Grid>
         </Grid>
     )

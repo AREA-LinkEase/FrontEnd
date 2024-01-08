@@ -1,5 +1,5 @@
 // ** React Imports
-import { useState } from 'react'
+import {useContext, useEffect, useState} from 'react'
 
 // ** Next Import
 import Link from 'next/link'
@@ -31,6 +31,11 @@ import BlankLayout from 'src/@core/layouts/BlankLayout'
 
 // ** Demo Imports
 import AuthIllustrationV1Wrapper from 'src/views/pages/auth/AuthIllustrationV1Wrapper'
+import {useRouter} from "next/router";
+import {Alert} from "@mui/material";
+import {Auth} from "../../../models/Auth";
+import {UserContext} from "../../../hook/UserContext";
+import NetworkConfig from "../../../configs/networkConfig";
 
 // ** Styled Components
 const Card = styled(MuiCard)(({ theme }) => ({
@@ -54,12 +59,41 @@ const LoginV1 = () => {
     password: '',
     showPassword: false
   })
+  const [email, setEmail] = useState("")
+  const [error, setError] = useState("")
+  const { login } = useContext(UserContext);
 
   // ** Hook
   const theme = useTheme()
+  const router = useRouter()
+
+  useEffect(() => {
+    console.log(router.query.token)
+    if (router.query.token) {
+      login("Bearer " + router.query.token).then(() => {
+        router.replace("/")
+      })
+    }
+  }, [router.query.token]);
 
   const handleChange = prop => event => {
     setValues({ ...values, [prop]: event.target.value })
+  }
+
+  const onSubmit = async () => {
+    try {
+      let result = await Auth.login(email, values.password)
+
+      if (typeof result === "object") {
+        await login(result.jwt)
+        router.replace("/")
+      } else {
+        setError("Something wrong happen...")
+      }
+    } catch (e) {
+      console.log(e)
+      setError("Something wrong happen...")
+    }
   }
 
   const handleClickShowPassword = () => {
@@ -72,47 +106,34 @@ const LoginV1 = () => {
         <Card>
           <CardContent sx={{ p: theme => `${theme.spacing(10.5, 8, 8)} !important` }}>
             <Box sx={{ mb: 8, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <svg width={34} viewBox='0 0 32 22' fill='none' xmlns='http://www.w3.org/2000/svg'>
+              <svg width={34} viewBox='0 0 32 32' fill='none' xmlns='http://www.w3.org/2000/svg'>
                 <path
-                  fillRule='evenodd'
-                  clipRule='evenodd'
-                  fill={theme.palette.primary.main}
-                  d='M0.00172773 0V6.85398C0.00172773 6.85398 -0.133178 9.01207 1.98092 10.8388L13.6912 21.9964L19.7809 21.9181L18.8042 9.88248L16.4951 7.17289L9.23799 0H0.00172773Z'
-                />
+                  d="M29.9996 6.31812L23.2727 13.045L29.9514 19.7362L25.6202 24.0675L7.91895 6.36562L12.2496 2.03375L18.9414 8.71375L25.6664 2L29.9996 6.31812Z"
+                  fill="#685DD7"/>
                 <path
-                  fill='#161616'
-                  opacity={0.06}
-                  fillRule='evenodd'
-                  clipRule='evenodd'
-                  d='M7.69824 16.4364L12.5199 3.23696L16.5541 7.25596L7.69824 16.4364Z'
-                />
-                <path
-                  fill='#161616'
-                  opacity={0.06}
-                  fillRule='evenodd'
-                  clipRule='evenodd'
-                  d='M8.07751 15.9175L13.9419 4.63989L16.5849 7.28475L8.07751 15.9175Z'
-                />
-                <path
-                  fillRule='evenodd'
-                  clipRule='evenodd'
-                  fill={theme.palette.primary.main}
-                  d='M7.77295 16.3566L23.6563 0H32V6.88383C32 6.88383 31.8262 9.17836 30.6591 10.4057L19.7824 22H13.6938L7.77295 16.3566Z'
-                />
+                  d="M2.03437 12.2498L6.36562 7.91797L24.0669 25.6205L19.7356 29.9517L13.0481 23.2723L6.3175 29.9998L2 25.6667L8.71375 18.9411L2.03437 12.2498Z"
+                  fill="#685DD7"/>
               </svg>
-              <Typography variant='h3' sx={{ ml: 2.5, fontWeight: 700 }}>
+              <Typography variant='h3' sx={{ml: 2.5, fontWeight: 700}}>
                 {themeConfig.templateName}
               </Typography>
             </Box>
-            <Box sx={{ mb: 6 }}>
-              <Typography variant='h4' sx={{ mb: 1.5 }}>
+            <Box sx={{mb: 3}}>
+              <Typography variant='h4' sx={{mb: 1.5}}>
                 {`Welcome to ${themeConfig.templateName}! 👋🏻`}
               </Typography>
               <Typography sx={{ color: 'text.secondary' }}>
                 Please sign-in to your account and start the adventure
               </Typography>
             </Box>
-            <form noValidate autoComplete='off' onSubmit={e => e.preventDefault()}>
+            {(error.length !== 0) ?
+              <Alert variant='filled' severity='error' sx={{ mb: 3 }}>
+                {error}
+              </Alert> : null}
+            <form noValidate autoComplete='off' onSubmit={e => {
+              e.preventDefault()
+              onSubmit()
+            }}>
               <CustomTextField
                 autoFocus
                 fullWidth
@@ -120,6 +141,8 @@ const LoginV1 = () => {
                 label='Email'
                 sx={{ mb: 4 }}
                 placeholder='john.doe@gmail.com'
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
               />
               <CustomTextField
                 fullWidth
@@ -177,21 +200,17 @@ const LoginV1 = () => {
               </Divider>
               <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <IconButton
-                  href='/'
+                  href={NetworkConfig.url + "/auth/login/github"}
                   component={Link}
-                  onClick={e => e.preventDefault()}
                   sx={{ color: theme => (theme.palette.mode === 'light' ? '#272727' : 'grey.300') }}
                 >
                   <Icon icon='mdi:github' />
                 </IconButton>
-                <IconButton href='/' component={Link} sx={{ color: '#db4437' }} onClick={e => e.preventDefault()}>
+                <IconButton href={NetworkConfig.url + "/auth/login/google"} component={Link} sx={{ color: '#db4437' }}>
                   <Icon icon='mdi:google' />
                 </IconButton>
-                <IconButton href='/' component={Link} sx={{ color: '#7289da' }} onClick={e => e.preventDefault()}>
+                <IconButton href={NetworkConfig.url + "/auth/login/discord"} component={Link} sx={{ color: '#7289da' }}>
                   <Icon icon='mdi:discord' />
-                </IconButton>
-                <IconButton href='/' component={Link} sx={{ color: '#00A4EF' }} onClick={e => e.preventDefault()}>
-                  <Icon icon='mdi:microsoft' />
                 </IconButton>
               </Box>
             </form>
@@ -202,5 +221,6 @@ const LoginV1 = () => {
   )
 }
 LoginV1.getLayout = page => <BlankLayout>{page}</BlankLayout>
+LoginV1.needAuth = false
 
 export default LoginV1

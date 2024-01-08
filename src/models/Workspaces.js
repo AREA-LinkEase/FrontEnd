@@ -22,6 +22,23 @@ export class Workspace {
   }
 
   /**
+   * Retrieves public workspaces.
+   * @param {string} jwt - The JWT token for authentication.
+   * @returns {Promise<array|number>} - An array of public workspaces or a status code if the request fails.
+   */
+  static async getAll(jwt) {
+    let response = await fetch(networkConfig.url + "/workspaces/@all", {
+      headers: {
+        "Authorization": jwt
+      }
+    })
+    if (response.ok)
+      return response.json()
+    else
+      return response.status
+  }
+
+  /**
    * Retrieves public workspaces for the authenticated user.
    * @param {string} jwt - The JWT token for authentication.
    * @returns {Promise<array|number>} - An array of public workspaces or a status code if the request fails.
@@ -64,10 +81,11 @@ export class Workspace {
   static async createNewWorkspace(jwt, body) {
     let response = await fetch(networkConfig.url + "/workspaces/@me", {
       headers: {
-        "Authorization": jwt
+        "Authorization": jwt,
+        "Content-Type": "application/json"
       },
       method: "POST",
-      body: body
+      body: JSON.stringify(body)
     })
     return (response.ok) ? true : response.status;
   }
@@ -124,10 +142,11 @@ export class Workspace {
   async edit(body) {
     let response = await fetch(networkConfig.url + "/workspaces/" + this.id, {
       headers: {
-        "Authorization": this.token
+        "Authorization": this.token,
+        "Content-Type": "application/json"
       },
       method: "PUT",
-      body: body
+      body: JSON.stringify(body)
     })
     return (response.ok) ? true : response.status;
   }
@@ -156,13 +175,14 @@ export class Workspace {
   async addUser(userId, permission) {
     let response = await fetch(networkConfig.url + "/workspaces/" + this.id + "/users", {
       headers: {
-        "Authorization": this.token
+        "Authorization": this.token,
+        "Content-Type": "application/json"
       },
       method: "POST",
-      body: {
+      body: JSON.stringify({
         id: userId,
         permission
-      }
+      })
     })
     return (response.ok) ? true : response.status;
   }
@@ -175,10 +195,11 @@ export class Workspace {
   async createAutomate(body) {
     let response = await fetch(networkConfig.url + "/workspaces/" + this.id + "/automate", {
       headers: {
-        "Authorization": this.token
+        "Authorization": this.token,
+        "Content-Type": "application/json"
       },
       method: "POST",
-      body: body
+      body: JSON.stringify(body)
     })
     return (response.ok) ? true : response.status;
   }

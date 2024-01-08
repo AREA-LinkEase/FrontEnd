@@ -21,6 +21,9 @@ import ListItemAvatar from "@mui/material/ListItemAvatar";
 import ListItemText from "@mui/material/ListItemText";
 import ListItemSecondaryAction from "@mui/material/ListItemSecondaryAction";
 import toast from "react-hot-toast";
+import NetworkConfig from "../../configs/networkConfig";
+import {useRouter} from "next/router";
+import {Users} from "../../models/Users";
 
 const data = [
     {
@@ -80,7 +83,7 @@ const defaultColumns = [
         minWidth: 135,
         headerName: 'User',
         renderCell: ({ row }) => <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <Avatar src={row.avatar} alt={row.username} sx={{ mr: 4, width: 30, height: 30 }} />
+            <Avatar src={NetworkConfig.url + "/assets/avatars/" + row.id + ".png"} alt={row.username} sx={{ mr: 4, width: 30, height: 30 }} />
             <Typography sx={{ color: 'text.secondary' }}>{row.username}</Typography>
         </Box>
     }
@@ -105,17 +108,13 @@ const Transition = forwardRef(function Transition(props, ref) {
     return <Fade ref={ref} {...props} />
 })
 
-const UserTable = () => {
+const UserTable = ({data, user, token}) => {
     const [value, setValue] = useState('')
     const [paginationModel, setPaginationModel] = useState({ page: 0, pageSize: 6 })
-    const [showEdit, setShowEdit] = useState(false)
     const [showAdd, setShowAdd] = useState(false)
-    const [selectedValue, setSelectedValue] = useState('read')
+    const [searchResult, setSearchResult] = useState([]);
     const theme = useTheme()
-
-    const handleChange = event => {
-        setSelectedValue(event.target.value)
-    }
+    const router = useRouter()
 
     const columns = [
         ...defaultColumns,
@@ -128,7 +127,10 @@ const UserTable = () => {
             renderCell: ({ row }) => (
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
                     <Tooltip title='Delete'>
-                        <IconButton size='small' onClick={() => {}}>
+                        <IconButton size='small' onClick={async () => {
+                          await user.deleteFriend(row.id)
+                          router.reload()
+                        }}>
                             <Icon icon='tabler:trash' />
                         </IconButton>
                     </Tooltip>
@@ -152,12 +154,7 @@ const UserTable = () => {
             <DataGrid
                 autoHeight
                 rowHeight={54}
-                rows={[
-                    {
-                        "id": 0,
-                        "username": "moustafa"
-                    }
-                ]}
+                rows={data}
                 columns={columns}
                 disableRowSelectionOnClick
                 paginationModel={paginationModel}
@@ -192,8 +189,23 @@ const UserTable = () => {
                     </Box>
                     <Grid container spacing={6}>
                         <Grid item xs={12}>
-                            <CustomTextField sx={{ mb: 6 }} fullWidth label='Search User' placeholder='' />
-                            <Typography variant='h4'>{`${data.length} Members`}</Typography>
+                            <CustomTextField
+                              sx={{ mb: 6 }}
+                              fullWidth
+                              label='Search User'
+                              placeholder=''
+                              onChange={async (e) => {
+                                let result = await Users.searchUser(token, e.target.value);
+
+                                if (typeof result === "number") {
+                                  toast.error("An error has occurred")
+                                  console.log(result)
+                                } else {
+                                  setSearchResult(result)
+                                }
+                              }}
+                            />
+                            <Typography variant='h4'>{`${searchResult.length} Members`}</Typography>
                             <List
                                 dense
                                 sx={{
@@ -210,17 +222,25 @@ const UserTable = () => {
                                     }
                                 }}
                             >
-                                {data.map(member => {
+                                {searchResult.map(member => {
                                     return (
-                                        <ListItem key={member.name} sx={{ px: 0, py: 2, display: 'flex', flexWrap: 'wrap' }}>
+                                        <ListItem key={member.username} sx={{ px: 0, py: 2, display: 'flex', flexWrap: 'wrap' }}>
                                             <ListItemAvatar>
-                                                <Avatar src={`/images/avatars/${member.avatar}`} alt={member.name} sx={{ height: 38, width: 38 }} />
+                                                <Avatar src={`${NetworkConfig.url}/assets/avatars/${member.id}.png`} alt={member.username} sx={{ height: 38, width: 38 }} />
                                             </ListItemAvatar>
-                                            <ListItemText sx={{ m: 0 }} primary={member.name} secondary={member.email} />
+                                            <ListItemText sx={{ m: 0 }} primary={member.username} secondary={member.email} />
                                             <ListItemSecondaryAction sx={{ right: 0 }}>
-                                                <Button variant='contained' onClick={() => {
-                                                    setShowAdd(false)
+                                                <Button variant='contained' onClick={async () => {
+                                                  setShowAdd(false)
+                                                  let result = await user.addFriends([member.id]);
+
+                                                  if (typeof result === "number") {
+                                                    toast.error('An error has occurred')
+                                                    console.log(result)
+                                                  } else {
                                                     toast.success('User Added !')
+                                                    router.reload();
+                                                  }
                                                 }}>Add</Button>
                                             </ListItemSecondaryAction>
                                         </ListItem>

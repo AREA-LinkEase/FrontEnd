@@ -3,14 +3,16 @@ import Box from '@mui/material/Box'
 
 // ** Footer Content Component
 import FooterContent from './FooterContent'
+import {useRouter} from "next/router";
 
 const Footer = props => {
   // ** Props
   const { settings, footerStyles, footerContent: userFooterContent } = props
+  const router = useRouter();
 
   // ** Vars
   const { skin, layout, footer, contentWidth } = settings
-  if (footer === 'hidden') {
+  if (footer === 'hidden' || router.asPath === "/monkeyteam/" || router.asPath === "/monkeyteam") {
     return null
   }
 

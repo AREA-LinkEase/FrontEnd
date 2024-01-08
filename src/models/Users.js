@@ -76,28 +76,27 @@ export class User {
   async update(body) {
     let response = await fetch(networkConfig.url + "/users/@me", {
       headers: {
-        "Authorization": this.token
+        "Authorization": this.token,
+        "Content-Type": "application/json"
       },
       method: "PUT",
-      body: body
+      body: JSON.stringify(body)
     })
     return (response.ok) ? true : response.status;
   }
 
   /**
    * Update the user's avatar.
-   * @param {string} image - The new avatar image.
+   * @param {Object} image - The new avatar image.
    * @returns {Promise<boolean|number>} - A promise that resolves to `true` if successful, or the HTTP status code on failure.
    */
   async updateAvatar(image) {
     let response = await fetch(networkConfig.url + "/users/@me/avatar", {
       headers: {
-        "Authorization": this.token
+        "Authorization": this.token,
       },
       method: "PUT",
-      body: {
-        "avatar": image
-      }
+      body: image
     })
     return (response.ok) ? true : response.status;
   }
@@ -126,12 +125,13 @@ export class User {
   async addFriends(friendsArray) {
     let response = await fetch(networkConfig.url + "/users/@me/friends", {
       headers: {
-        "Authorization": this.token
+        "Authorization": this.token,
+        "Content-Type": "application/json"
       },
       method: "POST",
-      body: {
+      body: JSON.stringify({
         "friends": friendsArray
-      }
+      })
     })
     return (response.ok) ? true : response.status;
   }

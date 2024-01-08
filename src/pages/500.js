@@ -55,5 +55,6 @@ const Error500 = () => {
   )
 }
 Error500.getLayout = page => <BlankLayout>{page}</BlankLayout>
+Error500.needAuth = false
 
 export default Error500

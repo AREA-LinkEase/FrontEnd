@@ -1,6 +1,6 @@
 // ** Next Imports
 import Head from 'next/head'
-import { Router } from 'next/router'
+import {Router, useRouter} from 'next/router'
 
 // ** Loader Import
 import NProgress from 'nprogress'
@@ -40,6 +40,9 @@ import 'src/iconify-bundle/icons-bundle-react'
 
 // ** Global css styles
 import '../../styles/globals.css'
+import {useContext, useEffect, useState} from "react";
+import Spinner from "../@core/components/spinner";
+import {UserContext, UserProvider} from "../hook/UserContext";
 
 const clientSideEmotionCache = createEmotionCache()
 
@@ -56,6 +59,34 @@ if (themeConfig.routingLoader) {
   })
 }
 
+const AuthGuard = ({children}) => {
+  const router = useRouter()
+  const { token, isLoaded } = useContext(UserContext);
+  const [isLoading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!router.isReady || !isLoaded) return;
+
+    if (token === null)
+      router.replace("/auth/login")
+    else
+      setLoading(false)
+  }, [router.isReady, router.route, token, isLoaded]);
+
+  if (isLoading)
+    return <Spinner />
+  else
+    return <>{children}</>
+}
+
+const Guard = ({ children, needAuth }) => {
+  if (needAuth) {
+    return <AuthGuard>{children}</AuthGuard>
+  } else {
+    return <>{children}</>
+  }
+}
+
 // ** Configure JSS & ClassName
 const App = props => {
   const { Component, emotionCache = clientSideEmotionCache, pageProps } = props
@@ -67,30 +98,35 @@ const App = props => {
     Component.getLayout ?? (page => <UserLayout contentHeightFixed={contentHeightFixed}>{page}</UserLayout>)
   const setConfig = Component.setConfig ?? undefined
 
+  const needAuth = Component.needAuth ?? true
+
   return (
       <CacheProvider value={emotionCache}>
         <Head>
-          <title>{`${themeConfig.templateName} - Material Design React Admin Template`}</title>
+          <title>{`${themeConfig.templateName}`}</title>
           <meta
             name='description'
-            content={`${themeConfig.templateName} – Material Design React Admin Dashboard Template – is the most developer friendly & highly customizable Admin Dashboard Template based on MUI v5.`}
+            content={`${themeConfig.templateName}`}
           />
-          <meta name='keywords' content='Material Design, MUI, Admin Template, React Admin Template' />
           <meta name='viewport' content='initial-scale=1, width=device-width' />
         </Head>
           <SettingsProvider {...(setConfig ? { pageSettings: setConfig() } : {})}>
-            <SettingsConsumer>
-              {({ settings }) => {
-                return (
-                  <ThemeComponent settings={settings}>
-                    {getLayout(<Component {...pageProps} />)}
-                    <ReactHotToast>
-                      <Toaster position={settings.toastPosition} toastOptions={{ className: 'react-hot-toast' }} />
-                    </ReactHotToast>
-                  </ThemeComponent>
-                )
-              }}
-            </SettingsConsumer>
+            <UserProvider>
+              <SettingsConsumer>
+                {({ settings }) => {
+                  return (
+                    <ThemeComponent settings={settings}>
+                      <Guard needAuth={needAuth}>
+                        {getLayout(<Component {...pageProps} />)}
+                      </Guard>
+                      <ReactHotToast>
+                        <Toaster position={settings.toastPosition} toastOptions={{ className: 'react-hot-toast' }} />
+                      </ReactHotToast>
+                    </ThemeComponent>
+                  )
+                }}
+              </SettingsConsumer>
+            </UserProvider>
           </SettingsProvider>
       </CacheProvider>
   )

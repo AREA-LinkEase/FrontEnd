@@ -15,10 +15,13 @@ export class Auth {
   static async login(username, password) {
     let response = await fetch(networkConfig.url + "/auth/login", {
       method: "POST",
-      body: {
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
         username,
         password
-      }
+      })
     })
     if (response.ok)
       return response.json()
@@ -37,11 +40,14 @@ export class Auth {
   static async register(username, email, password) {
     let response = await fetch(networkConfig.url + "/auth/register", {
       method: "POST",
-      body: {
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
         email,
         username,
         password
-      }
+      })
     })
     return (response.ok) ? true : response.status;
   }

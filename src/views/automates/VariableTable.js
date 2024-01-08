@@ -1,15 +1,11 @@
 import Box from "@mui/material/Box";
-import CustomAvatar from "../../@core/components/mui/avatar";
 import Icon from "../../@core/components/icon";
 import Typography from "@mui/material/Typography";
-import CustomChip from "../../@core/components/mui/chip";
 import {styled} from "@mui/material/styles";
 import IconButton from "@mui/material/IconButton";
 import {forwardRef, useState} from "react";
 import Fade from "@mui/material/Fade";
 import Tooltip from "@mui/material/Tooltip";
-import Link from "next/link";
-import OptionsMenu from "../../@core/components/option-menu";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Button from "@mui/material/Button";
@@ -18,9 +14,8 @@ import {DataGrid} from "@mui/x-data-grid";
 import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
 import Grid from "@mui/material/Grid";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Switch from "@mui/material/Switch";
 import DialogActions from "@mui/material/DialogActions";
+import toast from "react-hot-toast";
 
 const defaultColumns = [
     {
@@ -35,7 +30,7 @@ const defaultColumns = [
         minWidth: 80,
         field: 'value',
         headerName: 'Value',
-        renderCell: ({ row }) => <Typography sx={{ color: 'text.secondary' }}>{row.value}</Typography>
+        renderCell: ({ row }) => <Typography sx={{ color: 'text.secondary' }}>{row.content}</Typography>
     }
 ]
 
@@ -58,11 +53,13 @@ const Transition = forwardRef(function Transition(props, ref) {
     return <Fade ref={ref} {...props} />
 })
 
-const VariableTable = () => {
+const VariableTable = ({data, automate}) => {
     const [value, setValue] = useState('')
     const [show, setShow] = useState(false)
-    const [showEdit, setShowEdit] = useState(false)
     const [paginationModel, setPaginationModel] = useState({ page: 0, pageSize: 6 })
+
+  const [title, setTitle] = useState("")
+  const [description, setDescription] = useState("");
 
     const columns = [
         ...defaultColumns,
@@ -80,7 +77,11 @@ const VariableTable = () => {
                         </IconButton>
                     </Tooltip>
                     <Tooltip title='Edit'>
-                        <IconButton size='small' onClick={() => setShowEdit(true)}>
+                        <IconButton size='small' onClick={() => {
+                          setShow(true)
+                          setTitle(row.title)
+                          setDescription(row.content)
+                        }}>
                             <Icon icon='tabler:pencil' />
                         </IconButton>
                     </Tooltip>
@@ -94,7 +95,11 @@ const VariableTable = () => {
             <CardContent
                 sx={{ gap: 4, display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between' }}
             >
-                <Button variant='contained' startIcon={<Icon icon='tabler:plus' />} onClick={() => setShow(true)}>
+                <Button variant='contained' startIcon={<Icon icon='tabler:plus' />} onClick={() => {
+                  setShow(true)
+                  setTitle("")
+                  setDescription("")
+                }}>
                     Create Variable
                 </Button>
                 <Box sx={{ gap: 4, display: 'flex', flexWrap: 'wrap', alignItems: 'center' }}>
@@ -104,13 +109,7 @@ const VariableTable = () => {
             <DataGrid
                 autoHeight
                 rowHeight={54}
-                rows={[
-                    {
-                        "id": 0,
-                        "title": "test",
-                        "value": "valueVariable"
-                    }
-                ]}
+                rows={data}
                 columns={columns}
                 disableRowSelectionOnClick
                 paginationModel={paginationModel}
@@ -139,13 +138,19 @@ const VariableTable = () => {
                     </CustomCloseButton>
                     <Box sx={{ mb: 8, textAlign: 'center' }}>
                         <Typography variant='h3' sx={{ mb: 3 }}>
-                            Create New Variable
+                          {(title.length === 0) ? "Create New Variable" : "Edit Variable"}
                         </Typography>
                         <Typography sx={{ color: 'text.secondary' }}>Explication d'une variable</Typography>
                     </Box>
                     <Grid container spacing={6}>
                         <Grid item xs={12}>
-                            <CustomTextField fullWidth label='Title' placeholder='' />
+                            <CustomTextField
+                              fullWidth
+                              label='Title'
+                              placeholder=''
+                              value={title}
+                              onChange={(e) => setTitle(e.target.value)}
+                            />
                         </Grid>
                         <Grid item xs={12}>
                             <CustomTextField
@@ -154,6 +159,8 @@ const VariableTable = () => {
                                 fullWidth
                                 label='Value'
                                 id='textarea-outlined-static'
+                                value={description}
+                                onChange={(e) => setDescription(e.target.value)}
                             />
                         </Grid>
                     </Grid>
@@ -165,65 +172,20 @@ const VariableTable = () => {
                         pb: theme => [`${theme.spacing(8)} !important`, `${theme.spacing(12.5)} !important`]
                     }}
                 >
-                    <Button variant='contained' sx={{ mr: 1 }} onClick={() => setShow(false)}>
+                    <Button variant='contained' sx={{ mr: 1 }} onClick={async () => {
+                      setShow(false)
+                      let result = await automate.addVariable(title, description)
+
+                      if (typeof result === "number")
+                        toast.error("An error has occurred")
+                      else {
+                        router.reload();
+                        toast.success("The variable has added successfully")
+                      }
+                    }}>
                         Submit
                     </Button>
                     <Button variant='tonal' color='secondary' onClick={() => setShow(false)}>
-                        Cancel
-                    </Button>
-                </DialogActions>
-            </Dialog>
-            <Dialog
-                fullWidth
-                open={showEdit}
-                maxWidth='md'
-                scroll='body'
-                onClose={() => setShowEdit(false)}
-                TransitionComponent={Transition}
-                onBackdropClick={() => setShowEdit(false)}
-                sx={{ '& .MuiDialog-paper': { overflow: 'visible' } }}
-            >
-                <DialogContent
-                    sx={{
-                        pb: theme => `${theme.spacing(8)} !important`,
-                        px: theme => [`${theme.spacing(5)} !important`, `${theme.spacing(15)} !important`],
-                        pt: theme => [`${theme.spacing(8)} !important`, `${theme.spacing(12.5)} !important`]
-                    }}
-                >
-                    <CustomCloseButton onClick={() => setShowEdit(false)}>
-                        <Icon icon='tabler:x' fontSize='1.25rem' />
-                    </CustomCloseButton>
-                    <Box sx={{ mb: 8, textAlign: 'center' }}>
-                        <Typography variant='h3' sx={{ mb: 3 }}>
-                            Edit Variable
-                        </Typography>
-                    </Box>
-                    <Grid container spacing={6}>
-                        <Grid item xs={12}>
-                            <CustomTextField fullWidth label='Title' placeholder='' />
-                        </Grid>
-                        <Grid item xs={12}>
-                            <CustomTextField
-                                rows={4}
-                                multiline
-                                fullWidth
-                                label='Value'
-                                id='textarea-outlined-static'
-                            />
-                        </Grid>
-                    </Grid>
-                </DialogContent>
-                <DialogActions
-                    sx={{
-                        justifyContent: 'center',
-                        px: theme => [`${theme.spacing(5)} !important`, `${theme.spacing(15)} !important`],
-                        pb: theme => [`${theme.spacing(8)} !important`, `${theme.spacing(12.5)} !important`]
-                    }}
-                >
-                    <Button variant='contained' sx={{ mr: 1 }} onClick={() => setShowEdit(false)}>
-                        Update
-                    </Button>
-                    <Button variant='tonal' color='secondary' onClick={() => setShowEdit(false)}>
                         Cancel
                     </Button>
                 </DialogActions>

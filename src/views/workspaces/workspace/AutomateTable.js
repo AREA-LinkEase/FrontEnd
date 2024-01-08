@@ -21,6 +21,8 @@ import DialogActions from "@mui/material/DialogActions";
 import Dialog from "@mui/material/Dialog";
 import Fade from "@mui/material/Fade";
 import {styled} from "@mui/material/styles";
+import toast from "react-hot-toast";
+import {useRouter} from "next/router";
 
 const defaultColumns = [
   {
@@ -41,7 +43,7 @@ const defaultColumns = [
     field: 'visibility',
     headerName: 'Visibility',
     renderCell: ({ row }) => <>
-      <CustomChip rounded label={row.visibility} skin='light' color={(row.visibility === "public" ? "warning" : "secondary")} />
+      <CustomChip rounded label={(row.is_private) ? "private" : "public"} skin='light' color={(row.is_private ? "warning" : "secondary")} />
     </>
   },
   {
@@ -49,7 +51,7 @@ const defaultColumns = [
     minWidth: 90,
     field: 'Status',
     headerName: 'Status',
-    renderCell: ({ row }) => <CustomChip rounded label={row.status} skin='light' color={(row.status === "enable" ? "success" : "error")} />
+    renderCell: ({ row }) => <CustomChip rounded label={(row.is_enabled) ? "enable" : "disable"} skin='light' color={(row.is_enabled ? "success" : "error")} />
   }
 ]
 
@@ -72,10 +74,16 @@ const Transition = forwardRef(function Transition(props, ref) {
   return <Fade ref={ref} {...props} />
 })
 
-const AutomateTable = () => {
+const AutomateTable = ({data, workspace}) => {
   const [value, setValue] = useState('')
   const [show, setShow] = useState(false)
   const [paginationModel, setPaginationModel] = useState({ page: 0, pageSize: 6 })
+
+  const [title, setTitle] = useState("")
+  const [description, setDescription] = useState("");
+  const [isCheck, setCheck] = useState(false);
+
+  const router = useRouter()
 
   const columns = [
     ...defaultColumns,
@@ -93,7 +101,7 @@ const AutomateTable = () => {
             </IconButton>
           </Tooltip>
           <Tooltip title='View'>
-            <IconButton size='small' component={Link} href={"#"}>
+            <IconButton size='small' component={Link} href={"/automates/" + row.id}>
               <Icon icon='tabler:eye' />
             </IconButton>
           </Tooltip>
@@ -107,7 +115,7 @@ const AutomateTable = () => {
               },
               {
                 text: 'Edit',
-                href: `#`,
+                href: `/automates/` + row.id,
                 icon: <Icon icon='tabler:pencil' fontSize='1.25rem' />
               },
               {
@@ -136,14 +144,7 @@ const AutomateTable = () => {
       <DataGrid
         autoHeight
         rowHeight={54}
-        rows={[
-          {
-            "id": 0,
-            "title": "test",
-            "status": "enable",
-            "visibility": "private"
-          }
-        ]}
+        rows={data}
         columns={columns}
         disableRowSelectionOnClick
         paginationModel={paginationModel}
@@ -178,12 +179,33 @@ const AutomateTable = () => {
           </Box>
           <Grid container spacing={6}>
             <Grid item xs={12}>
-              <CustomTextField fullWidth label='Title' placeholder='' />
+              <CustomTextField
+                fullWidth
+                label='Title'
+                placeholder=''
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <CustomTextField
+                rows={4}
+                multiline
+                fullWidth
+                label='Description'
+                id='textarea-outlined-static'
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+              />
             </Grid>
             <Grid item xs={12}>
               <FormControlLabel
                 sx={{ '& .MuiFormControlLabel-label': { color: 'text.secondary' } }}
-                control={<Switch defaultChecked />}
+                control={<Switch
+                  defaultChecked
+                  checked={isCheck}
+                  onChange={(e) => setCheck(e.target.checked)}
+                />}
                 label='this automate need to be private ?'
               />
             </Grid>
@@ -196,7 +218,22 @@ const AutomateTable = () => {
             pb: theme => [`${theme.spacing(8)} !important`, `${theme.spacing(12.5)} !important`]
           }}
         >
-          <Button variant='contained' sx={{ mr: 1 }} onClick={() => setShow(false)}>
+          <Button variant='contained' sx={{ mr: 1 }} onClick={async () => {
+            setShow(false)
+            let result = await workspace.createAutomate({
+              title,
+              description,
+              is_private: isCheck
+            })
+
+            if (typeof result === "number") {
+              toast.error("An error has occurred")
+              console.log(result)
+            } else {
+              toast.success("An automate has created successfully")
+              router.reload()
+            }
+          }}>
             Submit
           </Button>
           <Button variant='tonal' color='secondary' onClick={() => setShow(false)}>

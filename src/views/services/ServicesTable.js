@@ -5,7 +5,7 @@ import Typography from "@mui/material/Typography";
 import AvatarGroup from "@mui/material/AvatarGroup";
 import Avatar from "@mui/material/Avatar";
 import CustomChip from "../../@core/components/mui/chip";
-import {forwardRef, useState} from "react";
+import {forwardRef, Fragment, useContext, useState} from "react";
 import Tooltip from "@mui/material/Tooltip";
 import IconButton from "@mui/material/IconButton";
 import Link from "next/link";
@@ -23,6 +23,14 @@ import DialogActions from "@mui/material/DialogActions";
 import Dialog from "@mui/material/Dialog";
 import {styled} from "@mui/material/styles";
 import Fade from "@mui/material/Fade";
+import NetworkConfig from "../../configs/networkConfig";
+import {useDropzone} from "react-dropzone";
+import toast from "react-hot-toast";
+import ListItem from "@mui/material/ListItem";
+import List from "@mui/material/List";
+import {Service} from "../../models/Services";
+import {UserContext} from "../../hook/UserContext";
+import {useRouter} from "next/router";
 
 const defaultColumns = [
     {
@@ -31,7 +39,7 @@ const defaultColumns = [
         minWidth: 90,
         headerName: 'Name',
         renderCell: ({ row }) => <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <Avatar src={row.image} alt={row.name} sx={{ mr: 4, width: 30, height: 30 }} />
+            <Avatar src={NetworkConfig.url + "/assets/services/" + row.id + ".png"} alt={row.name} sx={{ mr: 4, width: 30, height: 30 }} />
             <Typography sx={{ color: 'text.secondary' }}>{row.name}</Typography>
         </Box>
     },
@@ -41,7 +49,7 @@ const defaultColumns = [
         field: 'Owner',
         headerName: 'Owner',
         renderCell: ({ row }) => <>
-            <Typography sx={{ color: 'text.secondary' }}>{row.owner}</Typography>
+            <Typography sx={{ color: 'text.secondary' }}>{row.owner.username}</Typography>
         </>
     },
     {
@@ -50,8 +58,8 @@ const defaultColumns = [
         field: 'Users',
         headerName: 'Users',
         renderCell: ({ row }) => <AvatarGroup className='pull-up' max={4}>
-            {row.users.map((user) => {
-                return <Avatar src={user.avatar} alt={user.username} />
+            {row.users.map((user, i) => {
+                return <Avatar key={i} src={NetworkConfig.url + "/assets/avatars/" + user.id + ".png"} alt={user.username} />
             })}
         </AvatarGroup>
     },
@@ -60,7 +68,7 @@ const defaultColumns = [
         minWidth: 90,
         field: 'Status',
         headerName: 'Status',
-        renderCell: ({ row }) => <CustomChip rounded label={row.status} skin='light' color={(row.status === "enable" ? "success" : "error")} />
+        renderCell: ({ row }) => <CustomChip rounded label={(row.is_private) ? "private" : "public"} skin='light' color={(row.is_private ? "secondary" : "warning")} />
     }
 ]
 
@@ -83,10 +91,80 @@ const Transition = forwardRef(function Transition(props, ref) {
     return <Fade ref={ref} {...props} />
 })
 
-const WorkspacesTable = () => {
+const WorkspacesTable = ({data}) => {
     const [value, setValue] = useState('')
     const [show, setShow] = useState(false)
     const [paginationModel, setPaginationModel] = useState({ page: 0, pageSize: 6 })
+    const { token } = useContext(UserContext);
+    const router = useRouter();
+    const [form, setForm] = useState({
+      'name': "",
+      "description": "",
+      "client_id": "",
+      "client_secret": "",
+      "scope": "",
+      "auth_url": "",
+      "token_url": "",
+      "is_private": false
+    })
+    const [files, setFiles] = useState([])
+    const { getRootProps, getInputProps } = useDropzone({
+      multiple: false,
+      maxFiles: 1,
+      maxSize: 2000000,
+      accept: {
+        'image/*': ['.png', '.jpg', '.jpeg', '.gif']
+      },
+      onDrop: acceptedFiles => {
+        setFiles(acceptedFiles.map(file => Object.assign(file)))
+      },
+      onDropRejected: () => {
+        toast.error('You can only upload 1 file & maximum size of 2 MB.', {
+          duration: 2000
+        })
+      }
+    })
+
+    const renderFilePreview = file => {
+      if (file.type.startsWith('image')) {
+        return <img width={38} height={38} alt={file.name} src={URL.createObjectURL(file)} />
+      } else {
+        return <Icon icon='tabler:file-description' />
+      }
+    }
+    const handleRemoveFile = file => {
+      const uploadedFiles = files
+      const filtered = uploadedFiles.filter(i => i.name !== file.name)
+      setFiles([...filtered])
+    }
+
+    const fileList = files.map(file => (
+      <ListItem key={file.name}>
+        <div className='file-details'>
+          <div className='file-preview'>{renderFilePreview(file)}</div>
+          <div>
+            <Typography className='file-name'>{file.name}</Typography>
+            <Typography className='file-size' variant='body2'>
+              {Math.round(file.size / 100) / 10 > 1000
+                ? (Math.round(file.size / 100) / 10000).toFixed(1) + "mb"
+                : (Math.round(file.size / 100) / 10).toFixed(1) + "kb"}
+            </Typography>
+          </div>
+        </div>
+        <IconButton onClick={() => handleRemoveFile(file)}>
+          <Icon icon='tabler:x' fontSize={20} />
+        </IconButton>
+      </ListItem>
+    ))
+
+    const handleRemoveAllFiles = () => {
+      setFiles([])
+    }
+
+    const fillInput = (key, value) => {
+      form[key] = value;
+      setForm({...form})
+    }
 
     const columns = [
         ...defaultColumns,
@@ -104,7 +182,7 @@ const WorkspacesTable = () => {
                         </IconButton>
                     </Tooltip>
                     <Tooltip title='View'>
-                        <IconButton size='small' component={Link} href={"#"}>
+                        <IconButton size='small' component={Link} href={"/services/" + row.id}>
                             <Icon icon='tabler:eye' />
                         </IconButton>
                     </Tooltip>
@@ -118,7 +196,7 @@ const WorkspacesTable = () => {
                             },
                             {
                                 text: 'Edit',
-                                href: `#`,
+                                href: `/services/` + row.id,
                                 icon: <Icon icon='tabler:pencil' fontSize='1.25rem' />
                             }
                         ]}
@@ -143,21 +221,7 @@ const WorkspacesTable = () => {
             <DataGrid
                 autoHeight
                 rowHeight={54}
-                rows={[
-                    {
-                        "id": 0,
-                        "name": "test",
-                        "image": "/images/avatars/1.png",
-                        "owner": "moustafa",
-                        "users": [
-                            {
-                                "username": "moustafa",
-                                "avatar": "/images/avatars/1.png"
-                            }
-                        ],
-                        "status": "enable"
-                    }
-                ]}
+                rows={data}
                 columns={columns}
                 disableRowSelectionOnClick
                 paginationModel={paginationModel}
@@ -192,27 +256,116 @@ const WorkspacesTable = () => {
                     </Box>
                     <Grid container spacing={6}>
                         <Grid item xs={12}>
-                            <CustomTextField fullWidth label='Name' placeholder='' />
+                            <CustomTextField
+                              fullWidth
+                              label='Name'
+                              placeholder=''
+                              value={form["name"]}
+                              onChange={(e) => fillInput("name", e.target.value)}
+                            />
                         </Grid>
                         <Grid item xs={12}>
-                            <CustomTextField fullWidth label='client_id' placeholder='' />
+                          <CustomTextField
+                            rows={4}
+                            multiline
+                            fullWidth
+                            label='Description'
+                            id='textarea-outlined-static'
+                            value={form["description"]}
+                            onChange={(e) => fillInput("description", e.target.value)}
+                          />
                         </Grid>
                         <Grid item xs={12}>
-                            <CustomTextField fullWidth label='client_secret' placeholder='' />
+                            <CustomTextField
+                              fullWidth
+                              label='client_id'
+                              placeholder=''
+                              value={form["client_id"]}
+                              onChange={(e) => fillInput("client_id", e.target.value)}
+                            />
                         </Grid>
                         <Grid item xs={12}>
-                            <CustomTextField fullWidth label='scope' placeholder='' />
+                            <CustomTextField
+                              fullWidth
+                              label='client_secret'
+                              placeholder=''
+                              value={form["client_secret"]}
+                              onChange={(e) => fillInput("client_secret", e.target.value)}
+                            />
                         </Grid>
                         <Grid item xs={12}>
-                            <CustomTextField fullWidth label='auth_url' placeholder='' />
+                            <CustomTextField
+                              fullWidth
+                              label='scope'
+                              placeholder=''
+                              value={form["scope"]}
+                              onChange={(e) => fillInput("scope", e.target.value)}
+                            />
                         </Grid>
                         <Grid item xs={12}>
-                            <CustomTextField fullWidth label='token_url' placeholder='' />
+                            <CustomTextField
+                              fullWidth
+                              label='auth_url'
+                              placeholder=''
+                              value={form["auth_url"]}
+                              onChange={(e) => fillInput("auth_url", e.target.value)}
+                            />
+                        </Grid>
+                        <Grid item xs={12}>
+                            <CustomTextField
+                              fullWidth
+                              label='token_url'
+                              placeholder=''
+                              value={form["token_url"]}
+                              onChange={(e) => fillInput("token_url", e.target.value)}
+                            />
+                        </Grid>
+                        <Grid item xs={12}>
+                          <Fragment>
+                            <div {...getRootProps({ className: 'dropzone' })}>
+                              <input {...getInputProps()} />
+                              <Box sx={{ display: 'flex', textAlign: 'center', alignItems: 'center', flexDirection: 'column' }}>
+                                <Box
+                                  sx={{
+                                    mb: 8.75,
+                                    width: 48,
+                                    height: 48,
+                                    display: 'flex',
+                                    borderRadius: 1,
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    backgroundColor: theme => `rgba(${theme.palette.customColors.main}, 0.08)`
+                                  }}
+                                >
+                                  <Icon icon='tabler:upload' fontSize='1.75rem' />
+                                </Box>
+                                <Typography variant='h4' sx={{ mb: 2.5 }}>
+                                  Drop the logo of your service.
+                                </Typography>
+                                <Typography sx={{ color: 'text.secondary' }}>
+                                  Allowed *.jpeg, *.jpg, *.png, *.gif
+                                </Typography>
+                              </Box>
+                            </div>
+                            {files.length ? (
+                              <Fragment>
+                                <List>{fileList}</List>
+                                <div className='buttons'>
+                                  <Button color='error' variant='outlined' onClick={handleRemoveAllFiles}>
+                                    Remove File
+                                  </Button>
+                                </div>
+                              </Fragment>
+                            ) : null}
+                          </Fragment>
                         </Grid>
                         <Grid item xs={12}>
                             <FormControlLabel
                                 sx={{ '& .MuiFormControlLabel-label': { color: 'text.secondary' } }}
-                                control={<Switch defaultChecked />}
+                                control={<Switch
+                                  checked={form["is_private"]}
+                                  onChange={(e) => fillInput("is_private", e.target.checked)}
+                                />}
                                 label='this service need to be private ?'
                             />
                         </Grid>
@@ -225,7 +378,31 @@ const WorkspacesTable = () => {
                         pb: theme => [`${theme.spacing(8)} !important`, `${theme.spacing(12.5)} !important`]
                     }}
                 >
-                    <Button variant='contained' sx={{ mr: 1 }} onClick={() => setShow(false)}>
+                    <Button variant='contained' sx={{ mr: 1 }} onClick={async () => {
+                      setShow(false)
+                      console.log(form, files)
+                      try {
+                        const formData = new FormData();
+
+                        for (const key of Object.keys(form)) {
+                          formData.append(key, form[key])
+                        }
+                        if (files.length > 0)
+                          formData.append("image", files[0])
+                        let result = await Service.createService(token, formData)
+
+                        if (result === true) {
+                          toast.success("Service has created successfully")
+                          router.reload()
+                        } else {
+                          toast.error("An error has occurred")
+                          console.log(result)
+                        }
+                      } catch (e) {
+                        console.log(e)
+                        toast.error("An error has occurred")
+                      }
+                    }}>
                         Submit
                     </Button>
                     <Button variant='tonal' color='secondary' onClick={() => setShow(false)}>

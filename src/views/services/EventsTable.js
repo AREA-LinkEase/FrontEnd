@@ -1,16 +1,14 @@
 import Box from "@mui/material/Box";
 import Avatar from "@mui/material/Avatar";
 import Typography from "@mui/material/Typography";
-import AvatarGroup from "@mui/material/AvatarGroup";
 import CustomChip from "../../@core/components/mui/chip";
 import {styled} from "@mui/material/styles";
 import IconButton from "@mui/material/IconButton";
-import {forwardRef, useState} from "react";
+import {forwardRef, useEffect, useState} from "react";
 import Fade from "@mui/material/Fade";
 import Tooltip from "@mui/material/Tooltip";
 import Icon from "../../@core/components/icon";
 import Link from "next/link";
-import OptionsMenu from "../../@core/components/option-menu";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Button from "@mui/material/Button";
@@ -19,10 +17,10 @@ import {DataGrid} from "@mui/x-data-grid";
 import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
 import Grid from "@mui/material/Grid";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Switch from "@mui/material/Switch";
 import DialogActions from "@mui/material/DialogActions";
 import MenuItem from "@mui/material/MenuItem";
+import {useRouter} from "next/router";
+import toast from "react-hot-toast";
 
 const defaultColumns = [
     {
@@ -31,18 +29,8 @@ const defaultColumns = [
         minWidth: 90,
         headerName: 'Name',
         renderCell: ({ row }) => <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <Avatar src={row.image} alt={row.name} sx={{ mr: 4, width: 30, height: 30 }} />
             <Typography sx={{ color: 'text.secondary' }}>{row.name}</Typography>
         </Box>
-    },
-    {
-        flex: 0.15,
-        minWidth: 80,
-        field: 'Owner',
-        headerName: 'Owner',
-        renderCell: ({ row }) => <>
-            <Typography sx={{ color: 'text.secondary' }}>{row.owner}</Typography>
-        </>
     },
     {
         flex: 0.25,
@@ -72,10 +60,20 @@ const Transition = forwardRef(function Transition(props, ref) {
     return <Fade ref={ref} {...props} />
 })
 
-const EventsTable = ({defaultSelect}) => {
+const EventsTable = ({defaultSelect, id, data, service}) => {
     const [value, setValue] = useState('')
     const [show, setShow] = useState(false)
     const [paginationModel, setPaginationModel] = useState({ page: 0, pageSize: 6 })
+
+    const router = useRouter()
+
+    const [title, setTitle] = useState("")
+    const [description, setDescription] = useState("");
+    const [type, setType] = useState(defaultSelect);
+
+    useEffect(() => {
+      setType(defaultSelect)
+    }, [defaultSelect]);
 
     const columns = [
         ...defaultColumns,
@@ -88,7 +86,7 @@ const EventsTable = ({defaultSelect}) => {
             renderCell: ({ row }) => (
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
                     <Tooltip title='View'>
-                        <IconButton size='small' component={Link} href={"#"}>
+                        <IconButton size='small' component={Link} href={"/events/" + id + "/" + row.id}>
                             <Icon icon='tabler:eye' />
                         </IconButton>
                     </Tooltip>
@@ -117,13 +115,7 @@ const EventsTable = ({defaultSelect}) => {
             <DataGrid
                 autoHeight
                 rowHeight={54}
-                rows={[
-                    {
-                        "id": 0,
-                        "name": "nom",
-                        "type": "action"
-                    }
-                ]}
+                rows={data}
                 columns={columns}
                 disableRowSelectionOnClick
                 paginationModel={paginationModel}
@@ -158,13 +150,35 @@ const EventsTable = ({defaultSelect}) => {
                     </Box>
                     <Grid container spacing={6}>
                         <Grid item xs={12}>
-                            <CustomTextField fullWidth select defaultValue={defaultSelect} label='Default' id='custom-select'>
-                                <MenuItem value="Action">Action</MenuItem>
-                                <MenuItem value="Trigger">Trigger</MenuItem>
+                            <CustomTextField
+                              fullWidth
+                              select
+                              defaultValue={defaultSelect} SelectProps={{type, onChange: (e) => setType(e.target.value)}}
+                              label='Default'
+                              id='custom-select'>
+                                <MenuItem value="action">Action</MenuItem>
+                                <MenuItem value="trigger">Trigger</MenuItem>
                             </CustomTextField>
                         </Grid>
                         <Grid item xs={12}>
-                            <CustomTextField fullWidth label='name' placeholder='' />
+                            <CustomTextField
+                              fullWidth
+                              label='name'
+                              placeholder=''
+                              value={title}
+                              onChange={(e) => setTitle(e.target.value)}
+                            />
+                        </Grid>
+                        <Grid item xs={12}>
+                          <CustomTextField
+                            rows={4}
+                            multiline
+                            fullWidth
+                            label='Description'
+                            id='textarea-outlined-static'
+                            value={description}
+                            onChange={(e) => setDescription(e.target.value)}
+                          />
                         </Grid>
                     </Grid>
                 </DialogContent>
@@ -175,7 +189,26 @@ const EventsTable = ({defaultSelect}) => {
                         pb: theme => [`${theme.spacing(8)} !important`, `${theme.spacing(12.5)} !important`]
                     }}
                 >
-                    <Button variant='contained' sx={{ mr: 1 }} onClick={() => setShow(false)}>
+                    <Button variant='contained' sx={{ mr: 1 }} onClick={async () => {
+                      setShow(false)
+                      try {
+                        let result = await service.createEvent({
+                          name: title,
+                          description,
+                          type
+                        })
+
+                        if (typeof result === "number") {
+                          toast.error("An error has occurred")
+                          console.log(result)
+                        } else {
+                          toast.success("An event has created successfully")
+                          router.reload();
+                        }
+                      } catch (e) {
+                        console.log(e)
+                      }
+                    }}>
                         Submit
                     </Button>
                     <Button variant='tonal' color='secondary' onClick={() => setShow(false)}>
