@@ -5,7 +5,8 @@ const config: CapacitorConfig = {
   appName: 'LinkEase',
   webDir: 'out',
   server: {
-    androidScheme: 'https'
+    androidScheme: 'http',
+    "url": "http://135.181.165.228:8081"
   }
 };
 
