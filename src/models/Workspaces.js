@@ -22,6 +22,23 @@ export class Workspace {
   }
 
   /**
+   * Retrieves public workspaces.
+   * @param {string} jwt - The JWT token for authentication.
+   * @returns {Promise<array|number>} - An array of public workspaces or a status code if the request fails.
+   */
+  static async getAll(jwt) {
+    let response = await fetch(networkConfig.url + "/workspaces/@all", {
+      headers: {
+        "Authorization": jwt
+      }
+    })
+    if (response.ok)
+      return response.json()
+    else
+      return response.status
+  }
+
+  /**
    * Retrieves public workspaces for the authenticated user.
    * @param {string} jwt - The JWT token for authentication.
    * @returns {Promise<array|number>} - An array of public workspaces or a status code if the request fails.

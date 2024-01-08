@@ -9,11 +9,8 @@ import {Icon} from "@iconify/react";
 import CardHeader from "@mui/material/CardHeader";
 import Box from "@mui/material/Box";
 import Fab from "@mui/material/Fab";
-import AvatarGroup from "@mui/material/AvatarGroup";
-import Avatar from "@mui/material/Avatar";
-import {useContext, useState} from "react";
+import {useContext, useEffect, useState} from "react";
 import {UserContext} from "../../hook/UserContext";
-import {Workspace} from "../../models/Workspaces";
 import toast from "react-hot-toast";
 import {Automate} from "../../models/Automates";
 
@@ -30,6 +27,17 @@ const CustomTextFieldStyled = styled(CustomTextField)(({ theme }) => ({
 export default function automates() {
     const { token } = useContext(UserContext);
     const [automates, setAutomates] = useState([])
+
+    useEffect(() => {
+      (async () => {
+        let result = await Automate.getAll(token);
+
+        if (typeof result !== "number") {
+          setAutomates(result)
+        }
+      })()
+    }, [])
+
     return (
         <Grid container spacing={6}>
             <Grid item xs={12}>
@@ -52,19 +60,23 @@ export default function automates() {
                             onChange={async (e) => {
                               let input = e.target.value;
 
-                              if (input === "") {
-                                // mettre le get all
-                              } else {
-                                try {
+                              try {
+                                if (input === "") {
+                                  let result = await Automate.getAll(token);
+
+                                  if (typeof result !== "number") {
+                                    setAutomates(result)
+                                  }
+                                } else {
                                   let result = await Automate.search(token, input);
 
                                   if (typeof result !== "number") {
                                     setAutomates(result)
                                   }
-                                } catch (e) {
-                                  console.log(e)
-                                  toast.error("An error has occurred")
                                 }
+                              } catch (e) {
+                                console.log(e)
+                                toast.error("An error has occurred")
                               }
                             }}
                         />

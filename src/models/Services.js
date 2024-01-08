@@ -24,6 +24,24 @@ export class Service {
   }
 
   /**
+   * Get public services.
+   *
+   * @param {string} jwt - The Bearer token for authentication.
+   * @returns {Promise<object[]|number>} - Returns a list of public services for the user or a status code if unsuccessful.
+   */
+  static async getAll(jwt) {
+    let response = await fetch(networkConfig.url + "/services/@all", {
+      headers: {
+        "Authorization": jwt
+      }
+    })
+    if (response.ok)
+      return response.json()
+    else
+      return response.status
+  }
+
+  /**
    * Get public services for the authenticated user.
    *
    * @param {string} jwt - The Bearer token for authentication.

@@ -10,7 +10,7 @@ import CardHeader from "@mui/material/CardHeader";
 import Box from "@mui/material/Box";
 import AvatarGroup from "@mui/material/AvatarGroup";
 import Avatar from "@mui/material/Avatar";
-import {useContext, useState} from "react";
+import {useContext, useEffect, useState} from "react";
 import {UserContext} from "../../hook/UserContext";
 import toast from "react-hot-toast";
 import {Service} from "../../models/Services";
@@ -37,6 +37,16 @@ export default function automates() {
     const { token } = useContext(UserContext);
     const [services, setServices] = useState([])
 
+    useEffect(() => {
+      (async () => {
+        let result = await Service.getAll(token);
+
+        if (typeof result !== "number") {
+          setServices(result)
+        }
+      })()
+    }, [])
+
     return (
         <Grid container spacing={6}>
             <Grid item xs={12}>
@@ -59,19 +69,23 @@ export default function automates() {
                             onChange={async (e) => {
                               let input = e.target.value;
 
-                              if (input === "") {
-                                // mettre le get all
-                              } else {
-                                try {
+                              try {
+                                if (input === "") {
+                                  let result = await Service.getAll(token);
+
+                                  if (typeof result !== "number") {
+                                    setServices(result)
+                                  }
+                                } else {
                                   let result = await Service.search(token, input);
 
                                   if (typeof result !== "number") {
                                     setServices(result)
                                   }
-                                } catch (e) {
-                                  console.log(e)
-                                  toast.error("An error has occurred")
                                 }
+                              } catch (e) {
+                                console.log(e)
+                                toast.error("An error has occurred")
                               }
                             }}
                         />

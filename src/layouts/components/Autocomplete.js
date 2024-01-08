@@ -205,7 +205,8 @@ const AutocompleteComponent = ({ hidden, settings }) => {
           results.push({
             title: workspace.title,
             "icon": "tabler:command",
-            "category": "workspaces"
+            "category": "workspaces",
+            "url": "/workspaces/" + workspace.id
           })
         }
       }
@@ -214,7 +215,8 @@ const AutocompleteComponent = ({ hidden, settings }) => {
           results.push({
             title: service.name,
             "icon": "tabler:link",
-            "category": "services"
+            "category": "services",
+            "url": "/services/" + service.id
           })
         }
       }

@@ -23,6 +23,23 @@ export class Automate {
   }
 
   /**
+   * get All public automates.
+   * @param {string} jwt - The JSON Web Token for authorization.
+   * @returns {Promise<Array|number>} - A promise that resolves to an array of automates or returns a status code on failure.
+   */
+  static async getAll(jwt) {
+    let response = await fetch(networkConfig.url + "/automates/@all", {
+      headers: {
+        "Authorization": jwt
+      }
+    })
+    if (response.ok)
+      return response.json()
+    else
+      return response.status
+  }
+
+  /**
    * Create an instance of Automate.
    * @param {string} jwt - The JSON Web Token for authorization.
    * @param {number} id - The ID of the automate.

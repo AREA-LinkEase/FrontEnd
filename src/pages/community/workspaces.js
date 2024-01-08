@@ -15,7 +15,6 @@ import {useContext, useEffect, useState} from "react";
 import {UserContext} from "../../hook/UserContext";
 import {Workspace} from "../../models/Workspaces";
 import toast from "react-hot-toast";
-import {Users} from "../../models/Users";
 import NetworkConfig from "../../configs/networkConfig";
 
 const CustomTextFieldStyled = styled(CustomTextField)(({ theme }) => ({
@@ -31,6 +30,16 @@ const CustomTextFieldStyled = styled(CustomTextField)(({ theme }) => ({
 export default function workspaces() {
     const { token } = useContext(UserContext);
     const [workspaces, setWorkspaces] = useState([])
+
+    useEffect(() => {
+      (async () => {
+        let result = await Workspace.getAll(token);
+
+        if (typeof result !== "number") {
+          setWorkspaces(result)
+        }
+      })()
+    }, [])
 
     return (
         <Grid container spacing={6}>
@@ -54,19 +63,23 @@ export default function workspaces() {
                             onChange={async (e) => {
                               let input = e.target.value;
 
-                              if (input === "") {
-                                // mettre le get all
-                              } else {
-                                try {
+                              try {
+                                if (input === "") {
+                                  let result = await Workspace.getAll(token);
+
+                                  if (typeof result !== "number") {
+                                    setWorkspaces(result)
+                                  }
+                                } else {
                                   let result = await Workspace.search(token, input);
 
                                   if (typeof result !== "number") {
                                     setWorkspaces(result)
                                   }
-                                } catch (e) {
-                                  console.log(e)
-                                  toast.error("An error has occurred")
                                 }
+                              } catch (e) {
+                                console.log(e)
+                                toast.error("An error has occurred")
                               }
                             }}
                         />

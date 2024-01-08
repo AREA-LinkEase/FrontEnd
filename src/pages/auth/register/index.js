@@ -34,6 +34,7 @@ import AuthIllustrationV1Wrapper from 'src/views/pages/auth/AuthIllustrationV1Wr
 import {Auth} from "../../../models/Auth";
 import {Alert} from "@mui/lab";
 import {useRouter} from "next/router";
+import NetworkConfig from "../../../configs/networkConfig";
 
 // ** Styled Components
 const Card = styled(MuiCard)(({ theme }) => ({
@@ -225,21 +226,17 @@ const RegisterV1 = () => {
               </Divider>
               <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <IconButton
-                  href='/'
+                  href={NetworkConfig.url + "/auth/login/github"}
                   component={Link}
-                  onClick={e => e.preventDefault()}
                   sx={{ color: theme => (theme.palette.mode === 'light' ? '#272727' : 'grey.300') }}
                 >
                   <Icon icon='mdi:github' />
                 </IconButton>
-                <IconButton href='/' component={Link} sx={{ color: '#db4437' }} onClick={e => e.preventDefault()}>
+                <IconButton href={NetworkConfig.url + "/auth/login/google"} component={Link} sx={{ color: '#db4437' }}>
                   <Icon icon='mdi:google' />
                 </IconButton>
-                <IconButton href='/' component={Link} sx={{ color: '#7289da' }} onClick={e => e.preventDefault()}>
+                <IconButton href={NetworkConfig.url + "/auth/login/discord"} component={Link} sx={{ color: '#7289da' }}>
                   <Icon icon='mdi:discord' />
-                </IconButton>
-                <IconButton href='/' component={Link} sx={{ color: '#00A4EF' }} onClick={e => e.preventDefault()}>
-                  <Icon icon='mdi:microsoft' />
                 </IconButton>
               </Box>
             </form>
