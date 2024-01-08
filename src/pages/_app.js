@@ -5,6 +5,8 @@ import {Router, useRouter} from 'next/router'
 // ** Loader Import
 import NProgress from 'nprogress'
 
+import { store } from 'src/store'
+
 // ** Emotion Imports
 import { CacheProvider } from '@emotion/react'
 
@@ -38,11 +40,15 @@ import 'prismjs/components/prism-tsx'
 import 'react-perfect-scrollbar/dist/css/styles.css'
 import 'src/iconify-bundle/icons-bundle-react'
 
+// ** React Flow Style
+import 'src/pages/reactflow/reactflow.css'
+
 // ** Global css styles
 import '../../styles/globals.css'
 import {useContext, useEffect, useState} from "react";
 import Spinner from "../@core/components/spinner";
 import {UserContext, UserProvider} from "../hook/UserContext";
+import { Provider } from 'react-redux'
 
 const clientSideEmotionCache = createEmotionCache()
 
@@ -102,6 +108,7 @@ const App = props => {
   const needAuth = Component.needAuth ?? true
 
   return (
+    <Provider store={store}>
       <CacheProvider value={emotionCache}>
         <Head>
           <title>{`${themeConfig.templateName}`}</title>
@@ -130,6 +137,7 @@ const App = props => {
             </UserProvider>
           </SettingsProvider>
       </CacheProvider>
+    </Provider>
   )
 }
 
