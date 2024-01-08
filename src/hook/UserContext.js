@@ -27,19 +27,23 @@ export const UserProvider = ({children}) => {
 
   useEffect(() => {
     (async () => {
-      const jwt = localStorage.getItem("token")
+      try {
+        const jwt = localStorage.getItem("token")
 
-      if (!jwt) return setLoaded(true);
-      let newUser = new User(jwt)
+        if (!jwt) return setLoaded(true);
+        let newUser = new User(jwt)
 
-      let result = await newUser.get();
+        let result = await newUser.get();
 
-      if (typeof result === "number") {
-        setLoaded(true)
-        return localStorage.removeItem("token")
+        if (typeof result === "number") {
+          setLoaded(true)
+          return localStorage.removeItem("token")
+        }
+        setToken(jwt)
+        setUser(newUser)
+      } catch (e) {
+        console.log(e)
       }
-      setToken(jwt)
-      setUser(newUser)
       setLoaded(true)
     })()
   }, []);
