@@ -9,7 +9,7 @@ import PageHeader from 'src/@core/components/page-header'
 import Box from '@mui/material/Box'
 import IconButton from '@mui/material/IconButton'
 import Typography from '@mui/material/Typography'
-import { Button } from '@mui/material'
+import { Button, FormControl, InputLabel, Modal, Select } from '@mui/material'
 import Icon from 'src/@core/components/icon'
 import MuiDrawer from '@mui/material/Drawer'
 import { styled } from '@mui/material/styles'
@@ -80,6 +80,13 @@ import ArrayBlockIndicator from 'src/@core/components/reactflowBlocksIndicator/s
 import ObjectBlockIndicator from 'src/@core/components/reactflowBlocksIndicator/stockageBlocks/objectBlock';
 import DateBlockIndicator from 'src/@core/components/reactflowBlocksIndicator/temporalBlock/dateBlock';
 import RecurrenceBlockIndicator from 'src/@core/components/reactflowBlocksIndicator/temporalBlock/recurrenceBlock';
+import RequestBlock from '../reactflowBlocks/eventBlocks/requestBlock';
+import RequestBlockIndicator from '../reactflowBlocksIndicator/eventBlocks/requestBlock';
+import TestBlockIndicator from '../reactflowBlocksIndicator/eventBlocks/testBlock';
+import TestBlock from '../reactflowBlocks/eventBlocks/testBlock';
+import QuantityInput from './quantityInput';
+import ArgumentBlockIndicator from '../reactflowBlocksIndicator/stockageBlocks/argumentBlock';
+import ArgumentBlock from '../reactflowBlocks/stockageBlocks/argumentBlock';
 
 const Drawer = styled(MuiDrawer)(({ theme }) => ({
     width: 400,
@@ -99,12 +106,15 @@ const CustomizerSpacing = styled('div')(({ theme }) => ({
     padding: theme.spacing(5, 6)
 }))
 
-const Workflow = ({value, onChange}) => {
+const ReactFlowComponent = ({value, onChange}) => {
     const dispatch = useDispatch();
     const reduxNodes = useSelector((state) => state.nodes.nodes);
     const reduxEdges = useSelector((state) => state.edges);
     const [test, setTest] = useState(false);
     const [index, setIndex] = useState(0);
+    const [openPopup, setOpenPopup] = useState(false);
+    const [selectedNode, setSelectedNode] = useState('');
+    const [entryPoints, setEntryPoints] = useState(1);
 
     const DefaultSmoothStepEdge = ({ id, sourceX, sourceY, targetX, targetY }) => {
         const [edgePath] = getSmoothStepPath({
@@ -133,35 +143,40 @@ const Workflow = ({value, onChange}) => {
     
     const nodeColor = (node) => {
         switch (node.type) {
-            case 'startBlock':
-            case 'endBlock':
+            case 'start':
+            case 'end':
                 return '#7367F0';
-            case 'ifBlock':
-            case 'forBlock':
-            case 'onBlock':
-            case 'forEachBlock':
-            case 'atBlock':
+            case 'if':
+            case 'for':
+            case 'on':
+            case 'forEach':
+            case 'at':
                 return '#000000';
-            case 'equalBlock':
-            case 'notEqualBlock':
-            case 'superiorBlock':
-            case 'inferiorBlock':
-            case 'superiorOrEqualBlock':
-            case 'inferiorOrEqualBlock':
+            case '==':
+            case '!=':
+            case '>':
+            case '<':
+            case '>=':
+            case '<=':
                 return '#FF9F43';
-            case 'numberBlock':
-            case 'stringBlock':
-            case 'booleanBlock':
-            case 'arrayBlock':
-            case 'objectBlock':
-            case 'stringBuilderBlock':
+            case 'variableNumber':
+            case 'variableString':
+            case 'variableBoolean':
+            case 'variableArray':
+            case 'variableObject':
+            case 'stringBuilder':
+            case 'variableArgument':
                 return '#E83E8C';
-            case 'numberToBoolBlock':
-            case 'numberToStringBlock':
+            case 'NumberToBool':
+            case 'NumberToString':
+            case 'StringToNumber':
                 return '#00CFE8';
-            case 'recurrenceBlock':
-            case 'dateBlock':
+            case 'variableRecurrence':
+            case 'variableDate':
                 return '#EA5455';
+            case 'request':
+            case 'test':
+                return '#28C76F';
             default:
                 return '#ff0072';
         }
@@ -228,16 +243,32 @@ const Workflow = ({value, onChange}) => {
         return verif;
     };
     
-    const checkAtType = (sourceNode, targetNode) => {
-        const connectedNodes = getConnectedNodes(targetNode.id, reduxNodes, reduxEdges);
-        if (connectedNodes.length === 1) {
-            if (sourceNode.data.type === 'str' || sourceNode.data.type === 'number')
-                return false;
-        } else {
-            if (sourceNode.data.type === 'object' || sourceNode.data.type === 'array')
-                return false;
+    const checkAtType = (sourceNode, targetNode, targetType) => {
+        if (targetType === 'element') {
+            if (sourceNode.data.type !== 'object' && sourceNode.data.type !== 'array') {
+                return true;
+            }
         }
-        return true;
+        if (targetType === 'entry') {
+            if (sourceNode.data.type && sourceNode.data.type !== '')
+                return true;
+        }
+        if (targetType === 'key') {
+            const connectedNodes = getConnectedNodes(targetNode.id, reduxNodes, reduxEdges);
+            let typeValue = '';
+            connectedNodes.forEach((connectedNode) => {
+              if (connectedNode.data && connectedNode.data.type !== "") {
+                typeValue = connectedNode.data.type;
+              }
+            });
+            if (typeValue === 'object' && sourceNode.data.type !== 'str') {
+                console.log('ok');
+                return true;
+            }
+            if (typeValue === 'array' && sourceNode.data.type !== 'number')
+                return true;
+          }
+        return false;
     };
 
     const isValidConnection = (connection) => {
@@ -246,10 +277,11 @@ const Workflow = ({value, onChange}) => {
         const targetNode = reduxNodes.find((node) => node.id === connection.target);
         
         if (sourceNode && targetNode) { // rules
-            if (targetNode.type === 'atBlock' && checkAtType(sourceNode, targetNode)) {
+            if (targetNode.type === 'at' && checkAtType(sourceNode, targetNode, connection.targetHandle)) {
                 verif = 1;
             }
-            verif = checkType(verif, sourceNode, targetNode);
+            if (targetNode.type !== 'at')
+                verif = checkType(verif, sourceNode, targetNode);
             // verif = checkAlreadyConnected(verif, sourceNode, targetNode, connection);
         }
         if (verif === 0)
@@ -265,7 +297,7 @@ const Workflow = ({value, onChange}) => {
                 const connectedNode = reduxNodes.find((n) => n.id === (node.id === params.source ? params.target : params.source));
                 const connectedNodeType = connectedNode && connectedNode.data.typeOutput ? connectedNode.data.typeOutput : connectedNode ? connectedNode.data.type : '';
     
-                if (node.type == 'atBlock') {
+                if (node.type == 'at') {
                     return {
                         ...node,
                         data: {
@@ -352,30 +384,33 @@ const Workflow = ({value, onChange}) => {
   }, [test]);
     
     const nodeTypes = useMemo(() => ({
-        startBlock: StartBlock,
-        endBlock: EndBlock,
-        ifBlock: IfBlock,
-        forBlock: ForBlock,
-        onBlock: OnBlock,
-        forEachBlock: ForEachBlock,
-        atBlock: AtBlock,
-        equalBlock: EqualBlock,
-        notEqualBlock: NotEqualBlock,
-        superiorBlock: SuperiorBlock,
-        inferiorBlock: InferiorBlock,
-        inferiorOrEqualBlock: InferiorOrEqualBlock,
-        superiorOrEqualBlock: SuperiorOrEqualBlock,
-        numberBlock: NumberBlock,
-        booleanBlock: BooleanBlock,
-        stringBlock: StringBlock,
-        arrayBlock: ArrayBlock,
-        objectBlock: ObjectBlock,
-        numberToBoolBlock: NumberToBoolBlock,
-        numberToStringBlock: NumberToStringBlock,
-        stringToNumberBlock: StringToNumberBlock,
-        recurrenceBlock: RecurrenceBlock,
-        dateBlock: DateBlock,
-        stringBuilderBlock: StringBuilderBlock,
+        start: StartBlock,
+        end: EndBlock,
+        if: IfBlock,
+        for: ForBlock,
+        on: OnBlock,
+        forEach: ForEachBlock,
+        at: AtBlock,
+        '==': EqualBlock,
+        '!=': NotEqualBlock,
+        '>': SuperiorBlock,
+        '<': InferiorBlock,
+        '<=': InferiorOrEqualBlock,
+        '>=': SuperiorOrEqualBlock,
+        variableNumber: NumberBlock,
+        variableBoolean: BooleanBlock,
+        variableString: StringBlock,
+        variableArray: ArrayBlock,
+        variableObject: ObjectBlock,
+        NumberToBool: NumberToBoolBlock,
+        NumberToString: NumberToStringBlock,
+        StringToNumber: StringToNumberBlock,
+        variableRecurrence: RecurrenceBlock,
+        variableDate: DateBlock,
+        variableArgument: ArgumentBlock,
+        stringBuilder: StringBuilderBlock,
+        request: RequestBlock,
+        test: TestBlock,
     }), []);
 
     const onDragOver = useCallback((event) => {
@@ -460,14 +495,13 @@ const Workflow = ({value, onChange}) => {
     
             const targetNode = reduxNodes.find((node) => node.id === edge.target);
     
-            // Si vous souhaitez exécuter onChange même si ce n'est pas un nœud de comparaison
             const updatedNodes = reduxNodes.map((node) => {
                 if (targetNode && node.id === targetNode.id) {
                     return {
                         ...node,
                         data: {
                             ...node.data,
-                            type: isComparaisonNode(targetNode.type) ? '' : node.data.type, // Laissez inchangé si ce n'est pas un nœud de comparaison
+                            type: isComparaisonNode(targetNode.type) ? '' : node.data.type,
                         },
                     };
                 }
@@ -505,8 +539,36 @@ const Workflow = ({value, onChange}) => {
             if (onChange) {
                 onChange(updatedObject);
             }
+        } else if (event.button === 0 && node.type === "test") {
+            setSelectedNode(node.id);
+            setOpenPopup(true);
         }
     };
+
+    const handleClose = () => {
+        setOpenPopup(false);
+    };
+
+      const handleAdd = () => {
+        const updatedNodeIndex = reduxNodes.findIndex((n) => n.id === selectedNode);
+      
+        if (updatedNodeIndex !== -1) {
+          const updatedNodes = [...reduxNodes];
+          const updatedNode = { ...updatedNodes[updatedNodeIndex] };
+          const updatedData = { ...updatedNode.data };
+          updatedData.nbrEntry = entryPoints;
+          updatedNode.data = updatedData;
+          updatedNodes[updatedNodeIndex] = updatedNode;
+          dispatch(setReduxNodes(updatedNodes));
+      
+          console.log(updatedNode);
+        } else {
+          console.error(`Node with ID ${selectedNode} not found in the nodes array.`);
+        }
+      
+        handleClose();
+      };
+      
 
     const onNodeDragStop = (event, draggedNode) => {
         const { id, position } = draggedNode;
@@ -535,16 +597,57 @@ const Workflow = ({value, onChange}) => {
             console.error(`Node with ID ${id} not found in the nodes array.`);
         }
     };
-    
 
     return (
         <Grid container spacing={2}>
+        <Modal
+            open={openPopup}
+            onClose={handleClose}
+            style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+            }}
+            aria-labelledby="modal-modal-title"
+            aria-describedby="modal-modal-description"
+        >
+        <div
+            style={{
+                backgroundColor: 'white',
+                borderRadius: '10px',
+                boxShadow: '5px 5px 15px rgba(0, 0, 0, 0.3)',
+                paddingLeft: '20px',
+                paddingRight: '20px',
+                paddingBottom: '20px',
+                maxWidth: '300px',
+                width: '100%',
+                maxHeight: '80vh',
+                overflowY: 'auto',
+            }}
+        >
+        <h2 id="modal-modal-title">
+            Select the number of entry ports
+        </h2>
+
+        <QuantityInput quantity={entryPoints} setQuantity={setEntryPoints}/>
+        <div style={{paddingBottom:'20px'}}/>
+        <Button
+            variant='contained'
+            color='primary'
+            startIcon={<Icon icon='tabler:save' fontSize={20} />}
+            onClick={handleAdd}
+            >
+            Add
+        </Button>
+    </div>
+</Modal>
+
             <PageHeader
                 title={
                     <Grid container spacing={2} justifyContent="space-between">
                     <Grid item>
                         <Typography variant='h4' sx={{ mb: 6 }}>
-                            WorkSpace
+                            Workflow
                         </Typography>
                     </Grid>
                     <Grid item>
@@ -653,12 +756,12 @@ const Workflow = ({value, onChange}) => {
                         Marking blocks
                     </Typography>
                     <Box sx={{ mb: 5, display: 'flex', alignItems: 'center' }}>
-                        <div onDragStart={(event) => onDragStart(event, 'startBlock', {})} draggable="true">
+                        <div onDragStart={(event) => onDragStart(event, 'start', {})} draggable="true">
                             <StartBlockIndicator/>
                         </div>
                     </Box>
                     <Box sx={{ mb: -5, display: 'flex', alignItems: 'center' }}>
-                        <div onDragStart={(event) => onDragStart(event, 'endBlock', {})} draggable="true">
+                        <div onDragStart={(event) => onDragStart(event, 'end', {})} draggable="true">
                             <EndBlockIndicator/>
                         </div>
                     </Box>
@@ -674,27 +777,27 @@ const Workflow = ({value, onChange}) => {
                     </Typography>
                         
                     <Box sx={{ mb: 5, display: 'flex', alignItems: 'center' }}>
-                        <div onDragStart={(event) => onDragStart(event, 'ifBlock', {type: 'bool'})} draggable="true">
+                        <div onDragStart={(event) => onDragStart(event, 'if', {type: 'bool'})} draggable="true">
                             <IfBlockIndicator/>
                         </div>
                     </Box>
                     <Box sx={{ mb: 5, display: 'flex', alignItems: 'center' }}>
-                        <div onDragStart={(event) => onDragStart(event, 'forBlock', {type: 'bool'})} draggable="true">
+                        <div onDragStart={(event) => onDragStart(event, 'for', {type: 'bool'})} draggable="true">
                             <ForBlockIndicator/>
                         </div>
                     </Box>
                     <Box sx={{ mb: 5, display: 'flex', alignItems: 'center' }}>
-                        <div onDragStart={(event) => onDragStart(event, 'forEachBlock', {type: 'array'})} draggable="true">
+                        <div onDragStart={(event) => onDragStart(event, 'forEach', {type: 'array'})} draggable="true">
                             <ForEachBlockIndicator/>
                         </div>
                     </Box>
                     <Box sx={{ mb: 5, display: 'flex', alignItems: 'center' }}>
-                        <div onDragStart={(event) => onDragStart(event, 'onBlock', {type: 'recurrence-date'})} draggable="true">
+                        <div onDragStart={(event) => onDragStart(event, 'on', {type: 'recurrence-date'})} draggable="true">
                             <OnBlockIndicator/>
                         </div>
                     </Box>
                     <Box sx={{ mb: -5, display: 'flex', alignItems: 'center' }}>
-                        <div onDragStart={(event) => onDragStart(event, 'atBlock', {type: ''})} draggable="true">
+                        <div onDragStart={(event) => onDragStart(event, 'at', {type: ''})} draggable="true">
                             <AtBlockIndicator/>
                         </div>
                     </Box>
@@ -709,32 +812,37 @@ const Workflow = ({value, onChange}) => {
                         Stockage blocks
                     </Typography>
                     <Box sx={{ mb: 5, display: 'flex', alignItems: 'center' }}>
-                        <div onDragStart={(event) => onDragStart(event, 'booleanBlock', {value: false, type: 'bool'})} draggable="true">
+                        <div onDragStart={(event) => onDragStart(event, 'variableBoolean', {value: '', type: 'bool'})} draggable="true">
                             <BooleanBlockIndicator/>
                         </div>
                     </Box>
                     <Box sx={{ mb: 5, display: 'flex', alignItems: 'center' }}>
-                        <div onDragStart={(event) => onDragStart(event, 'numberBlock', {value: 0, type: 'number'})} draggable="true">
+                        <div onDragStart={(event) => onDragStart(event, 'variableNumber', {value: '', type: 'number'})} draggable="true">
                             <NumberBlockIndicator/>
                         </div>
                     </Box>
                     <Box sx={{ mb: 5, display: 'flex', alignItems: 'center' }}>
-                        <div onDragStart={(event) => onDragStart(event, 'stringBlock', {value: '', type: 'str'})} draggable="true">
+                        <div onDragStart={(event) => onDragStart(event, 'variableString', {value: '', type: 'str'})} draggable="true">
                             <StringBlockIndicator/>
                         </div>
                     </Box>
                     <Box sx={{ mb: 5, display: 'flex', alignItems: 'center' }}>
-                        <div onDragStart={(event) => onDragStart(event, 'objectBlock', {value: '', type: 'object'})} draggable="true">
+                        <div onDragStart={(event) => onDragStart(event, 'variableObject', {value: '', type: 'object'})} draggable="true">
                             <ObjectBlockIndicator/>
                         </div>
                     </Box>
                     <Box sx={{ mb: 5, display: 'flex', alignItems: 'center' }}>
-                        <div onDragStart={(event) => onDragStart(event, 'arrayBlock', {value: '', type: 'array'})} draggable="true">
+                        <div onDragStart={(event) => onDragStart(event, 'variableArray', {value: '', type: 'array'})} draggable="true">
                             <ArrayBlockIndicator/>
                         </div>
                     </Box>
+                    <Box sx={{ mb: 5, display: 'flex', alignItems: 'center' }}>
+                        <div onDragStart={(event) => onDragStart(event, 'variableArgument', {})} draggable="true">
+                            <ArgumentBlockIndicator/>
+                        </div>
+                    </Box>
                     <Box sx={{ mb: -5, display: 'flex', alignItems: 'center' }}>
-                        <div onDragStart={(event) => onDragStart(event, 'stringBuilderBlock', {type: 'str', typeOutput: 'str', value: ''})} draggable="true">
+                        <div onDragStart={(event) => onDragStart(event, 'stringBuilder', {type: 'str', typeOutput: 'str', value: ''})} draggable="true">
                             <StringBuilderBlockIndicator/>
                         </div>
                     </Box>
@@ -749,17 +857,17 @@ const Workflow = ({value, onChange}) => {
                         Conversion blocks
                         </Typography>
                     <Box sx={{ mb: 5, display: 'flex', alignItems: 'center' }}>
-                        <div onDragStart={(event) => onDragStart(event, 'numberToBoolBlock', {type: 'number', typeOutput: 'bool', value: false})} draggable="true">
+                        <div onDragStart={(event) => onDragStart(event, 'NumberToBool', {type: 'number', typeOutput: 'bool'})} draggable="true">
                             <NumberToBoolBlockIndicator/>
                         </div>
                     </Box>
                     <Box sx={{ mb: 5, display: 'flex', alignItems: 'center' }}>
-                        <div onDragStart={(event) => onDragStart(event, 'numberToStringBlock', {type: 'number', typeOutput: 'str', value: ''})} draggable="true">
+                        <div onDragStart={(event) => onDragStart(event, 'NumberToString', {type: 'number', typeOutput: 'str'})} draggable="true">
                             <NumberToStringBlockIndicator/>
                         </div>
                     </Box>
                     <Box sx={{ mb: -5, display: 'flex', alignItems: 'center' }}>
-                        <div onDragStart={(event) => onDragStart(event, 'stringToNumberBlock', {type: 'str', typeOutput: 'number', value: ''})} draggable="true">
+                        <div onDragStart={(event) => onDragStart(event, 'StringToNumber', {type: 'str', typeOutput: 'number'})} draggable="true">
                             <StringToNumberBlockIndicator/>
                         </div>
                     </Box>
@@ -774,32 +882,32 @@ const Workflow = ({value, onChange}) => {
                         Comparaison blocks
                     </Typography>
                     <Box sx={{ mb: 5, display: 'flex', alignItems: 'center' }}>
-                        <div onDragStart={(event) => onDragStart(event, 'equalBlock', {type: '', typeOutput: 'bool', value: 'false'})} draggable="true">
+                        <div onDragStart={(event) => onDragStart(event, '==', {type: '', typeOutput: 'bool'})} draggable="true">
                             <EqualBlockIndicator/>
                         </div>
                     </Box>
                     <Box sx={{ mb: 5, display: 'flex', alignItems: 'center' }}>
-                        <div onDragStart={(event) => onDragStart(event, 'notEqualBlock', {type: '', typeOutput: 'bool', value: 'false'})} draggable="true">
+                        <div onDragStart={(event) => onDragStart(event, '!=', {type: '', typeOutput: 'bool'})} draggable="true">
                             <NotEqualBlockIndicator/>
                         </div>
                     </Box>
                     <Box sx={{ mb: 5, display: 'flex', alignItems: 'center' }}>
-                        <div onDragStart={(event) => onDragStart(event, 'superiorBlock', {type: '', typeOutput: 'bool', value: 'false'})} draggable="true">
+                        <div onDragStart={(event) => onDragStart(event, '>', {type: '', typeOutput: 'bool'})} draggable="true">
                             <SuperiorBlockIndicator/>
                         </div>
                     </Box>
                     <Box sx={{ mb: 5, display: 'flex', alignItems: 'center' }}>
-                        <div onDragStart={(event) => onDragStart(event, 'superiorOrEqualBlock', {type: '', typeOutput: 'bool', value: 'false'})} draggable="true">
+                        <div onDragStart={(event) => onDragStart(event, '>=', {type: '', typeOutput: 'bool'})} draggable="true">
                             <SuperiorOrEqualBlockIndicator/>
                         </div>
                     </Box>
                     <Box sx={{ mb: 5, display: 'flex', alignItems: 'center' }}>
-                        <div onDragStart={(event) => onDragStart(event, 'inferiorBlock', {type: '', typeOutput: 'bool', value: 'false'})} draggable="true">
+                        <div onDragStart={(event) => onDragStart(event, '<', {type: '', typeOutput: 'bool'})} draggable="true">
                             <InferiorBlockIndicator/>
                         </div>
                     </Box>
                     <Box sx={{ mb: -5, display: 'flex', alignItems: 'center' }}>
-                        <div onDragStart={(event) => onDragStart(event, 'inferiorOrEqualBlock', {type: '', typeOutput: 'bool', value: 'false'})} draggable="true">
+                        <div onDragStart={(event) => onDragStart(event, '<=', {type: '', typeOutput: 'bool'})} draggable="true">
                             <InferiorOrEqualBlockIndicator/>
                         </div>
                     </Box>
@@ -815,12 +923,12 @@ const Workflow = ({value, onChange}) => {
                         Temporal blocks
                     </Typography>
                     <Box sx={{ mb: 5, display: 'flex', alignItems: 'center' }}>
-                        <div onDragStart={(event) => onDragStart(event, 'recurrenceBlock', {type: 'recurrence-date', value: {}})} draggable="true">
+                        <div onDragStart={(event) => onDragStart(event, 'variableRecurrence', {type: 'recurrence-date', value: {}})} draggable="true">
                             <RecurrenceBlockIndicator/>
                         </div>
                     </Box>
                     <Box sx={{ mb: -5, display: 'flex', alignItems: 'center' }}>
-                        <div onDragStart={(event) => onDragStart(event, 'dateBlock', {type: 'recurrence-date', value: {}})} draggable="true">
+                        <div onDragStart={(event) => onDragStart(event, 'variableDate', {type: 'recurrence-date', value: {}})} draggable="true">
                             <DateBlockIndicator/>
                         </div>
                     </Box>
@@ -832,8 +940,18 @@ const Workflow = ({value, onChange}) => {
                         variant='caption'
                         sx={{ mb: 5, color: 'text.disabled', textTransform: 'uppercase' }}
                         >
-                        Evenement blocks
+                        Event blocks
                     </Typography>
+                    <Box sx={{ mb: 5, display: 'flex', alignItems: 'center' }}>
+                        <div onDragStart={(event) => onDragStart(event, 'request', {type: 'str'})} draggable="true">
+                            <RequestBlockIndicator/>
+                        </div>
+                    </Box>
+                    <Box sx={{ mb: 5, display: 'flex', alignItems: 'center' }}>
+                        <div onDragStart={(event) => onDragStart(event, 'test', {nbrEntry: 0})} draggable="true">
+                            <TestBlockIndicator/>
+                        </div>
+                    </Box>
                     
                 </CustomizerSpacing>
 
@@ -843,5 +961,4 @@ const Workflow = ({value, onChange}) => {
     )
   }
   
-  export default Workflow
-  
+  export default ReactFlowComponent

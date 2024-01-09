@@ -99,7 +99,7 @@ const OnBlock = ({ isConnectable, data }) => {
       <Handle
         type="source"
         position={Position.Left}
-        id={`exit`}
+        id={`action`}
         style={{
           width: '13.129px',
           height: '13.129px',
@@ -124,14 +124,14 @@ const OnBlock = ({ isConnectable, data }) => {
             transform: 'translate(-50%, -50%)',
           }}
         >
-          Exit
+          Action
         </div>
       </Handle>
       {/* Handle blanc en bas à droite avec annotation 'Else' */}
       <Handle
         type="source"
         position={Position.Right}
-        id={`else`}
+        id={`exit`}
         style={{
           width: '13.129px',
           height: '13.129px',
@@ -155,14 +155,14 @@ const OnBlock = ({ isConnectable, data }) => {
             transform: 'translate(-50%, -50%)',
           }}
         >
-          Else
+          Exit
         </div>
       </Handle>
       {/* Handle en haut à droite en rouge avec annotation 'Argument' */}
       <Handle
         type="target"
         position={Position.Right}
-        id={`argument`}
+        id={`condition`}
         style={{
           width: '13.129px',
           height: '13.129px',
@@ -186,7 +186,7 @@ const OnBlock = ({ isConnectable, data }) => {
             transform: 'translate(-50%, -50%)',
           }}
         >
-          Argument
+          Condition
         </div>
       </Handle>
     </Grid>

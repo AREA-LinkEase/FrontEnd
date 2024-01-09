@@ -131,7 +131,7 @@ const IfBlock = ({ isConnectable, data }) => {
       <Handle
         type="source"
         position={Position.Right}
-        id={`else`}
+        id={`failure`}
         style={{
           width: '13.129px',
           height: '13.129px',
@@ -162,7 +162,7 @@ const IfBlock = ({ isConnectable, data }) => {
       <Handle
         type="target"
         position={Position.Right}
-        id={`argument`}
+        id={`condition`}
         style={{
           width: '13.129px',
           height: '13.129px',
@@ -186,7 +186,7 @@ const IfBlock = ({ isConnectable, data }) => {
             transform: 'translate(-50%, -50%)',
           }}
         >
-          Argument
+          Condition
         </div>
       </Handle>
     </Grid>

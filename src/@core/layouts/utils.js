@@ -135,12 +135,12 @@ export const compareValues = (type, valueType, value1, value2) => {
  * @returns {boolean} - True if the node type is a comparison block type, otherwise false.
  */
 export const isComparaisonNode = (type) => (
-  type === 'equalBlock' ||
-  type === 'notEqualBlock' ||
-  type === 'superiorBlock' ||
-  type === 'inferiorBlock' ||
-  type === 'superiorOrEqualBlock' ||
-  type === 'inferiorOrEqualBlock'
+  type === '==' ||
+  type === '!=' ||
+  type === '>' ||
+  type === '<' ||
+  type === '>=' ||
+  type === '<='
 );
 
 /**
@@ -150,7 +150,7 @@ export const isComparaisonNode = (type) => (
  * @returns {boolean} - True if the node type is a conversion block type, otherwise false.
  */
 export const isConversionNode = (type) => (
-  type === 'numberToBoolBlock'
+  type === 'NumberToBool'
 );
 
 /**
@@ -162,7 +162,7 @@ export const isConversionNode = (type) => (
  */
 export const convertType = (type, value) => {
   switch (type) {
-    case 'numberToBoolBlock':
+    case 'NumberToBool':
       // Convert number to boolean (example implementation)
       return value !== 0;
 

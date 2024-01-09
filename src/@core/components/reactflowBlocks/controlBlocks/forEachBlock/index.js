@@ -63,43 +63,11 @@ const ForEachBlock = ({ isConnectable, data }) => {
         }}
         isConnectable={isConnectable}
       />
-      {/* Handle blanc en bas au milieu avec annotation 'Success' */}
-      <Handle
-        type="else"
-        position={Position.Bottom}
-        id={`success`}
-        style={{
-          width: '13.129px',
-          height: '13.129px',
-          flexShrink: 0,
-          background: '#fff',
-          borderColor: 'rgba(0, 0, 0, 0.30)',
-          borderWidth: '1px',
-          position: 'absolute',
-          bottom: '-6px',
-          left: '50%',
-          transform: 'translateX(-50%)',
-        }}
-        isConnectable={isConnectable}
-      >
-        <div
-          style={{
-            color: '#fff',
-            fontSize: '8px',
-            position: 'absolute',
-            top: '-6px',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-          }}
-        >
-          Success
-        </div>
-      </Handle>
       {/* Handle blanc en bas à gauche avec annotation 'Exit' */}
       <Handle
         type="source"
         position={Position.Left}
-        id={`exit`}
+        id={`action`}
         style={{
           width: '13.129px',
           height: '13.129px',
@@ -124,14 +92,14 @@ const ForEachBlock = ({ isConnectable, data }) => {
             transform: 'translate(-50%, -50%)',
           }}
         >
-          Exit
+          Action
         </div>
       </Handle>
       {/* Handle blanc en bas à droite avec annotation 'Else' */}
       <Handle
         type="source"
         position={Position.Right}
-        id={`else`}
+        id={`exit`}
         style={{
           width: '13.129px',
           height: '13.129px',
@@ -155,7 +123,7 @@ const ForEachBlock = ({ isConnectable, data }) => {
             transform: 'translate(-50%, -50%)',
           }}
         >
-          Else
+          Exit
         </div>
       </Handle>
       {/* Handle en haut à droite en rouge avec annotation 'Argument' */}
