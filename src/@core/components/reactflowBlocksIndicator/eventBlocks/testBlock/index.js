@@ -1,11 +1,28 @@
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 import { Grid, Typography } from '@mui/material';
 
-const TestBlockIndicator = () => {
+const TestBlockIndicator = ({ name }) => {
+  const indicatorRef = useRef(null);
+
+  useEffect(() => {
+    if (indicatorRef.current && name) {
+      const textWidth = getTextWidth(name, '14px', 'Public Sans');
+      indicatorRef.current.style.width = `${textWidth + 20}px`;
+    }
+  }, [name]);
+
+  const getTextWidth = (text, fontSize, fontFamily) => {
+    const canvas = document.createElement('canvas');
+    const context = canvas.getContext('2d');
+    context.font = `${fontSize} ${fontFamily}`;
+    const width = context.measureText(text).width;
+    return width;
+  };
+
   return (
     <Grid
+      ref={indicatorRef}
       sx={{
-        width: '70px',
         height: '30px',
         flexShrink: 0,
         borderRadius: '5px',
@@ -34,7 +51,7 @@ const TestBlockIndicator = () => {
           transform: 'translate(-50%, -50%)',
         }}
       >
-        Test
+        {name ? name : 'Test'}
       </Typography>
     </Grid>
   );

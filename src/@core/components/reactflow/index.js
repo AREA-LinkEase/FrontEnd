@@ -106,7 +106,19 @@ const CustomizerSpacing = styled('div')(({ theme }) => ({
     padding: theme.spacing(5, 6)
 }))
 
-const ReactFlowComponent = ({value, onChange}) => {
+const generateBlockIndicator = (name) => {
+    return <TestBlockIndicator name={name} />;
+};
+
+const generateBlockComponent = (name) => {
+    const DynamicBlock = ({ data }) => {
+      return <TestBlock name={name} data={data} />;
+    };
+  
+    return DynamicBlock;
+  };
+
+const ReactFlowComponent = ({value, onChange, newNodes}) => {
     const dispatch = useDispatch();
     const reduxNodes = useSelector((state) => state.nodes.nodes);
     const reduxEdges = useSelector((state) => state.edges);
@@ -142,6 +154,12 @@ const ReactFlowComponent = ({value, onChange}) => {
     }, []);
     
     const nodeColor = (node) => {
+        const isDynamicBlock = newNodes.some(dynamicBlock => (
+            dynamicBlock.name === node.type && dynamicBlock.id === node.id
+        ));
+    
+        if (isDynamicBlock)
+            return '#28C76F';
         switch (node.type) {
             case 'start':
             case 'end':
@@ -382,36 +400,44 @@ const ReactFlowComponent = ({value, onChange}) => {
           }
     }
   }, [test]);
-    
-    const nodeTypes = useMemo(() => ({
-        start: StartBlock,
-        end: EndBlock,
-        if: IfBlock,
-        for: ForBlock,
-        on: OnBlock,
-        forEach: ForEachBlock,
-        at: AtBlock,
-        '==': EqualBlock,
-        '!=': NotEqualBlock,
-        '>': SuperiorBlock,
-        '<': InferiorBlock,
-        '<=': InferiorOrEqualBlock,
-        '>=': SuperiorOrEqualBlock,
-        variableNumber: NumberBlock,
-        variableBoolean: BooleanBlock,
-        variableString: StringBlock,
-        variableArray: ArrayBlock,
-        variableObject: ObjectBlock,
-        NumberToBool: NumberToBoolBlock,
-        NumberToString: NumberToStringBlock,
-        StringToNumber: StringToNumberBlock,
-        variableRecurrence: RecurrenceBlock,
-        variableDate: DateBlock,
-        variableArgument: ArgumentBlock,
-        stringBuilder: StringBuilderBlock,
-        request: RequestBlock,
-        test: TestBlock,
-    }), []);
+
+    const nodeTypes = useMemo(() => {
+        const generatedNodeTypes = newNodes.reduce((types, { name }) => {
+          types[name] = generateBlockComponent(name);
+          return types;
+        }, {});
+      
+        return {
+          start: StartBlock,
+          end: EndBlock,
+          if: IfBlock,
+          for: ForBlock,
+          on: OnBlock,
+          forEach: ForEachBlock,
+          at: AtBlock,
+          '==': EqualBlock,
+          '!=': NotEqualBlock,
+          '>': SuperiorBlock,
+          '<': InferiorBlock,
+          '<=': InferiorOrEqualBlock,
+          '>=': SuperiorOrEqualBlock,
+          variableNumber: NumberBlock,
+          variableBoolean: BooleanBlock,
+          variableString: StringBlock,
+          variableArray: ArrayBlock,
+          variableObject: ObjectBlock,
+          NumberToBool: NumberToBoolBlock,
+          NumberToString: NumberToStringBlock,
+          StringToNumber: StringToNumberBlock,
+          variableRecurrence: RecurrenceBlock,
+          variableDate: DateBlock,
+          variableArgument: ArgumentBlock,
+          stringBuilder: StringBuilderBlock,
+          request: RequestBlock,
+          test: TestBlock,
+          ...generatedNodeTypes,
+        };
+      }, []);
 
     const onDragOver = useCallback((event) => {
         event.preventDefault();
@@ -433,7 +459,7 @@ const ReactFlowComponent = ({value, onChange}) => {
         const data = JSON.parse(event.dataTransfer.getData('application/reactflow-data'));
     
         const newNode = {
-            id: getId(index),
+            id: data.newId ? data.newId : getId(index),
             type,
             position: reactFlowInstance.project({
                 x: event.clientX - reactFlowBounds.left,
@@ -441,7 +467,7 @@ const ReactFlowComponent = ({value, onChange}) => {
             }),
             data: {
                 ...data,
-                label: getId(index),
+                label: data.newId ? data.newId : getId(index),
             },
         };
     
@@ -539,7 +565,7 @@ const ReactFlowComponent = ({value, onChange}) => {
             if (onChange) {
                 onChange(updatedObject);
             }
-        } else if (event.button === 0 && node.type === "test") {
+        } else if (event.button === 0 && node.data.newId) {
             setSelectedNode(node.id);
             setOpenPopup(true);
         }
@@ -947,6 +973,13 @@ const ReactFlowComponent = ({value, onChange}) => {
                             <RequestBlockIndicator/>
                         </div>
                     </Box>
+                    {newNodes.map(({ name, id }) => (
+                        <Box key={name} sx={{ mb: 5, display: 'flex', alignItems: 'center' }}>
+                            <div onDragStart={(event) => onDragStart(event, name, {newId: id})} draggable="true">
+                                {generateBlockIndicator(name)}
+                            </div>
+                        </Box>
+                    ))}
                     <Box sx={{ mb: 5, display: 'flex', alignItems: 'center' }}>
                         <div onDragStart={(event) => onDragStart(event, 'test', {nbrEntry: 0})} draggable="true">
                             <TestBlockIndicator/>

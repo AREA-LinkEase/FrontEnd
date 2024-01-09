@@ -3,7 +3,7 @@ import { Handle, Position } from 'reactflow';
 import { Grid, Typography } from '@mui/material';
 import { useSelector } from 'react-redux';
 
-const TestBlock = ({ isConnectable, data }) => {
+const TestBlock = ({ isConnectable, data, name }) => {
     const id = data.label || '';
     const nodes = useSelector((state) => state.nodes.nodes);
     const node = nodes.find((node) => node.id === id);
@@ -13,6 +13,15 @@ const TestBlock = ({ isConnectable, data }) => {
         (index) => `${(index * 10) + 5}%`,
         []
     );
+
+    const calculateLeftPosition = () => {
+        if (name) {
+            const nameLength = name.length;
+            const leftPercentage = 47 - nameLength * 1;
+            return leftPercentage + '%';
+        }
+        return '47%';
+    };
 
     return (
         <Grid
@@ -45,11 +54,11 @@ const TestBlock = ({ isConnectable, data }) => {
                     flexShrink: 0,
                     position: 'absolute',
                     top: '50%',
-                    left: '47%',
+                    left: calculateLeftPosition(),
                     transform: 'translate(-50%, -50%)',
                 }}
             >
-                Test
+                {name ? name : 'Test'}
             </Typography>
             {nbrEntry > 0 && (
                 <Grid item xs={12}>
@@ -92,7 +101,7 @@ const TestBlock = ({ isConnectable, data }) => {
                     transform: 'translateX(-50%)',
                 }}
                 isConnectable={isConnectable}
-        />
+            />
         </Grid>
     );
 };
