@@ -83,36 +83,36 @@ export default function automates() {
                     </CardContent>
                 </Card>
             </Grid>
-            <Grid item xs={12} md={6} lg={4}>
                 {automates.map((automate, i) => {
                   return (
-                    <Card key={i}>
-                      <CardHeader
-                        title={
-                          <Box sx={{ display: 'flex', alignItems: 'center', '& svg': { mr: 2 } }}>
-                            <Icon fontSize={20} icon='tabler:toggle-left' />
-                            <Typography fontSize={20}>{automate.title}</Typography>
-                          </Box>
-                        }
-                        subheader={automate.description}
-                        action={
-                          <Fab size="small" color='info' aria-label='edit' href={"/automates/" + automate.id}>
-                            <Icon width={20} icon='tabler:chevron-right'/>
-                          </Fab>
-                        }
-                      />
-                      <CardContent>
-                        <Grid item xs={12} sx={{ mt: 4, display: 'flex', flexWrap: 'wrap', alignItems: 'flex-end', justifyContent: 'flex-start' }}>
-                          <Box sx={{ display: 'flex', alignItems: 'center', '& svg': { mr: 1.25 } }}>
-                            <Icon icon='tabler:eye' />
-                            <Typography>{automate.views}</Typography>
-                          </Box>
-                        </Grid>
-                      </CardContent>
-                    </Card>
+                    <Grid item xs={12} md={6} lg={4}>
+                      <Card key={i}>
+                        <CardHeader
+                          title={
+                            <Box sx={{ display: 'flex', alignItems: 'center', '& svg': { mr: 2 } }}>
+                              <Icon fontSize={20} icon='tabler:toggle-left' />
+                              <Typography fontSize={20}>{automate.title}</Typography>
+                            </Box>
+                          }
+                          subheader={automate.description}
+                          action={
+                            <Fab size="small" color='info' aria-label='edit' href={"/automates/" + automate.id}>
+                              <Icon width={20} icon='tabler:chevron-right'/>
+                            </Fab>
+                          }
+                        />
+                        <CardContent>
+                          <Grid item xs={12} sx={{ mt: 4, display: 'flex', flexWrap: 'wrap', alignItems: 'flex-end', justifyContent: 'flex-start' }}>
+                            <Box sx={{ display: 'flex', alignItems: 'center', '& svg': { mr: 1.25 } }}>
+                              <Icon icon='tabler:eye' />
+                              <Typography>{automate.views}</Typography>
+                            </Box>
+                          </Grid>
+                        </CardContent>
+                      </Card>
+                    </Grid>
                   )
                 })}
-            </Grid>
         </Grid>
     )
 }

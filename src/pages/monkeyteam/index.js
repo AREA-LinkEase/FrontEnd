@@ -48,7 +48,7 @@ export default function monkeyTeam() {
       "flexDirection": "column",
       "justifyContent": "center"
     }}>
-      <img src="/images/Heading.svg" alt="Heading" width="500px" style={{marginTop: 10}} />
+      <img src="/images/Heading.svg" alt="Heading" width="300px" style={{marginTop: 10}} />
       <Grid sx={{
         mt: 6
       }} container spacing={6} justifyContent="center" alignItems="center">

@@ -86,43 +86,43 @@ export default function workspaces() {
                     </CardContent>
                 </Card>
             </Grid>
-            <Grid item xs={12} md={6} lg={4}>
               {workspaces.map((workspace, i) => {
                 console.log(workspace.users_id)
                 return (
-                  <Card key={i}>
-                    <CardHeader
-                      title={
-                        <Box sx={{ display: 'flex', alignItems: 'center', '& svg': { mr: 2 } }}>
-                          <Icon fontSize={20} icon='tabler:command' />
-                          <Typography fontSize={20}>{workspace.title}</Typography>
-                        </Box>
-                      }
-                      subheader={workspace.description}
-                      action={
-                        <Fab size="small" color='info' aria-label='edit' href={"/workspaces/" + workspace.id}>
-                          <Icon width={20} icon='tabler:chevron-right'/>
-                        </Fab>
-                      }
-                    />
-                    <CardContent>
-                      <Grid item xs={12} sx={{ mt: 4, display: 'flex', flexWrap: 'wrap', alignItems: 'flex-end', justifyContent: 'space-between' }}>
-                        <AvatarGroup className='pull-up' max={4}>
-                          <Avatar src={NetworkConfig.url + "/assets/avatars/" + workspace.owner_id + ".png"} />
-                          {workspace.users_id.map((user, i) => {
-                            return <Avatar key={i} src={NetworkConfig.url + "/assets/avatars/" + user.id + ".png"} />
-                          })}
-                        </AvatarGroup>
-                        <Box sx={{ display: 'flex', alignItems: 'center', '& svg': { mr: 1.25 } }}>
-                          <Icon icon='tabler:eye' />
-                          <Typography>{workspace.views}</Typography>
-                        </Box>
-                      </Grid>
-                    </CardContent>
-                  </Card>
+                  <Grid item xs={12} md={6} lg={4}>
+                    <Card key={i}>
+                      <CardHeader
+                        title={
+                          <Box sx={{ display: 'flex', alignItems: 'center', '& svg': { mr: 2 } }}>
+                            <Icon fontSize={20} icon='tabler:command' />
+                            <Typography fontSize={20}>{workspace.title}</Typography>
+                          </Box>
+                        }
+                        subheader={workspace.description}
+                        action={
+                          <Fab size="small" color='info' aria-label='edit' href={"/workspaces/" + workspace.id}>
+                            <Icon width={20} icon='tabler:chevron-right'/>
+                          </Fab>
+                        }
+                      />
+                      <CardContent>
+                        <Grid item xs={12} sx={{ mt: 4, display: 'flex', flexWrap: 'wrap', alignItems: 'flex-end', justifyContent: 'space-between' }}>
+                          <AvatarGroup className='pull-up' max={4}>
+                            <Avatar src={NetworkConfig.url + "/assets/avatars/" + workspace.owner_id + ".png"} />
+                            {workspace.users_id.map((user, i) => {
+                              return <Avatar key={i} src={NetworkConfig.url + "/assets/avatars/" + user.id + ".png"} />
+                            })}
+                          </AvatarGroup>
+                          <Box sx={{ display: 'flex', alignItems: 'center', '& svg': { mr: 1.25 } }}>
+                            <Icon icon='tabler:eye' />
+                            <Typography>{workspace.views}</Typography>
+                          </Box>
+                        </Grid>
+                      </CardContent>
+                    </Card>
+                  </Grid>
                 )
               })}
-            </Grid>
         </Grid>
     )
 }

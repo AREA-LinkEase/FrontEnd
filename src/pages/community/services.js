@@ -92,46 +92,46 @@ export default function automates() {
                     </CardContent>
                 </Card>
             </Grid>
-            <Grid item xs={12} md={6} lg={4}>
               {services.map((service, i) => {
                 return (
-                  <Card key={i}>
-                    <CardHeader
-                      title={
-                        <Box sx={{ display: 'flex', alignItems: 'center', '& svg': { mr: 2 } }}>
-                          <Icon fontSize={20} icon='tabler:link' />
-                          <LinkStyled fontSize={20} href={"/services/" + service.id}>{service.name}</LinkStyled>
-                        </Box>
-                      }
-                      action={
-                        <Avatar
-                          variant='rounded'
-                          src={NetworkConfig.url + "/assets/services/" + service.id + ".png"}
-                          sx={{
-                            width: 55,
-                            height: 55,
-                          }}
-                        />
-                      }
-                    />
-                    <CardContent>
-                      <Grid item xs={12} sx={{ mt: 4, display: 'flex', flexWrap: 'wrap', alignItems: 'flex-end', justifyContent: 'space-between' }}>
-                        <AvatarGroup className='pull-up' max={4}>
-                          <Avatar src={NetworkConfig.url + "/assets/avatars/" + service.owner_id + ".png"} />
-                          {service.users_id.map((user_id, i) => {
-                            <Avatar key={i} src={NetworkConfig.url + "/assets/avatars/" + user_id + ".png"} />
-                          })}
-                        </AvatarGroup>
-                        <Box sx={{ display: 'flex', alignItems: 'center', '& svg': { mr: 1.25 } }}>
-                          <Icon icon='tabler:eye' />
-                          <Typography>{services.views}</Typography>
-                        </Box>
-                      </Grid>
-                    </CardContent>
-                  </Card>
+                  <Grid item xs={12} md={6} lg={4}>
+                    <Card key={i}>
+                      <CardHeader
+                        title={
+                          <Box sx={{ display: 'flex', alignItems: 'center', '& svg': { mr: 2 } }}>
+                            <Icon fontSize={20} icon='tabler:link' />
+                            <LinkStyled fontSize={20} href={"/services/" + service.id}>{service.name}</LinkStyled>
+                          </Box>
+                        }
+                        action={
+                          <Avatar
+                            variant='rounded'
+                            src={NetworkConfig.url + "/assets/services/" + service.id + ".png"}
+                            sx={{
+                              width: 55,
+                              height: 55,
+                            }}
+                          />
+                        }
+                      />
+                      <CardContent>
+                        <Grid item xs={12} sx={{ mt: 4, display: 'flex', flexWrap: 'wrap', alignItems: 'flex-end', justifyContent: 'space-between' }}>
+                          <AvatarGroup className='pull-up' max={4}>
+                            <Avatar src={NetworkConfig.url + "/assets/avatars/" + service.owner_id + ".png"} />
+                            {service.users_id.map((user_id, i) => {
+                              <Avatar key={i} src={NetworkConfig.url + "/assets/avatars/" + user_id + ".png"} />
+                            })}
+                          </AvatarGroup>
+                          <Box sx={{ display: 'flex', alignItems: 'center', '& svg': { mr: 1.25 } }}>
+                            <Icon icon='tabler:eye' />
+                            <Typography>{services.views}</Typography>
+                          </Box>
+                        </Grid>
+                      </CardContent>
+                    </Card>
+                  </Grid>
                 )
               })}
-            </Grid>
         </Grid>
     )
 }
