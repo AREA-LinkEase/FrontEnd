@@ -26,8 +26,8 @@ let id = 0;
 export const getId = () => `LinkEaseNode_${id++}`;
 
 export default function WorkflowComponent({value, onChange, events}) {
-  const [nodes, setNodes, onNodesChange] = useNodesState([]);
-  const [edges, setEdges, onEdgesChange] = useEdgesState([]);
+  const [nodes, setNodes, onNodesChange] = useNodesState(value.nodes);
+  const [edges, setEdges, onEdgesChange] = useEdgesState(value.edges);
   const [nodeStyles, setNodeStyles] = useState(nodeGlobalStyles)
   const [isOpen, setOpen] = useState(false)
   const [reactFlowInstance, setReactFlowInstance] = useState(null);
@@ -56,6 +56,14 @@ export default function WorkflowComponent({value, onChange, events}) {
     },
     [setEdges],
   );
+
+  const onSave = useCallback(() => {
+    if (reactFlowInstance) {
+      const flow = reactFlowInstance.toObject();
+      console.log(flow)
+      onChange(flow);
+    }
+  }, [reactFlowInstance]);
 
   const handleDrawer = () => setOpen(!isOpen)
 
@@ -112,6 +120,7 @@ export default function WorkflowComponent({value, onChange, events}) {
             color='primary'
             startIcon={<Icon icon='tabler:save' fontSize={20} />}
             sx={{ mr: 2 }}
+            onClick={onSave}
           >
             Register
           </Button>

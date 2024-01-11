@@ -70,7 +70,10 @@ export const nodeGlobalStyles = {
         "type": HandleTypes.ANY
       }
     ],
-    "background": "#e83e8c"
+    "background": "#e83e8c",
+    valuePicker: {
+      "type": "text"
+    }
   },
   "variableBoolean": {
     "categories": "variable",
@@ -210,7 +213,7 @@ export const nodeGlobalStyles = {
     "name": "End",
     inputs: [
       {
-        "id": "exit",
+        "id": "entry",
         "type": HandleTypes.ANY
       }
     ],

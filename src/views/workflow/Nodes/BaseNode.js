@@ -75,7 +75,7 @@ const actions = {
 export default function BaseNode({data, id}) {
   const { setNodes } = useReactFlow();
   const store = useStoreApi();
-  const [value, setValue] = useState("")
+  const [value, setValue] = useState(data.value)
 
   const onChange = (e) => {
     const { nodeInternals } = store.getState();

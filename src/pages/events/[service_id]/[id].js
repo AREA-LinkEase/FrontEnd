@@ -13,11 +13,11 @@ import Dialog from "@mui/material/Dialog";
 import {styled} from "@mui/material/styles";
 import IconButton from "@mui/material/IconButton";
 import Fade from "@mui/material/Fade";
-import {Automate} from "../../../models/Automates";
 import Spinner from "../../../@core/components/spinner";
 import {UserContext} from "../../../hook/UserContext";
 import {Service} from "../../../models/Services";
 import toast from "react-hot-toast";
+import WorkflowComponent from "../../../views/workflow/Workflow";
 
 const CustomCloseButton = styled(IconButton)(({ theme }) => ({
     top: 0,
@@ -47,6 +47,25 @@ export default function event() {
     const [isLoading, setLoading] = useState(true);
     const [title, setTitle] = useState("")
     const [description, setDescription] = useState("");
+
+    const onChange = async (workflow) => {
+      try {
+        let result = await service.editEvent(info.id, {
+          workflow
+        })
+
+        if (typeof result === "number") {
+          toast.error("An error has occurred")
+          console.log(result)
+        } else {
+          toast.success("The workflow has been updated successfully")
+          router.reload()
+        }
+      } catch (e) {
+        console.log(e)
+        toast.error("An error has occurred")
+      }
+    }
 
     useEffect(() => {
       (async () => {
@@ -92,6 +111,12 @@ export default function event() {
             />
             <Grid item xs={12}>
                 <Button variant='contained' onClick={() => setShowEdit(true)}>Edit Event</Button>
+            </Grid>
+            <Grid item xs={12} height={"65vh"}>
+              <WorkflowComponent value={{
+                "nodes": info.workflow.nodes || [],
+                "edges": info.workflow.edges || []
+              }} onChange={onChange} />
             </Grid>
         </Grid>
         <Dialog

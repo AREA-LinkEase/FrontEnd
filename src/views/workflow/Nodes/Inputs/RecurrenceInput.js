@@ -19,7 +19,7 @@ export function RecurrenceInput({value, onChange}) {
     >
       <Grid item className="custom-select-container">
         <CustomTextField select id='custom-select' fullWidth className="nodrag" SelectProps={{
-          value: value.day,
+          value: value.day || "all",
           onChange: e => onChange({...value, day: e.target.value}),
           onMouseDown: (e) => e.stopPropagation()
         }}
