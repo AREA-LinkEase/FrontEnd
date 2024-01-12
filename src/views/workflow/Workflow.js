@@ -122,6 +122,10 @@ export default function WorkflowComponent({value, onChange, events}) {
 
   const onPaneClick = useCallback(() => setMenu(null), [setMenu]);
 
+  const onEdgeDoubleClick = (event, ed) => {
+    setEdges((edges) => edges.filter((edge) => edge.id !== ed.id));
+  };
+
   return (
     <>
       <Grid container spacing={2} justifyContent="flex-end" sx={{mb: 3}}>
@@ -158,6 +162,7 @@ export default function WorkflowComponent({value, onChange, events}) {
         onInit={setReactFlowInstance}
         onPaneClick={onPaneClick}
         onNodeContextMenu={onNodeContextMenu}
+        onEdgeDoubleClick={onEdgeDoubleClick}
       >
         <Controls />
         <Background variant="dots" gap={12} size={1} />
