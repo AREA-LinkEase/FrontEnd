@@ -37,6 +37,7 @@ export default function WorkflowComponent({value, onChange, events}) {
   const [menu, setMenu] = useState(null);
   const ref = useRef(null);
   const [countPin, setCountPin] = useState(0);
+  const fileInputRef = useRef(null);
 
   useEffect(() => {
     setNodeStyles({
@@ -75,6 +76,38 @@ export default function WorkflowComponent({value, onChange, events}) {
       onChange(flow);
     }
   }, [reactFlowInstance]);
+
+  const onExport = useCallback(() => {
+    if (reactFlowInstance) {
+      const flow = reactFlowInstance.toObject();
+      const jsonString = JSON.stringify(flow, null, 2);
+      const blob = new Blob([jsonString], { type: 'application/json' });
+      const a = document.createElement('a');
+
+      a.href = URL.createObjectURL(blob);
+      a.download = 'output.json';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
+  }, [reactFlowInstance])
+
+  const onImport = useCallback(() => {
+    try {
+      console.log(fileContent)
+      const flow = JSON.parse(fileContent);
+
+      if (flow) {
+        setNodes(flow.nodes || [])
+        setNodes(flow.edges || [])
+      } else {
+        toast.error("An error has occurred")
+      }
+    } catch (e) {
+      console.log(e)
+      toast.error("An error has occurred")
+    }
+  }, [setNodes])
 
   const handleDrawer = () => setOpen(!isOpen)
 
@@ -126,14 +159,68 @@ export default function WorkflowComponent({value, onChange, events}) {
     setEdges((edges) => edges.filter((edge) => edge.id !== ed.id));
   };
 
+  const handleFileChange = useCallback((event) => {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const content = e.target.result;
+        try {
+          const flow = JSON.parse(content);
+
+          if (flow) {
+            setNodes(flow.nodes || [])
+            setEdges(flow.edges || [])
+          } else {
+            toast.error("An error has occurred")
+          }
+        } catch (e) {
+          console.log(e)
+          toast.error("An error has occurred")
+        }
+      };
+      reader.readAsText(file);
+    }
+  }, [setNodes, setEdges]);
+
+  const handleButtonClick = () => {
+    fileInputRef.current.click();
+  };
+
   return (
     <>
       <Grid container spacing={2} justifyContent="flex-end" sx={{mb: 3}}>
         <Grid item>
           <Button
+            component='label'
+            variant='contained'
+            onClick={onExport}
+            sx={{ mr: 2 }}
+            startIcon={<Icon icon='tabler:external-link' fontSize={20} />}
+          >
+            Export
+          </Button>
+          <Button
             variant='contained'
             color='primary'
-            startIcon={<Icon icon='tabler:save' fontSize={20} />}
+            startIcon={<Icon icon='tabler:download' fontSize={20}/>}
+            sx={{mr: 2}}
+            htmlFor='account-settings-upload-image'
+            onClick={handleButtonClick}
+          >
+            <input
+              hidden
+              type='file'
+              onChange={handleFileChange}
+              ref={fileInputRef}
+              id='account-settings-upload-image'
+            />
+            Import
+          </Button>
+          <Button
+            variant='contained'
+            color='primary'
+            startIcon={<Icon icon='tabler:file-import' fontSize={20}/>}
             sx={{ mr: 2 }}
             onClick={onSave}
           >
