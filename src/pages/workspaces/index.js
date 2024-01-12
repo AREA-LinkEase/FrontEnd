@@ -71,7 +71,7 @@ const Workspaces = () => {
           }
         />
         <Grid item xs={12}>
-          <WorkspacesTable data={workspaces} handleDrawer={handleDrawer} />
+          <WorkspacesTable data={workspaces} handleDrawer={handleDrawer} token={token} />
         </Grid>
       </Grid>
       <DrawerCreator isOpen={isOpen} handleDrawer={handleDrawer} />

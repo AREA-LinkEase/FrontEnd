@@ -123,6 +123,12 @@ const UserTable = ({data, workspace}) => {
               },
               {
                 text: 'Delete',
+                menuItemProps: {
+                  onClick: async () => {
+                    await workspace.deleteUser(row.id)
+                    router.reload()
+                  },
+                },
                 icon: <Icon icon='tabler:trash' fontSize='1.25rem' />
               }
             ]}
@@ -254,6 +260,7 @@ const UserTable = ({data, workspace}) => {
                 onChange={async (e) => {
                   let result = await Users.searchUser(token, e.target.value);
 
+                  if (e.target.value === "") return;
                   if (typeof result === "number") {
                     toast.error("An error has occurred")
                     console.log(result)

@@ -16,6 +16,8 @@ import AvatarGroup from "@mui/material/AvatarGroup";
 import Avatar from "@mui/material/Avatar";
 import CustomChip from 'src/@core/components/mui/chip'
 import NetworkConfig from "../../configs/networkConfig";
+import {Workspace} from "../../models/Workspaces";
+import {useRouter} from "next/router";
 
 const defaultColumns = [
   {
@@ -59,9 +61,10 @@ const defaultColumns = [
   }
 ]
 
-const WorkspacesTable = ({data, handleDrawer}) => {
+const WorkspacesTable = ({data, handleDrawer, token}) => {
   const [value, setValue] = useState('')
   const [paginationModel, setPaginationModel] = useState({ page: 0, pageSize: 6 })
+  const router = useRouter();
 
   const columns = [
     ...defaultColumns,
@@ -88,17 +91,20 @@ const WorkspacesTable = ({data, handleDrawer}) => {
             menuProps={{ sx: { '& .MuiMenuItem-root svg': { mr: 2 } } }}
             options={[
               {
-                text: (row.status === "enable") ? "disable" : "enable",
-                icon: <Icon icon={'tabler:' + ((row.status === "enable") ? "pause" : "play")} fontSize='1.25rem' />
+                text: (row.is_enabled) ? "disable" : "enable",
+                menuItemProps: {
+                  onClick: async () => {
+                    const workspace = new Workspace(token, row.id)
+                    await workspace.edit({is_enabled: !row.is_enabled})
+                    router.reload();
+                  },
+                },
+                icon: <Icon icon={'tabler:' + ((row.is_enabled) ? "pause" : "play")} fontSize='1.25rem' />
               },
               {
                 text: 'Edit',
                 href: "/workspaces/" + row.id,
                 icon: <Icon icon='tabler:pencil' fontSize='1.25rem' />
-              },
-              {
-                text: 'Duplicate',
-                icon: <Icon icon='tabler:copy' fontSize='1.25rem' />
               }
             ]}
           />

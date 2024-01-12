@@ -23,6 +23,7 @@ import Fade from "@mui/material/Fade";
 import {styled} from "@mui/material/styles";
 import toast from "react-hot-toast";
 import {useRouter} from "next/router";
+import {Automate} from "../../../models/Automates";
 
 const defaultColumns = [
   {
@@ -74,7 +75,7 @@ const Transition = forwardRef(function Transition(props, ref) {
   return <Fade ref={ref} {...props} />
 })
 
-const AutomateTable = ({data, workspace}) => {
+const AutomateTable = ({data, workspace, token}) => {
   const [value, setValue] = useState('')
   const [show, setShow] = useState(false)
   const [paginationModel, setPaginationModel] = useState({ page: 0, pageSize: 6 })
@@ -110,17 +111,20 @@ const AutomateTable = ({data, workspace}) => {
             menuProps={{ sx: { '& .MuiMenuItem-root svg': { mr: 2 } } }}
             options={[
               {
-                text: (row.status === "enable") ? "disable" : "enable",
-                icon: <Icon icon={'tabler:' + ((row.status === "enable") ? "pause" : "play")} fontSize='1.25rem' />
+                text: (row.is_enabled) ? "disable" : "enable",
+                menuItemProps: {
+                  onClick: async () => {
+                    const automate = new Automate(token, row.id)
+                    await automate.edit({is_enabled: !row.is_enabled})
+                    router.reload();
+                  },
+                },
+                icon: <Icon icon={'tabler:' + ((row.is_enabled) ? "pause" : "play")} fontSize='1.25rem' />
               },
               {
                 text: 'Edit',
                 href: `/automates/` + row.id,
                 icon: <Icon icon='tabler:pencil' fontSize='1.25rem' />
-              },
-              {
-                text: 'Duplicate',
-                icon: <Icon icon='tabler:copy' fontSize='1.25rem' />
               }
             ]}
           />

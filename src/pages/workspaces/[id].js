@@ -151,7 +151,7 @@ const workspace = () => {
         </Grid>
       </Grid>
       <Grid item xs={12}>
-        <AutomateTable data={info.automates} workspace={workspace} />
+        <AutomateTable data={info.automates} workspace={workspace} token={token} />
       </Grid>
       <Grid item xs={12}>
         <UserTable data={info.users} workspace={workspace} />

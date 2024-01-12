@@ -197,6 +197,7 @@ const UserTable = ({data, user, token}) => {
                               onChange={async (e) => {
                                 let result = await Users.searchUser(token, e.target.value);
 
+                                if (e.target.value === "") return;
                                 if (typeof result === "number") {
                                   toast.error("An error has occurred")
                                   console.log(result)
