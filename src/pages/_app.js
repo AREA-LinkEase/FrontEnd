@@ -5,8 +5,6 @@ import {Router, useRouter} from 'next/router'
 // ** Loader Import
 import NProgress from 'nprogress'
 
-import { store } from 'src/store'
-
 // ** Emotion Imports
 import { CacheProvider } from '@emotion/react'
 
@@ -107,7 +105,6 @@ const App = props => {
   const needAuth = Component.needAuth ?? true
 
   return (
-    <Provider store={store}>
       <CacheProvider value={emotionCache}>
         <Head>
           <title>{`${themeConfig.templateName}`}</title>
@@ -136,7 +133,6 @@ const App = props => {
             </UserProvider>
           </SettingsProvider>
       </CacheProvider>
-    </Provider>
   )
 }
 
