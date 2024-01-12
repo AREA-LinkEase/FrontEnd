@@ -167,6 +167,41 @@ export class Workspace {
   }
 
   /**
+   * Add a variable from a workspace.
+   * @param {String} name - Name of the variable.
+   * @param {String} value - Value of the variable.
+   * @returns {Promise<boolean|number>} - True if successful or a status code if the request fails.
+   */
+  async addVariable(name, value) {
+    let response = await fetch(networkConfig.url + "/workspaces/" + this.id + "/variables/" + name, {
+      headers: {
+        "Authorization": this.token,
+        "Content-Type": "application/json"
+      },
+      method: "POST",
+      body: JSON.stringify({
+        content: value
+      })
+    })
+    return (response.ok) ? true : response.status;
+  }
+
+  /**
+   * Remove a variable from a workspace.
+   * @param {String} name - Name of the variable.
+   * @returns {Promise<boolean|number>} - True if successful or a status code if the request fails.
+   */
+  async removeVariable(name) {
+    let response = await fetch(networkConfig.url + "/workspaces/" + this.id + "/variables/" + name, {
+      headers: {
+        "Authorization": this.token
+      },
+      method: "DELETE"
+    })
+    return (response.ok) ? true : response.status;
+  }
+
+  /**
    * Adds a user to a workspace.
    * @param {integer} userId - User ID to be added.
    * @param {integer} permission - Permission level for the user.

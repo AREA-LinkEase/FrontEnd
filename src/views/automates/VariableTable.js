@@ -3,7 +3,7 @@ import Icon from "../../@core/components/icon";
 import Typography from "@mui/material/Typography";
 import {styled} from "@mui/material/styles";
 import IconButton from "@mui/material/IconButton";
-import {forwardRef, useState} from "react";
+import {forwardRef, useContext, useEffect, useState} from "react";
 import Fade from "@mui/material/Fade";
 import Tooltip from "@mui/material/Tooltip";
 import Card from "@mui/material/Card";
@@ -16,6 +16,9 @@ import DialogContent from "@mui/material/DialogContent";
 import Grid from "@mui/material/Grid";
 import DialogActions from "@mui/material/DialogActions";
 import toast from "react-hot-toast";
+import {Workspace} from "../../models/Workspaces";
+import {UserContext} from "../../hook/UserContext";
+import {useRouter} from "next/router";
 
 const defaultColumns = [
     {
@@ -53,13 +56,45 @@ const Transition = forwardRef(function Transition(props, ref) {
     return <Fade ref={ref} {...props} />
 })
 
-const VariableTable = ({data, automate}) => {
+const VariableTable = ({automate}) => {
     const [value, setValue] = useState('')
     const [show, setShow] = useState(false)
     const [paginationModel, setPaginationModel] = useState({ page: 0, pageSize: 6 })
+    const [data, setData] = useState([])
+    const [workspace, setWorkspace] = useState(null)
+    const { token } = useContext(UserContext);
 
-  const [title, setTitle] = useState("")
-  const [description, setDescription] = useState("");
+    const [title, setTitle] = useState("")
+    const [description, setDescription] = useState("");
+
+    const router = useRouter()
+
+    useEffect(() => {
+      (async () => {
+        try {
+          const newWorkspace = new Workspace(token, automate.workspace_id)
+
+          const result = await newWorkspace.get()
+
+          let results = [];
+          for (const [i, name] of Object.keys(result.variables).entries()) {
+            results.push(
+              {
+                title: name,
+                content: automate.variables[name],
+                id: i
+              }
+            )
+          }
+          setData(results)
+          setWorkspace(newWorkspace)
+          console.log(results, result)
+        } catch (e) {
+          console.log(e)
+          toast.error("An error has occurred")
+        }
+      })()
+    }, []);
 
     const columns = [
         ...defaultColumns,
@@ -72,7 +107,11 @@ const VariableTable = ({data, automate}) => {
             renderCell: ({ row }) => (
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
                     <Tooltip title='Delete Automate'>
-                        <IconButton size='small' onClick={() => {}}>
+                        <IconButton size='small' onClick={async () => {
+                          await workspace.removeVariable(row.title)
+                          router.reload()
+                          toast.success("Variable has deleted successfully")
+                        }}>
                             <Icon icon='tabler:trash' />
                         </IconButton>
                     </Tooltip>
@@ -174,7 +213,7 @@ const VariableTable = ({data, automate}) => {
                 >
                     <Button variant='contained' sx={{ mr: 1 }} onClick={async () => {
                       setShow(false)
-                      let result = await automate.addVariable(title, description)
+                      let result = await workspace.addVariable(title, description)
 
                       if (typeof result === "number")
                         toast.error("An error has occurred")
