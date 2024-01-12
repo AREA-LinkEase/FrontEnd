@@ -18,6 +18,7 @@ import {UserContext} from "../../../hook/UserContext";
 import {Service} from "../../../models/Services";
 import toast from "react-hot-toast";
 import WorkflowComponent from "../../../views/workflow/Workflow";
+import {HandleTypes} from "../../../views/workflow/Nodes/nodes";
 
 const CustomCloseButton = styled(IconButton)(({ theme }) => ({
     top: 0,
@@ -47,6 +48,7 @@ export default function event() {
     const [isLoading, setLoading] = useState(true);
     const [title, setTitle] = useState("")
     const [description, setDescription] = useState("");
+    const [nodes, setNodes] = useState({});
 
     const onChange = async (workflow) => {
       try {
@@ -81,6 +83,46 @@ export default function event() {
 
           if (typeof result === "number")
             return
+          try {
+            let newNodes = {};
+            let results = await Service.getAllEvents(token)
+
+            if (typeof results === "number") {
+              toast.error("An error has occurred")
+              console.log(results)
+              return;
+            }
+            for (const event of results) {
+              let service = new Service(token, event.service_id);
+
+              let serviceInfo = await service.get();
+
+              if (typeof serviceInfo === "number") continue;
+              newNodes[event.name] = {
+                "categories": "events",
+                "name": event.name,
+                "eventID": event.id,
+                "service": serviceInfo.name,
+                inputs: [
+                  {
+                    "id": "argument_1",
+                    "type": HandleTypes.ANY
+                  }
+                ],
+                outputs: [
+                  {
+                    "id": "exit",
+                    "type": HandleTypes.ANY,
+                  },
+                ],
+                "background": "#28c76f"
+              }
+            }
+            setNodes(newNodes)
+          } catch (e) {
+            toast.error("An error has occurred")
+            console.log(e)
+          }
           setService(newEvent)
           setInfo(result)
           setTitle(result.name)
@@ -116,7 +158,7 @@ export default function event() {
               <WorkflowComponent value={{
                 "nodes": info.workflow.nodes || [],
                 "edges": info.workflow.edges || []
-              }} onChange={onChange} />
+              }} onChange={onChange} events={nodes} />
             </Grid>
         </Grid>
         <Dialog

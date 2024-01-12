@@ -130,7 +130,6 @@ export function ToolBoxDrawer({isOpen, handleDrawer, nodeStyles, setNodes}) {
                           },
                         };
 
-                        console.log(newNode)
                         setNodes((nds) => nds.concat(newNode));
                         handleDrawer()
                       }}

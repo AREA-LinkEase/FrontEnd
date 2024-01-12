@@ -28,7 +28,10 @@ export const getId = () => `LinkEaseNode_${id++}`;
 export default function WorkflowComponent({value, onChange, events}) {
   const [nodes, setNodes, onNodesChange] = useNodesState(value.nodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(value.edges);
-  const [nodeStyles, setNodeStyles] = useState(nodeGlobalStyles)
+  const [nodeStyles, setNodeStyles] = useState({
+    ...nodeGlobalStyles,
+    ...events
+  })
   const [isOpen, setOpen] = useState(false)
   const [reactFlowInstance, setReactFlowInstance] = useState(null);
   const [menu, setMenu] = useState(null);
@@ -41,6 +44,14 @@ export default function WorkflowComponent({value, onChange, events}) {
       ...events
     })
   }, [events])
+  useEffect(() => {
+    for (const node of value.nodes) {
+      let value = node.id.split("_")[1];
+      if (value > id)
+        id = value;
+    }
+    id++;
+  }, [])
 
   const onConnect = useCallback(
     (params) => {
@@ -182,7 +193,7 @@ export default function WorkflowComponent({value, onChange, events}) {
 
               for (let i = 0; i < countPin; i++)
                 inputs.push({
-                  "id": "argument_" + i,
+                  "id": "argument_" + (i + 1),
                   "type": HandleTypes.ANY
                 })
               setNodes(nodes.map((nde) => {

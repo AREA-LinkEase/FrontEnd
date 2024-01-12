@@ -63,7 +63,7 @@ const automate = () => {
         logs: <Logs info={info} automate={automate} />,
         settings: <Settings info={info} automate={automate} />,
         variables: <Variables info={info} automate={automate} />,
-        workflow: <Workflow info={info} automate={automate} />
+        workflow: <Workflow info={info} automate={automate} token={token} />
     }
 
   return <>

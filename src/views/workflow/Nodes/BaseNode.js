@@ -1,5 +1,5 @@
 import {Grid, Typography} from "@mui/material";
-import {Handle, Position, useReactFlow, useStoreApi} from "reactflow";
+import {Handle, Position, useReactFlow, useStoreApi, useUpdateNodeInternals} from "reactflow";
 import React, {useEffect, useState} from "react";
 import {TextInput} from "./Inputs/TextInput";
 import {SelectInput} from "./Inputs/SelectInput";
@@ -54,7 +54,7 @@ const actions = {
     if (count === data.inputs.length) return;
     for (let i = 0; i < count; i++)
       inputs.push({
-        "id": "argument_" + i,
+        "id": "argument_" + (i + 1),
         "type": HandleTypes.STRING
       })
     const { nodeInternals } = store.getState();
@@ -76,6 +76,7 @@ export default function BaseNode({data, id}) {
   const { setNodes } = useReactFlow();
   const store = useStoreApi();
   const [value, setValue] = useState(data.value)
+  const updateNodeInternals = useUpdateNodeInternals();
 
   const onChange = (e) => {
     const { nodeInternals } = store.getState();
@@ -95,7 +96,8 @@ export default function BaseNode({data, id}) {
 
   useEffect(() => {
     if (data.label in actions)
-      actions[data.label](id, data, store, setNodes)
+      actions[data.label](id, data, store, setNodes, updateNodeInternals)
+    updateNodeInternals(id);
   }, [data]);
 
   return (

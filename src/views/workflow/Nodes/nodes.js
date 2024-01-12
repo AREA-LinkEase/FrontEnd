@@ -374,6 +374,11 @@ export const nodeGlobalStyles = {
         "type": HandleTypes.ANY
       },
       {
+        "id": "service",
+        "type": HandleTypes.STRING,
+        "name": "Service"
+      },
+      {
         "id": "body",
         "type": HandleTypes.OBJECT,
         "name": "Body"
