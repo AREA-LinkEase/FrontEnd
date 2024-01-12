@@ -75,6 +75,21 @@ export const nodeGlobalStyles = {
       "type": "text"
     }
   },
+  "environment": {
+    "categories": "variable",
+    "name": "Env",
+    inputs: [],
+    outputs: [
+      {
+        "id": "exit",
+        "type": HandleTypes.ANY
+      }
+    ],
+    "background": "#e83e8c",
+    valuePicker: {
+      "type": "text"
+    }
+  },
   "variableBoolean": {
     "categories": "variable",
     "name": "Boolean",

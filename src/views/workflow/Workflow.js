@@ -47,7 +47,7 @@ export default function WorkflowComponent({value, onChange, events}) {
   }, [events])
   useEffect(() => {
     for (const node of value.nodes) {
-      let value = node.id.split("_")[1];
+      let value = parseInt(node.id.split("_")[1]);
       if (value > id)
         id = value;
     }
@@ -91,23 +91,6 @@ export default function WorkflowComponent({value, onChange, events}) {
       document.body.removeChild(a);
     }
   }, [reactFlowInstance])
-
-  const onImport = useCallback(() => {
-    try {
-      console.log(fileContent)
-      const flow = JSON.parse(fileContent);
-
-      if (flow) {
-        setNodes(flow.nodes || [])
-        setNodes(flow.edges || [])
-      } else {
-        toast.error("An error has occurred")
-      }
-    } catch (e) {
-      console.log(e)
-      toast.error("An error has occurred")
-    }
-  }, [setNodes])
 
   const handleDrawer = () => setOpen(!isOpen)
 
