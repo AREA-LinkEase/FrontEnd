@@ -1,5 +1,5 @@
 // ** React Imports
-import {useContext, useEffect, useState} from 'react'
+import {useContext, useState} from 'react'
 
 // ** Next Import
 import Link from 'next/link'
@@ -35,7 +35,6 @@ import {useRouter} from "next/router";
 import {Alert} from "@mui/material";
 import {Auth} from "../../../models/Auth";
 import {UserContext} from "../../../hook/UserContext";
-import NetworkConfig from "../../../configs/networkConfig";
 
 // ** Styled Components
 const Card = styled(MuiCard)(({ theme }) => ({
@@ -66,15 +65,6 @@ const LoginV1 = () => {
   // ** Hook
   const theme = useTheme()
   const router = useRouter()
-
-  useEffect(() => {
-    console.log(router.query.token)
-    if (router.query.token) {
-      login("Bearer " + router.query.token).then(() => {
-        router.replace("/")
-      })
-    }
-  }, [router.query.token]);
 
   const handleChange = prop => event => {
     setValues({ ...values, [prop]: event.target.value })
@@ -200,17 +190,21 @@ const LoginV1 = () => {
               </Divider>
               <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <IconButton
-                  href={NetworkConfig.url + "/auth/login/github"}
+                  href='/'
                   component={Link}
+                  onClick={e => e.preventDefault()}
                   sx={{ color: theme => (theme.palette.mode === 'light' ? '#272727' : 'grey.300') }}
                 >
                   <Icon icon='mdi:github' />
                 </IconButton>
-                <IconButton href={NetworkConfig.url + "/auth/login/google"} component={Link} sx={{ color: '#db4437' }}>
+                <IconButton href='/' component={Link} sx={{ color: '#db4437' }} onClick={e => e.preventDefault()}>
                   <Icon icon='mdi:google' />
                 </IconButton>
-                <IconButton href={NetworkConfig.url + "/auth/login/discord"} component={Link} sx={{ color: '#7289da' }}>
+                <IconButton href='/' component={Link} sx={{ color: '#7289da' }} onClick={e => e.preventDefault()}>
                   <Icon icon='mdi:discord' />
+                </IconButton>
+                <IconButton href='/' component={Link} sx={{ color: '#00A4EF' }} onClick={e => e.preventDefault()}>
+                  <Icon icon='mdi:microsoft' />
                 </IconButton>
               </Box>
             </form>
