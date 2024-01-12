@@ -17,6 +17,7 @@ import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
 import CustomTextField from "../../@core/components/mui/text-field";
 import DialogActions from "@mui/material/DialogActions";
+import TextField from "@mui/material/TextField";
 
 const types = {
   baseNode: BaseNode
@@ -172,7 +173,10 @@ export default function WorkflowComponent({value, onChange, events}) {
 
   return (
     <>
-      <Grid container spacing={2} justifyContent="flex-end" sx={{mb: 3}}>
+      <Grid container spacing={2} justifyContent="space-between" sx={{mb: 3}}>
+        <Grid item xs={12}>
+          <TextField id='outlined-basic' label='prompt AI' fullWidth height={38} />
+        </Grid>
         <Grid item>
           <Button
             component='label'
