@@ -24,3 +24,21 @@ export class ChatAI {
       return response.status
   }
 }
+
+export async function promptWorkflowAI(prompt, nodes, workflow) {
+  let response = await fetch(networkConfig.url + "/ai/workflow", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      prompt: prompt,
+      nodes: nodes,
+      workflow: workflow
+    })
+  })
+  if (response.ok)
+    return await response.json()
+  else
+    return response.status
+}

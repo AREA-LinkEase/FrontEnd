@@ -15,6 +15,7 @@ import CustomAvatar from 'src/@core/components/mui/avatar'
 import toast from "react-hot-toast";
 import {ChatAI} from "../../models/AI";
 import Spinner from "../../@core/components/spinner";
+import CustomChip from 'src/@core/components/mui/chip'
 
 const ChatFormWrapper = styled(Box)(({ theme }) => ({
   display: 'flex',
@@ -131,8 +132,8 @@ export default function ChatAIComponent() {
             <CustomAvatar skin='light' color="warning" sx={{ width: 50, height: 50, mb: 2.25 }}>
               <Icon icon='tabler:comet' fontSize='2rem' />
             </CustomAvatar>
-            <Typography variant='h4' sx={{ mb: 2.75 }}>
-              ChatAI
+            <Typography variant='h4' sx={{ mb: 2.75, display: "flex", alignItems: "center" }}>
+              ChatAI <CustomChip sx={{ml: 2}} label='Bêta' skin='light' color='error' />
             </Typography>
             <Typography sx={{ mb: 6, color: 'text.secondary' }}>
               According to us blisters are a very common thing and we come across them very often in our daily lives. It is

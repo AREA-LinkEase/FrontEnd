@@ -50,9 +50,11 @@ const navigation = () => {
       path: '/faq'
     },
     {
-      title: 'Help Center',
-      icon: 'tabler:help',
-      path: '/'
+      title: 'Chat AI',
+      badgeContent: 'beta',
+      badgeColor: 'error',
+      icon: 'tabler:comet',
+      path: '/chatai'
     },
     {
       title: 'Documentation',

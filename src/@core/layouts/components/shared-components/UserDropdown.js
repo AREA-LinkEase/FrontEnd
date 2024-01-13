@@ -152,10 +152,10 @@ const UserDropdown = props => {
           </Box>
         </MenuItemStyled>
         <Divider sx={{ my: theme => `${theme.spacing(2)} !important` }} />
-        <MenuItemStyled sx={{ p: 0 }} onClick={() => handleDropdownClose('/')}>
+        <MenuItemStyled sx={{ p: 0 }} onClick={() => handleDropdownClose('/chatai')}>
           <Box sx={styles}>
-            <Icon icon='tabler:lifebuoy' />
-            Help
+            <Icon icon='tabler:comet' />
+            Chat AI
           </Box>
         </MenuItemStyled>
         <MenuItemStyled sx={{ p: 0 }} onClick={() => handleDropdownClose('/faq')}>
