@@ -20,7 +20,7 @@ const defaultColumns = [
         field: 'value',
         minWidth: 90,
         headerName: 'Value',
-        renderCell: ({ row }) => <Typography sx={{ color: 'text.secondary' }}>{row.value}</Typography>
+        renderCell: ({ row }) => <Typography sx={{ color: 'text.secondary' }}>{row.message}</Typography>
     },
     {
         flex: 0.15,
