@@ -83,7 +83,7 @@ export default function Workflow({info, automate, token}) {
 
     return (
         <Grid container spacing={6}>
-            <Grid item xs={12} height={"65vh"}>
+            <Grid item xs={12} height={"60vh"}>
                 <WorkflowComponent value={value} onChange={onChange} events={nodes} />
             </Grid>
         </Grid>

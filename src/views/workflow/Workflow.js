@@ -17,6 +17,10 @@ import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
 import CustomTextField from "../../@core/components/mui/text-field";
 import DialogActions from "@mui/material/DialogActions";
+import TextField from "@mui/material/TextField";
+import CustomChip from "../../@core/components/mui/chip";
+import {promptWorkflowAI} from "../../models/AI";
+import Spinner from "../../@core/components/spinner";
 
 const types = {
   baseNode: BaseNode
@@ -38,6 +42,8 @@ export default function WorkflowComponent({value, onChange, events}) {
   const ref = useRef(null);
   const [countPin, setCountPin] = useState(0);
   const fileInputRef = useRef(null);
+  const [prompt, setPrompt] = useState("");
+  const [isLoading, setLoading] = useState(false);
 
   useEffect(() => {
     setNodeStyles({
@@ -170,9 +176,47 @@ export default function WorkflowComponent({value, onChange, events}) {
     fileInputRef.current.click();
   };
 
+  const onPrompt = async (event) => {
+    if (event.key !== "Enter") return;
+    setLoading(true)
+    try {
+      console.log(prompt)
+      const flow = reactFlowInstance.toObject();
+      let workflow = await promptWorkflowAI(prompt, nodeStyles, {nodes: flow.nodes, edges: flow.edges})
+
+      console.log(workflow)
+      if (workflow && typeof workflow !== "number") {
+        if (Array.isArray(workflow.nodes))
+          setNodes(workflow.nodes || [])
+        if (Array.isArray(workflow.edges))
+          setEdges(workflow.edges || [])
+      } else {
+        toast.error("An error has occurred")
+      }
+    } catch (e) {
+      console.log(e)
+      toast.error("An error has occurred")
+    }
+    setLoading(false)
+  }
+
   return (
     <>
-      <Grid container spacing={2} justifyContent="flex-end" sx={{mb: 3}}>
+      <Grid container spacing={2} justifyContent="space-between" sx={{mb: 3}}>
+        <Grid item xs={12}>
+          <TextField
+            id='outlined-basic'
+            label={<div style={{
+              display: "flex",
+              alignItems: "center"
+            }}>prompt AI<CustomChip sx={{ml: 2}} label='Beta' skin='light' color='error' /></div>}
+            fullWidth
+            height={38}
+            onKeyDown={onPrompt}
+            value={prompt}
+            onChange={(e) => setPrompt(e.target.value)}
+          />
+        </Grid>
         <Grid item>
           <Button
             component='label'
@@ -219,6 +263,12 @@ export default function WorkflowComponent({value, onChange, events}) {
           </Button>
         </Grid>
       </Grid>
+      {
+        isLoading ?
+            <Spinner sx={{
+              "height": "100%"
+            }} />
+          :
       <ReactFlow
         ref={ref}
         nodes={nodes}
@@ -237,6 +287,7 @@ export default function WorkflowComponent({value, onChange, events}) {
         <Controls />
         <Background variant="dots" gap={12} size={1} />
       </ReactFlow>
+      }
       <ToolBoxDrawer isOpen={isOpen} handleDrawer={handleDrawer} nodeStyles={nodeStyles} setNodes={setNodes} />
       <Dialog open={Boolean(menu)} onClose={onPaneClick} aria-labelledby='form-dialog-title' maxWidth="sm">
         <DialogTitle id='form-dialog-title'>Node</DialogTitle>
