@@ -59,7 +59,7 @@ const navigation = () => {
     {
       title: 'Documentation',
       icon: 'tabler:file-search',
-      path: '/'
+      path: 'https://docs.google.com/document/d/1JHtuHZJVM6iDgHY4FmnXTlxGSnB4Cz2fqoqrZPvAGrU/edit?usp=sharing'
     }
   ]
 }

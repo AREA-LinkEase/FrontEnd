@@ -164,7 +164,7 @@ const UserDropdown = props => {
             FAQ
           </Box>
         </MenuItemStyled>
-        <MenuItemStyled sx={{ p: 0 }} onClick={() => handleDropdownClose('/documentation')}>
+        <MenuItemStyled sx={{ p: 0 }} onClick={() => handleDropdownClose('https://docs.google.com/document/d/1JHtuHZJVM6iDgHY4FmnXTlxGSnB4Cz2fqoqrZPvAGrU/edit?usp=sharing')}>
           <Box sx={styles}>
             <Icon icon='tabler:file-search' />
             Documentation
