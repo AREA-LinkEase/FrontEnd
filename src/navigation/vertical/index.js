@@ -37,11 +37,6 @@ const navigation = () => {
       path: '/community/services'
     },
     {
-      title: 'Forum',
-      icon: 'tabler:layout-navbar',
-      path: '/'
-    },
-    {
       sectionTitle: 'Help & Documentation'
     },
     {
