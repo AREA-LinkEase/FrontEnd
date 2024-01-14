@@ -60,6 +60,40 @@ export const nodeGlobalStyles = {
     ],
     "background": "#00cfe8"
   },
+  "StringToObject": {
+    "categories": "conversion",
+    "name": "String -> Object",
+    inputs: [
+      {
+        "id": "entry",
+        "type": HandleTypes.STRING,
+      }
+    ],
+    outputs: [
+      {
+        "id": "exit",
+        "type": HandleTypes.OBJECT
+      }
+    ],
+    "background": "#00cfe8"
+  },
+  "ObjectToString": {
+    "categories": "conversion",
+    "name": "Object -> String",
+    inputs: [
+      {
+        "id": "entry",
+        "type": HandleTypes.OBJECT,
+      }
+    ],
+    outputs: [
+      {
+        "id": "exit",
+        "type": HandleTypes.STRING
+      }
+    ],
+    "background": "#00cfe8"
+  },
   "argument": {
     "categories": "variable",
     "name": "Argument",
@@ -78,7 +112,12 @@ export const nodeGlobalStyles = {
   "environment": {
     "categories": "variable",
     "name": "Env",
-    inputs: [],
+    inputs: [
+      {
+        "id": "entry",
+        "type": HandleTypes.STRING
+      }
+    ],
     outputs: [
       {
         "id": "exit",
