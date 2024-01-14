@@ -91,7 +91,10 @@ const EventsTable = ({defaultSelect, id, data, service}) => {
                         </IconButton>
                     </Tooltip>
                     <Tooltip title='Delete'>
-                        <IconButton size='small' onClick={() => {}}>
+                        <IconButton size='small' onClick={async () => {
+                          await service.deleteEvent(row.id)
+                          router.reload();
+                        }}>
                             <Icon icon='tabler:trash' />
                         </IconButton>
                     </Tooltip>
