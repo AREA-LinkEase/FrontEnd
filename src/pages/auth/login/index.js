@@ -1,5 +1,5 @@
 // ** React Imports
-import {useContext, useState} from 'react'
+import {useContext, useEffect, useState} from 'react'
 
 // ** Next Import
 import Link from 'next/link'
@@ -66,6 +66,15 @@ const LoginV1 = () => {
   // ** Hook
   const theme = useTheme()
   const router = useRouter()
+
+  useEffect(() => {
+    console.log(router.query.token)
+    if (router.query.token) {
+      login("Bearer " + router.query.token).then(() => {
+        router.replace("/")
+      })
+    }
+  }, [router.query.token]);
 
   const handleChange = prop => event => {
     setValues({ ...values, [prop]: event.target.value })
