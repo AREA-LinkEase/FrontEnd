@@ -202,15 +202,14 @@ const LoginV1 = () => {
                 <IconButton
                   href={NetworkConfig.url + "/auth/login/github"}
                   component={Link}
-                  onClick={e => e.preventDefault()}
                   sx={{ color: theme => (theme.palette.mode === 'light' ? '#272727' : 'grey.300') }}
                 >
                   <Icon icon='mdi:github' />
                 </IconButton>
-                <IconButton href={NetworkConfig.url + "/auth/login/google"} component={Link} sx={{ color: '#db4437' }} onClick={e => e.preventDefault()}>
+                <IconButton href={NetworkConfig.url + "/auth/login/google"} component={Link} sx={{ color: '#db4437' }}>
                   <Icon icon='mdi:google' />
                 </IconButton>
-                <IconButton href={NetworkConfig.url + "/auth/login/discord"} component={Link} sx={{ color: '#7289da' }} onClick={e => e.preventDefault()}>
+                <IconButton href={NetworkConfig.url + "/auth/login/discord"} component={Link} sx={{ color: '#7289da' }}>
                   <Icon icon='mdi:discord' />
                 </IconButton>
               </Box>
