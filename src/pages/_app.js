@@ -43,6 +43,7 @@ import 'src/@core/components/reactflow/reactflow.css'
 
 // ** Global css styles
 import '../../styles/globals.css'
+import "react-datepicker/dist/react-datepicker.css";
 import {useContext, useEffect, useState} from "react";
 import Spinner from "../@core/components/spinner";
 import {UserContext, UserProvider} from "../hook/UserContext";
